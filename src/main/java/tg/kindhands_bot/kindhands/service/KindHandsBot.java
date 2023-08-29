@@ -1,12 +1,10 @@
 package tg.kindhands_bot.kindhands.service;
 
-import liquibase.pro.packaged.S;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tg.kindhands_bot.kindhands.components.NavigationMenu;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
@@ -35,36 +33,52 @@ public class KindHandsBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-
-            String messageText = update.getMessage().getText();
-            long chatId = update.getMessage().getChatId();
-
-            ProcessingBotMessages botMessages = new ProcessingBotMessages(update);
-
-            switch (messageText) {
-                case "/start": {
-                    sendMessage(botMessages.startCommand());
-                    sendMessage(NavigationMenu.choosingShelter(chatId));
-                    break;
-                }
-                default: sendMessage(botMessages.defaultMessage());
-            }
+            textCommands(update);
         } else if (update.hasCallbackQuery()) {
+            buttonCommands(update);
+        }
+    }
 
-            String callbackData = update.getCallbackQuery().getData();
-            long chatId = update.getCallbackQuery().getMessage().getChatId();
+    /**
+     * Метод для обработки, введенного пользователем, текста или текстовых команд.
+     * -----||-----
+     * A method for processing user-entered text or text commands.
+     */
+    public void textCommands(Update update) {
+        String messageText = update.getMessage().getText();
+        long chatId = update.getMessage().getChatId();
 
-            ProcessingBotMessages botMessages = new ProcessingBotMessages(update);
+        ProcessingBotMessages botMessages = new ProcessingBotMessages(update);
 
-            switch (callbackData) {
-                case "DOG_SH": {
-                    sendMessage(botMessages.editExistMessage("Вы выбрали собачий приют."));
-                    break;
-                }
-                case "CAT_SH": {
-                    sendMessage(botMessages.editExistMessage("Вы выбрали кошачий приют."));
-                    break;
-                }
+        switch (messageText) {
+            case "/start": {
+                sendMessage(botMessages.startCommand());
+                sendMessage(NavigationMenu.choosingShelter(chatId));
+                break;
+            }
+            default: sendMessage(botMessages.defaultMessage());
+        }
+    }
+
+    /**
+     * Метод для обработки, выбранной пользователем, кнопки.
+     * -----||-----
+     * The method for processing the button selected by the user.
+     */
+    public void buttonCommands(Update update) {
+        String callbackData = update.getCallbackQuery().getData();
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
+
+        ProcessingBotMessages botMessages = new ProcessingBotMessages(update);
+
+        switch (callbackData) {
+            case "DOG_SH": {
+                sendMessage(botMessages.editExistMessage("Вы выбрали собачий приют."));
+                break;
+            }
+            case "CAT_SH": {
+                sendMessage(botMessages.editExistMessage("Вы выбрали кошачий приют."));
+                break;
             }
         }
     }
