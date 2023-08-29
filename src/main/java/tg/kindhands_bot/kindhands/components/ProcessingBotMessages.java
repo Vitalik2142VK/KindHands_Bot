@@ -3,6 +3,8 @@ package tg.kindhands_bot.kindhands.components;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tg.kindhands_bot.kindhands.entities.User;
+import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
 /**
  * Класс для обработки и отправки сообщений.
@@ -12,9 +14,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class ProcessingBotMessages {
 
     private final Update update;
+    private final UserRepository userRepository;
 
-    public ProcessingBotMessages(Update update) {
+    public ProcessingBotMessages(Update update,
+                                 UserRepository userRepository) {
         this.update = update;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -22,7 +27,13 @@ public class ProcessingBotMessages {
      * -----||-----
      * The method for sending the edited message.
      */
-    public SendMessage startCommand() {
+    public SendMessage startCommand(Long chatId, String name) {
+        User user = new User();
+        user.setChatId(chatId);
+        user.setName(name);
+        user.setBlocked(false);
+        userRepository.save(user);
+
         String firstNameUser = update.getMessage().getChat().getFirstName();
         String answer = "Здравствуйте," + firstNameUser + "! Я бот приюта для животных \"В добрые руки\".";
         return returnMessage(answer);
