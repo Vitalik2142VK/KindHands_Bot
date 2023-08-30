@@ -53,9 +53,9 @@ public class ProcessingBotMessages {
     }
 
     /**
-     * Метод для редактирования существующего сообщения.
+     * Метод для редактирования существующего сообщения пользователя.
      * -----||-----
-     * A method for editing an existing message.
+     * A method for editing an existing user message.
      */
     public EditMessageText editExistMessage(String text) {
         EditMessageText message = new EditMessageText();
@@ -66,8 +66,8 @@ public class ProcessingBotMessages {
     }
 
 
-    // Методы для более удобной работы класса.
-    // Methods for more convenient operation of the class.
+    // Приватные методы для более удобной работы класса.
+    // Private methods for more convenient operation of the class.
 
 
     /**

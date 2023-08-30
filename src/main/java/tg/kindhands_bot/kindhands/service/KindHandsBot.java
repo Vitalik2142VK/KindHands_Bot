@@ -31,17 +31,30 @@ public class KindHandsBot extends TelegramLongPollingBot {
 
     /**
      * Основной метод для работы бота.
-     * -----||-----
      * При первом обращении с командой '/start' к боту, высылается привествие
      * При обращении с командой '/start' более одного раза приветствие уже не высылается
+     * -----||-----
      * The main method for the bot to work.
+     * When you first use the '/start' command to the bot, a greeting is sent
+     * When using the '/start' command more than once, the greeting is no longer sent
      */
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
+            textCommands(update);
+        } else if (update.hasCallbackQuery()) {
+            buttonCommands(update);
+        }
+    }
 
-            String messageText = update.getMessage().getText();
-            long chatId = update.getMessage().getChatId();
+    /**
+     * Метод для обработки, введенного пользователем, текста или текстовых команд.
+     * -----||-----
+     * A method for processing user-entered text or text commands.
+     */
+    public void textCommands(Update update) {
+        String messageText = update.getMessage().getText();
+        long chatId = update.getMessage().getChatId();
 
             ProcessingBotMessages botMessages = new ProcessingBotMessages(update, userRepository);
 
@@ -55,22 +68,29 @@ public class KindHandsBot extends TelegramLongPollingBot {
                 }
                 default: sendMessage(botMessages.defaultMessage());
             }
-        } else if (update.hasCallbackQuery()) {
+            default: sendMessage(botMessages.defaultMessage());
+        }
+    }
 
-            String callbackData = update.getCallbackQuery().getData();
-            long chatId = update.getCallbackQuery().getMessage().getChatId();
+    /**
+     * Метод для обработки, выбранной пользователем, кнопки.
+     * -----||-----
+     * The method for processing the button selected by the user.
+     */
+    public void buttonCommands(Update update) {
+        String callbackData = update.getCallbackQuery().getData();
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-            ProcessingBotMessages botMessages = new ProcessingBotMessages(update, userRepository);
+        ProcessingBotMessages botMessages = new ProcessingBotMessages(update);
 
-            switch (callbackData) {
-                case "DOG_SH": {
-                    sendMessage(botMessages.editExistMessage("Вы выбрали собачий приют."));
-                    break;
-                }
-                case "CAT_SH": {
-                    sendMessage(botMessages.editExistMessage("Вы выбрали кошачий приют."));
-                    break;
-                }
+        switch (callbackData) {
+            case "DOG_SH": {
+                sendMessage(botMessages.editExistMessage("Вы выбрали собачий приют."));
+                break;
+            }
+            case "CAT_SH": {
+                sendMessage(botMessages.editExistMessage("Вы выбрали кошачий приют."));
+                break;
             }
         }
     }
