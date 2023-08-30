@@ -14,12 +14,15 @@ import tg.kindhands_bot.kindhands.repositories.UserRepository;
 public class ProcessingBotMessages {
 
     private final Update update;
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
-    public ProcessingBotMessages(Update update,
-                                 UserRepository userRepository) {
+    public ProcessingBotMessages(Update update, UserRepository userRepository) {
         this.update = update;
         this.userRepository = userRepository;
+    }
+
+    public ProcessingBotMessages(Update update) {
+        this.update = update;
     }
 
     /**
