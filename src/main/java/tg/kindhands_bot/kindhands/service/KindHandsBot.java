@@ -56,17 +56,15 @@ public class KindHandsBot extends TelegramLongPollingBot {
         String messageText = update.getMessage().getText();
         long chatId = update.getMessage().getChatId();
 
-            ProcessingBotMessages botMessages = new ProcessingBotMessages(update, userRepository);
+        ProcessingBotMessages botMessages = new ProcessingBotMessages(update, userRepository);
 
-            switch (messageText) {
-                case "/start": {
-                    if (userRepository.findByChatId(chatId) == null) {
-                        sendMessage(botMessages.startCommand(chatId, update.getMessage().getFrom().getFirstName()));
-                    }
-                    sendMessage(NavigationMenu.choosingShelter(chatId));
-                    break;
+        switch (messageText) {
+            case "/start": {
+                if (userRepository.findByChatId(chatId) == null) {
+                    sendMessage(botMessages.startCommand(chatId, update.getMessage().getFrom().getFirstName()));
                 }
-                default: sendMessage(botMessages.defaultMessage());
+                sendMessage(NavigationMenu.choosingShelter(chatId));
+                break;
             }
             default: sendMessage(botMessages.defaultMessage());
         }
