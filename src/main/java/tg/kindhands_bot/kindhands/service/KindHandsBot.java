@@ -83,14 +83,59 @@ public class KindHandsBot extends TelegramLongPollingBot {
 
         switch (callbackData) {
             case "DOG_SH": {
-                sendMessage(botMessages.editExistMessage("Вы выбрали собачий приют."));
+                SendMessage message = new SendMessage(String.valueOf(chatId),"Вы выбрали собачий приют.");
+                NavigationMenu.menuShelter(message, true);
+                sendMessage(message);
                 break;
             }
             case "CAT_SH": {
-                sendMessage(botMessages.editExistMessage("Вы выбрали кошачий приют."));
+                SendMessage message = new SendMessage(String.valueOf(chatId),"Вы выбрали кошачий приют.");
+                NavigationMenu.menuShelter(message, false);
+                sendMessage(message);
                 break;
             }
         }
+
+        switch (callbackData){
+            case "INFO_GET_D":
+                SendMessage message = new SendMessage(String.valueOf(chatId),"Информация о собачем приюте: ");
+                sendMessage(message);
+                break;
+
+            case "HOW_GET_D":
+                 message = new SendMessage(String.valueOf(chatId),"Как взять собаку из приюта: ");
+                sendMessage(message);
+                break;
+
+            case "SEND_RP_D":
+                message = new SendMessage(String.valueOf(chatId),"Отчёт о питомце(собаке): ");
+                sendMessage(message);
+                break;
+
+            case "CALL_VL_D":
+            case "CALL_VL_C":
+                message = new SendMessage(String.valueOf(chatId),"Вызов волонтёра...");
+                sendMessage(message);
+                break;
+
+            case "INFO_GET_C":
+                message = new SendMessage(String.valueOf(chatId),"Информация о кошачем приюте: ");
+                sendMessage(message);
+                break;
+
+            case "HOW_GET_C":
+                message = new SendMessage(String.valueOf(chatId),"Как взять кошку из приюта: ");
+                sendMessage(message);
+                break;
+
+            case "SEND_RP_C":
+                message = new SendMessage(String.valueOf(chatId),"Отчёт о питомце(кошке): ");
+                sendMessage(message);
+                break;
+
+        }
+
+
     }
 
     /**
