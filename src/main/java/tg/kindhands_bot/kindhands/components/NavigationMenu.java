@@ -49,7 +49,8 @@ public class NavigationMenu {
      */
 
     private static InlineKeyboardButton createButton(String text, String callbackData) {
-        var button = new InlineKeyboardButton();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(text);
         button.setCallbackData(callbackData);
 
@@ -63,20 +64,22 @@ public class NavigationMenu {
      * The method that displays the "menu" buttons of the shelter.
      */
 
-    public static void menuShelter(SendMessage message, boolean isDog) {
-
+    public static SendMessage menuShelter(long chatId, boolean isDog) {
+        SendMessage message = new SendMessage();
         String isDogText = "";
         if (isDog){
+            message = new SendMessage(String.valueOf(chatId),"Вы выбрали собачий приют.");
             isDogText = "_D";
         }
         else{
+            message = new SendMessage(String.valueOf(chatId),"Вы выбрали кошачий приют.");
             isDogText = "_C";
         }
 
         var infoButton = createButton("Узнать информацию о приюте", "INFO_GET" + isDogText);
         var howGetButton = createButton("Как взять животное из приюта", "HOW_GET" + isDogText);
         var sendReportButton = createButton("Прислать отчёт о питомце", "SEND_RP" + isDogText);
-        var callVolunteerButton = createButton("Позвать волонтёра", "CALL_VL" + isDogText);
+        var callVolunteerButton = createButton("Позвать волонтёра", "CALL_VL");
 
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
@@ -93,5 +96,7 @@ public class NavigationMenu {
 
         markup.setKeyboard(rowsInLine);
         message.setReplyMarkup(markup);
+
+        return message;
     }
 }

@@ -83,38 +83,43 @@ public class KindHandsBot extends TelegramLongPollingBot {
 
         switch (callbackData) {
             case "DOG_SH": {
-                SendMessage message = new SendMessage(String.valueOf(chatId),"Вы выбрали собачий приют.");
-                NavigationMenu.menuShelter(message, true);
-                sendMessage(message);
+                sendMessage(NavigationMenu.menuShelter(chatId, true));
                 break;
             }
             case "CAT_SH": {
-                SendMessage message = new SendMessage(String.valueOf(chatId),"Вы выбрали кошачий приют.");
-                NavigationMenu.menuShelter(message, false);
-                sendMessage(message);
+                sendMessage(NavigationMenu.menuShelter(chatId, false));
                 break;
             }
         }
 
+        menuShelterHandler(botMessages, callbackData);
+
+    }
+
+    /**
+     * Метод обработки кнопок "меню приюта"
+     * -----//-----
+     *The method of processing the "shelter menu" buttons
+     */
+
+    private SendMessage menuShelterHandler(ProcessingBotMessages botMessages, String callbackData) {
+
+        long chatId = botMessages.getUpdate().getCallbackQuery().getMessage().getChatId();
+        SendMessage message = new SendMessage();
+
         switch (callbackData){
             case "INFO_GET_D":
-                SendMessage message = new SendMessage(String.valueOf(chatId),"Информация о собачем приюте: ");
+                message = new SendMessage(String.valueOf(chatId),"Информация о собачем приюте: ");
                 sendMessage(message);
                 break;
 
             case "HOW_GET_D":
-                 message = new SendMessage(String.valueOf(chatId),"Как взять собаку из приюта: ");
+                message = new SendMessage(String.valueOf(chatId),"Как взять собаку из приюта: ");
                 sendMessage(message);
                 break;
 
             case "SEND_RP_D":
                 message = new SendMessage(String.valueOf(chatId),"Отчёт о питомце(собаке): ");
-                sendMessage(message);
-                break;
-
-            case "CALL_VL_D":
-            case "CALL_VL_C":
-                message = new SendMessage(String.valueOf(chatId),"Вызов волонтёра...");
                 sendMessage(message);
                 break;
 
@@ -133,9 +138,12 @@ public class KindHandsBot extends TelegramLongPollingBot {
                 sendMessage(message);
                 break;
 
+            case "CALL_VL":
+                message = new SendMessage(String.valueOf(chatId),"Вызов волонтёра...");
+                sendMessage(message);
+                break;
         }
-
-
+        return message;
     }
 
     /**

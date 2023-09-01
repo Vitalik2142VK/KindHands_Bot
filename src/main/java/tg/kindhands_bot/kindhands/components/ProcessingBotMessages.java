@@ -65,6 +65,15 @@ public class ProcessingBotMessages {
         return message;
     }
 
+    /**
+     * Метод get для menuShelterHandler
+     * -----//-----
+     * Method get for menuShelterHandler
+     */
+    public Update getUpdate() {
+        return update;
+    }
+
 
     // Приватные методы для более удобной работы класса.
     // Private methods for more convenient operation of the class.
@@ -81,4 +90,6 @@ public class ProcessingBotMessages {
         message.setText(text);
         return message;
     }
+
+
 }
