@@ -42,13 +42,12 @@ public class KindHandsBot extends TelegramLongPollingBot {
      */
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            if (checkUser(update, true)) {
+        if (checkUser(update)) {
+            if (update.hasMessage() && update.getMessage().hasText()) {
                 textCommands(update);
+            } else if (update.hasCallbackQuery()) {
+                buttonCommands(update);
             }
-        } else if (update.hasCallbackQuery()) {
-            if (checkUser(update, false)) {
-                buttonCommands(update);}
         }
     }
 
@@ -57,13 +56,24 @@ public class KindHandsBot extends TelegramLongPollingBot {
      * -----||-----
      * A method for handling of blocked users
      */
-    public boolean checkUser(Update update, Boolean messageOrQuery) {
-        var chatId = messageOrQuery ? update.getMessage().getChatId() : update.getCallbackQuery().getMessage().getChatId();
-        var user = userRepository.findByChatId(chatId);
-
+    public boolean checkUser(Update update) {
         if (botMessages == null) {
             botMessages = new ProcessingBotMessages(update, userRepository);
         }
+
+        long chatId;
+
+        if (update.hasMessage()) {
+            chatId = update.getMessage().getChatId();
+        } else if (update.hasCallbackQuery()) {
+            chatId = update.getCallbackQuery().getMessage().getChatId();
+        } else {
+            sendMessage(botMessages.defaultMessage());
+            return false;
+        }
+
+        var user = userRepository.findByChatId(chatId);
+
         if (user != null && user.getBlocked()) {
             sendMessage(botMessages.blockedMessage());
             return false;
