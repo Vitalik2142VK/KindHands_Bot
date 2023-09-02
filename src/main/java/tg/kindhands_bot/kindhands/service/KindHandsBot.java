@@ -17,6 +17,8 @@ public class KindHandsBot extends TelegramLongPollingBot {
 
     private final BotConfig config;
 
+    private ProcessingBotMessages botMessages = null;
+
     public KindHandsBot(UserRepository userRepository,
                         BotConfig config) {
         super(config.getToken());
@@ -40,11 +42,43 @@ public class KindHandsBot extends TelegramLongPollingBot {
      */
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            textCommands(update);
-        } else if (update.hasCallbackQuery()) {
-            buttonCommands(update);
+        if (checkUser(update)) {
+            if (update.hasMessage() && update.getMessage().hasText()) {
+                textCommands(update);
+            } else if (update.hasCallbackQuery()) {
+                buttonCommands(update);
+            }
         }
+    }
+
+    /**
+     * Метод для проверки пользователя на блокировку
+     * -----||-----
+     * A method for handling of blocked users
+     */
+    public boolean checkUser(Update update) {
+        if (botMessages == null) {
+            botMessages = new ProcessingBotMessages(update, userRepository);
+        }
+
+        long chatId;
+
+        if (update.hasMessage()) {
+            chatId = update.getMessage().getChatId();
+        } else if (update.hasCallbackQuery()) {
+            chatId = update.getCallbackQuery().getMessage().getChatId();
+        } else {
+            sendMessage(botMessages.defaultMessage());
+            return false;
+        }
+
+        var user = userRepository.findByChatId(chatId);
+
+        if (user != null && user.getBlocked()) {
+            sendMessage(botMessages.blockedMessage());
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -55,8 +89,6 @@ public class KindHandsBot extends TelegramLongPollingBot {
     public void textCommands(Update update) {
         String messageText = update.getMessage().getText();
         long chatId = update.getMessage().getChatId();
-
-        ProcessingBotMessages botMessages = new ProcessingBotMessages(update, userRepository);
 
         switch (messageText) {
             case "/start": {

@@ -91,5 +91,14 @@ public class ProcessingBotMessages {
         return message;
     }
 
-
+    /**
+     * Отправка сообщения для заблокированных пользователей
+     * -----||-----
+     * Sending a message when user is blocked
+     */
+    public SendMessage blockedMessage() {
+        String firstNameUser = update.getMessage().getChat().getFirstName();
+        String answer = firstNameUser + ", ваш аккаунт заблокирован";
+        return returnMessage(answer);
+    }
 }
