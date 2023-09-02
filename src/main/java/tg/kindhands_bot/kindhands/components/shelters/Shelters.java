@@ -1,4 +1,4 @@
-package tg.kindhands_bot.kindhands.shelters;
+package tg.kindhands_bot.kindhands.components.shelters;
 
 public interface Shelters {
     /**

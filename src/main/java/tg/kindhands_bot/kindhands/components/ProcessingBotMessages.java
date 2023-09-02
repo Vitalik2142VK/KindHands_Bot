@@ -74,17 +74,12 @@ public class ProcessingBotMessages {
         return update;
     }
 
-
-    // Приватные методы для более удобной работы класса.
-    // Private methods for more convenient operation of the class.
-
-
     /**
-     * Метод для отправки отредактированного сообщения.
+     * Преобразования Строки в sendMessage.
      * -----||-----
-     * The method for sending the edited message.
+     * Converting a String to SendMessage.
      */
-    private SendMessage returnMessage(String text) {
+    public SendMessage returnMessage(String text) {
         SendMessage message = new SendMessage();
         message.setChatId(update.getMessage().getChatId());
         message.setText(text);

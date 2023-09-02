@@ -1,6 +1,8 @@
 package tg.kindhands_bot.kindhands.components;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -26,8 +28,6 @@ public class NavigationMenu {
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
 
-        //заменил создание кнопок
-
         var butDog = createButton("Собачий", "DOG_SH");
         var butCat = createButton("Кошачий", "CAT_SH");
 
@@ -43,37 +43,29 @@ public class NavigationMenu {
     }
 
     /**
-     * Метод, для создания кнопки
-     * -----//-----
-     * Method for creating a button
-     */
-
-    private static InlineKeyboardButton createButton(String text, String callbackData) {
-
-        InlineKeyboardButton button = new InlineKeyboardButton();
-        button.setText(text);
-        button.setCallbackData(callbackData);
-
-        return button;
-    }
-
-
-    /**
      * Метод, выводящий на экран кнопки "меню" приюта.
      * -----||-----
      * The method that displays the "menu" buttons of the shelter.
      */
 
-    public static SendMessage menuShelter(long chatId, boolean isDog) {
-        SendMessage message = new SendMessage();
-        String isDogText = "";
-        if (isDog){
-            message = new SendMessage(String.valueOf(chatId),"Вы выбрали собачий приют.");
-            isDogText = "_D";
-        }
-        else{
-            message = new SendMessage(String.valueOf(chatId),"Вы выбрали кошачий приют.");
-            isDogText = "_C";
+    public static EditMessageText menuShelter(Update update, String shelter) {
+        EditMessageText message = new EditMessageText();
+        message.setChatId(update.getCallbackQuery().getMessage().getChatId());
+        message.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+
+        String isDogText;
+
+        switch (shelter) {
+            case "DOG_SH":
+                message.setText("Вы выбрали собачий приют.");
+                isDogText = "_D";
+                break;
+            case "CAT_SH":
+                message.setText("Вы выбрали кошачий приют.");
+                isDogText = "_C";
+                break;
+            default:
+                return null; // заменить на Exception
         }
 
         var infoButton = createButton("Узнать информацию о приюте", "INFO_GET" + isDogText);
@@ -98,5 +90,20 @@ public class NavigationMenu {
         message.setReplyMarkup(markup);
 
         return message;
+    }
+
+    /**
+     * Метод, для создания кнопки
+     * -----//-----
+     * Method for creating a button
+     */
+
+    private static InlineKeyboardButton createButton(String text, String callbackData) {
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+        button.setText(text);
+        button.setCallbackData(callbackData);
+
+        return button;
     }
 }

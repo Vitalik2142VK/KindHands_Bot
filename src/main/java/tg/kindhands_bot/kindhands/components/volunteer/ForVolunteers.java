@@ -1,4 +1,4 @@
-package tg.kindhands_bot.kindhands.service;
+package tg.kindhands_bot.kindhands.components.volunteer;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,13 +17,11 @@ import java.util.List;
  */
 
 @Component
-class ForVolunteers {
+public class ForVolunteers {
     private final VolunteersRepository volunteersRepository;
-    private final ProcessingBotMessages processingBotMessages;
 
-    public ForVolunteers(VolunteersRepository volunteersRepository, ProcessingBotMessages processingBotMessages) {
+    public ForVolunteers(VolunteersRepository volunteersRepository) {
         this.volunteersRepository = volunteersRepository;
-        this.processingBotMessages = processingBotMessages;
     }
 
     /**
@@ -31,7 +29,7 @@ class ForVolunteers {
      * -----||-----
      * Method the user calls a volunteer
      */
-    public String inviteAVolunteer() {
+    public String inviteVolunteer() {
         return "Мы ищем волонтера";
     }
 
