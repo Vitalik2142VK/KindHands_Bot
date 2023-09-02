@@ -1,5 +1,4 @@
 package tg.kindhands_bot.kindhands.entities;
-
 import javax.persistence.*;
 import java.util.Objects;
 
