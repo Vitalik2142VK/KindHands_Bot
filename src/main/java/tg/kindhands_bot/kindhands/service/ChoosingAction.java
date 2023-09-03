@@ -6,6 +6,11 @@ import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
 import tg.kindhands_bot.kindhands.components.volunteer.ForVolunteers;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
+/**
+ * Переопределяет полученные данные в требуемый класс или метод.
+ * -----||-----
+ * Overrides the received data into the required class or method.
+ */
 public class ChoosingAction {
 
     private final KindHandsBot bot;
@@ -101,7 +106,6 @@ public class ChoosingAction {
      * -----//-----
      *The method of processing the "shelter menu" buttons
      */
-
     private void menuShelterHandler(ProcessingBotMessages botMessages, String callbackData) {
 
 //        long chatId = botMessages.getUpdate().getCallbackQuery().getMessage().getChatId();

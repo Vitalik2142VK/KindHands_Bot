@@ -7,12 +7,14 @@ public interface Shelters {
      * Method for displaying shelter timetable
      */
     void getWorkSchedule();
+
     /**
      * Метод для вывода адреса приюта
      * -----||-----
      * Method for displaying shelter address
      */
     void getAddress();
+
     /**
      * Метод для вывода схемы проезда
      * -----||-----
@@ -26,6 +28,7 @@ public interface Shelters {
      * Method for displaying the contact details of the guard for issuing a pass for the car.
      */
     void getSecurityContactDetails();
+
     /**
      * Метод для вывода общих рекомендации о технике безопасности на территории приюта.
      * -----||-----

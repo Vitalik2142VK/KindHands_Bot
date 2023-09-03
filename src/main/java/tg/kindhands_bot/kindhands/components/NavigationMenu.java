@@ -47,7 +47,6 @@ public class NavigationMenu {
      * -----||-----
      * The method that displays the "menu" buttons of the shelter.
      */
-
     public static EditMessageText menuShelter(Update update, String shelter) {
         EditMessageText message = new EditMessageText();
         message.setChatId(update.getCallbackQuery().getMessage().getChatId());
@@ -97,7 +96,6 @@ public class NavigationMenu {
      * -----//-----
      * Method for creating a button
      */
-
     private static InlineKeyboardButton createButton(String text, String callbackData) {
 
         InlineKeyboardButton button = new InlineKeyboardButton();

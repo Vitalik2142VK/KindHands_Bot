@@ -66,15 +66,6 @@ public class ProcessingBotMessages {
     }
 
     /**
-     * Метод get для menuShelterHandler
-     * -----//-----
-     * Method get for menuShelterHandler
-     */
-    public Update getUpdate() {
-        return update;
-    }
-
-    /**
      * Преобразования Строки в sendMessage.
      * -----||-----
      * Converting a String to SendMessage.
