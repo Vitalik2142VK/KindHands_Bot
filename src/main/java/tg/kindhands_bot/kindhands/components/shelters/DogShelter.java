@@ -1,6 +1,6 @@
 package tg.kindhands_bot.kindhands.components.shelters;
 
-public class DogShelter implements Shelters{
+public class DogShelter implements Shelter {
     @Override
     public void getWorkSchedule() {
         System.out.println("Расписание приюта собак");

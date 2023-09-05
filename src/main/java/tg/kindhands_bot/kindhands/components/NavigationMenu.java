@@ -9,6 +9,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
+import static tg.kindhands_bot.kindhands.utils.MessageConstants.*;
+
 /**
  * Класс для отображения кнопок пользователю и возвращения результата вывода.
  * -----||-----
@@ -28,8 +30,8 @@ public class NavigationMenu {
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
 
-        var butDog = createButton("Собачий", "DOG_SH");
-        var butCat = createButton("Кошачий", "CAT_SH");
+        var butDog = createButton("Собачий", DOG_BUTTON);
+        var butCat = createButton("Кошачий", CAT_BUTTON);
 
         rowInLine.add(butDog);
         rowInLine.add(butCat);
@@ -52,25 +54,25 @@ public class NavigationMenu {
         message.setChatId(update.getCallbackQuery().getMessage().getChatId());
         message.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
 
-        String isDogText;
+        String animalText;
 
         switch (shelter) {
-            case "DOG_SH":
+            case DOG_BUTTON:
                 message.setText("Вы выбрали собачий приют.");
-                isDogText = "_D";
+                animalText = "_D";
                 break;
-            case "CAT_SH":
+            case CAT_BUTTON:
                 message.setText("Вы выбрали кошачий приют.");
-                isDogText = "_C";
+                animalText = "_C";
                 break;
             default:
                 return null; // заменить на Exception
         }
 
-        var infoButton = createButton("Узнать информацию о приюте", "INFO_GET" + isDogText);
-        var howGetButton = createButton("Как взять животное из приюта", "HOW_GET" + isDogText);
-        var sendReportButton = createButton("Прислать отчёт о питомце", "SEND_RP" + isDogText);
-        var callVolunteerButton = createButton("Позвать волонтёра", "CALL_VL");
+        var infoButton = createButton("Узнать информацию о приюте", SCHEMA_INFO + animalText);
+        var howGetButton = createButton("Как взять животное из приюта", SCHEMA_TAKE_INFO + animalText);
+        var sendReportButton = createButton("Прислать отчёт о питомце", SCHEMA_SEND_REPORT + animalText);
+        var callVolunteerButton = createButton("Позвать волонтёра", CALL_VOLUNTEER);
 
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
