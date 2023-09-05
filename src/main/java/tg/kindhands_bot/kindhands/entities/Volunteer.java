@@ -4,7 +4,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "volunteers")
-public class Volunteers {
+public class Volunteer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,7 +48,7 @@ public class Volunteers {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Volunteers that = (Volunteers) o;
+        Volunteer that = (Volunteer) o;
         return Objects.equals(id, that.id) && Objects.equals(chatId, that.chatId) && Objects.equals(name, that.name) && Objects.equals(free, that.free);
     }
 

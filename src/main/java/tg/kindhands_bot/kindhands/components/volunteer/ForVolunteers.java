@@ -2,8 +2,7 @@ package tg.kindhands_bot.kindhands.components.volunteer;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
-import tg.kindhands_bot.kindhands.entities.Volunteers;
+import tg.kindhands_bot.kindhands.entities.Volunteer;
 import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
 
 import java.util.List;
@@ -38,7 +37,7 @@ public class ForVolunteers {
      * -----||-----
      * Сreate and save a volunteer method
      */
-    public Volunteers createVolunteer(Volunteers volunteer) {
+    public Volunteer createVolunteer(Volunteer volunteer) {
         return volunteersRepository.save(volunteer);
     }
 
@@ -48,7 +47,7 @@ public class ForVolunteers {
      * Add and save a volunteer method
      */
     public String addVolunteer(Update update) {
-        Volunteers volunteer = new Volunteers();
+        Volunteer volunteer = new Volunteer();
         volunteer.setChatId(update.getMessage().getChatId());
         volunteer.setName(update.getMessage().getChat().getFirstName());
         volunteer.setFree(true);
@@ -62,7 +61,7 @@ public class ForVolunteers {
      * Delete a volunteer method
      */
     public String deleteVolunteer(long chatId) {
-        Volunteers volunteer = volunteersRepository.findByChatId(chatId);
+        Volunteer volunteer = volunteersRepository.findByChatId(chatId);
         volunteersRepository.delete(volunteer);
         return "Вы удалены из волонтеров!";
     }
