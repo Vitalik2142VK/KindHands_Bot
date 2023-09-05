@@ -1,4 +1,4 @@
-package tg.kindhands_bot.kindhands.service;
+package tg.kindhands_bot.kindhands.services;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tg.kindhands_bot.kindhands.config.BotConfig;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
-import tg.kindhands_bot.kindhands.components.volunteer.ForVolunteers;
 
 @Component
 public class KindHandsBot extends TelegramLongPollingBot {
@@ -19,7 +18,7 @@ public class KindHandsBot extends TelegramLongPollingBot {
 
 
     public KindHandsBot(UserRepository userRepository,
-                        ForVolunteers volunteers, BotConfig config) {
+                        VolunteerService volunteers, BotConfig config) {
         super(config.getToken());
         this.config = config;
         choosingAction = new ChoosingAction(this, userRepository, volunteers);

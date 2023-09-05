@@ -1,9 +1,8 @@
-package tg.kindhands_bot.kindhands.service;
+package tg.kindhands_bot.kindhands.services;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.components.NavigationMenu;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
-import tg.kindhands_bot.kindhands.components.volunteer.ForVolunteers;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
 import static tg.kindhands_bot.kindhands.utils.CommandConstants.START_COMMAND;
@@ -20,11 +19,11 @@ public class ChoosingAction {
 
     private final UserRepository userRepository;
 
-    private final ForVolunteers volunteers;
+    private final VolunteerService volunteers;
 
     private ProcessingBotMessages botMessages = null;
 
-    public ChoosingAction(KindHandsBot bot, UserRepository userRepository, ForVolunteers volunteers) {
+    public ChoosingAction(KindHandsBot bot, UserRepository userRepository, VolunteerService volunteers) {
         this.bot = bot;
         this.userRepository = userRepository;
         this.volunteers = volunteers;
@@ -90,7 +89,7 @@ public class ChoosingAction {
         String callbackData = update.getCallbackQuery().getData();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-        ProcessingBotMessages botMessages = new ProcessingBotMessages(update);
+        ProcessingBotMessages botMessages = new ProcessingBotMessages(update, userRepository);
 
         switch (callbackData) {
             case DOG_BUTTON:
@@ -110,8 +109,6 @@ public class ChoosingAction {
      *The method of processing the "shelter menu" buttons
      */
     private void menuShelterHandler(ProcessingBotMessages botMessages, String callbackData) {
-
-//        long chatId = botMessages.getUpdate().getCallbackQuery().getMessage().getChatId();
 
         switch (callbackData){
             case DOG_INFO:

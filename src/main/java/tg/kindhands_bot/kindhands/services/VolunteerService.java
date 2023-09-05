@@ -1,5 +1,5 @@
-package tg.kindhands_bot.kindhands.components.volunteer;
-import org.springframework.stereotype.Component;
+package tg.kindhands_bot.kindhands.services;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.entities.Volunteer;
@@ -9,17 +9,17 @@ import java.util.List;
 
 /**
  * Работа с БД волонтеров. Принимает желающих стать волонтерами, а так же удаляет из БД.
- * Отправляет уведомление волонтерам.
+ * Отправляет уведомление волонтерам. Дает доступ к БД животных, проверка отсчетов.
  * -----||-----
- * Working with the database of volunteers. Accepts those who want to become volunteers,
- * and also removes them from the database. Sends a notification to the volunteers.
+ * Working with the database of volunteers. Accepts those who want to become volunteers, and also removes them from the database.
+ * Sends a notification to volunteers. Gives access to the database of animals, checking reports.
  */
 
-@Component
-public class ForVolunteers {
+@Service
+public class VolunteerService {
     private final VolunteersRepository volunteersRepository;
 
-    public ForVolunteers(VolunteersRepository volunteersRepository) {
+    public VolunteerService(VolunteersRepository volunteersRepository) {
         this.volunteersRepository = volunteersRepository;
     }
 
