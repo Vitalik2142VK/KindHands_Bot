@@ -6,6 +6,9 @@ import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
 import tg.kindhands_bot.kindhands.components.volunteer.ForVolunteers;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
+import static tg.kindhands_bot.kindhands.utils.CommandConstants.START_COMMAND;
+import static tg.kindhands_bot.kindhands.utils.MessageConstants.*;
+
 /**
  * Переопределяет полученные данные в требуемый класс или метод.
  * -----||-----
@@ -37,7 +40,7 @@ public class ChoosingAction {
         long chatId = update.getMessage().getChatId();
 
         switch (messageText) {
-            case "/start": {
+            case START_COMMAND: {
                 if (userRepository.findByChatId(chatId) == null) {
                     bot.sendMessage(botMessages.startCommand(chatId, update.getMessage().getFrom().getFirstName()));
                 }
@@ -90,8 +93,8 @@ public class ChoosingAction {
         ProcessingBotMessages botMessages = new ProcessingBotMessages(update);
 
         switch (callbackData) {
-            case "DOG_SH":
-            case "CAT_SH": {
+            case DOG_BUTTON:
+            case CAT_BUTTON: {
                 bot.sendMessage(NavigationMenu.menuShelter(update, callbackData));
                 break;
             }
@@ -111,31 +114,31 @@ public class ChoosingAction {
 //        long chatId = botMessages.getUpdate().getCallbackQuery().getMessage().getChatId();
 
         switch (callbackData){
-            case "INFO_GET_D":
+            case DOG_INFO:
                 bot.sendMessage(botMessages.editExistMessage("Информация о собачем приюте: "));
                 break;
 
-            case "HOW_GET_D":
+            case DOG_TAKE_INFO:
                 bot.sendMessage(botMessages.editExistMessage("Как взять собаку из приюта: "));
                 break;
 
-            case "SEND_RP_D":
+            case DOG_SEND_REPORT:
                 bot.sendMessage(botMessages.editExistMessage("Отчёт о питомце(собаке): "));
                 break;
 
-            case "INFO_GET_C":
+            case CAT_INFO:
                 bot.sendMessage(botMessages.editExistMessage("Информация о кошачем приюте: "));
                 break;
 
-            case "HOW_GET_C":
+            case CAT_TAKE_INFO:
                 bot.sendMessage(botMessages.editExistMessage("Как взять кошку из приюта: "));
                 break;
 
-            case "SEND_RP_C":
+            case CAT_SEND_REPORT:
                 bot.sendMessage(botMessages.editExistMessage("Отчёт о питомце(кошке): "));
                 break;
 
-            case "CALL_VL":
+            case CALL_VOLUNTEER:
                 bot.sendMessage(botMessages.editExistMessage(volunteers.inviteVolunteer()));
                 break;
         }

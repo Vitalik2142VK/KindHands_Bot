@@ -1,6 +1,6 @@
 package tg.kindhands_bot.kindhands.components.shelters;
 
-public interface Shelters {
+public interface Shelter {
     /**
      * Метод для вывода расписания работы приюта
      * -----||-----

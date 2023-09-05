@@ -4,13 +4,14 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
-    <preConditions>
-        <not>
-            <tableExists tableName="users"/>
-        </not>
-    </preConditions>
 
     <changeSet  id="1"  author="morozov">
+        <preConditions>
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
+
         <createTable  tableName="users">
             <column  name="id"  type="BIGINT"  autoIncrement="true">
                 <constraints  primaryKey="true"  nullable="false"/>
@@ -21,10 +22,70 @@
             <column  name="name"  type="VARCHAR(50)">
                 <constraints  nullable="false"/>
             </column>
-            <column  name="is_blocked"  type="BOOLEAN" defaultValue="false">
+            <column  name="denial_reason"  type="VARCHAR(50)"/>
+            <column  name="blocked"  type="BOOLEAN" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
+            <column  name="animal_id"  type="BIGINT"/>
         </createTable>
     </changeSet>
 
+    <changeSet id="2" author="morozov">
+        <preConditions>
+            <not>
+                <tableExists tableName="volunteers"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="volunteers">
+            <column  name="id"  type="BIGINT"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="chat_id"  type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column  name="name"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="free"  type="BOOLEAN" defaultValue="true"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="morozov">
+        <preConditions>
+            <not>
+                <tableExists tableName="animals"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="animals">
+            <column  name="id"  type="BIGINT"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="name"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="ration"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="recommendation"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="photo"  type="OID"/>
+            <column  name="user_id"  type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="morozov">
+        <addForeignKeyConstraint baseTableName="animals"
+                                 baseColumnNames="user_id"
+                                 constraintName="relation_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="users"
+                                 baseColumnNames="animal_id"
+                                 constraintName="relation_animal"
+                                 referencedTableName="animals"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>

@@ -11,13 +11,16 @@ public class User {
     private Long id;
     private Long chatId;
     private String name;
-    private Boolean isBlocked;
+    private Boolean blocked;
+    private String denialReason;
+    @OneToOne(mappedBy = "user")
+    private Animal animal;
 
-    public User(Long id, Long chatId, String name, Boolean isBlocked) {
+    public User(Long id, Long chatId, String name, Boolean blocked) {
         this.id = id;
         this.chatId = chatId;
         this.name = name;
-        this.isBlocked = isBlocked;
+        this.blocked = blocked;
     }
 
     public User() {
@@ -36,7 +39,7 @@ public class User {
     }
 
     public Boolean getBlocked() {
-        return isBlocked;
+        return blocked;
     }
 
     public void setId(Long id) {
@@ -52,7 +55,7 @@ public class User {
     }
 
     public void setBlocked(Boolean blocked) {
-        isBlocked = blocked;
+        this.blocked = blocked;
     }
 
     @Override
@@ -70,6 +73,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "id=" + id + ", chatId=" + chatId + ", name=" + name + ", isBlocked=" + isBlocked;
+        return "id=" + id + ", chatId=" + chatId + ", name=" + name + ", blocked=" + blocked;
     }
 }
