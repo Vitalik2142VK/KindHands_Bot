@@ -7,14 +7,14 @@ public interface SendAnimalData {
      * -----||-----
      * The method gives out the rules of acquaintance with the animal before taking it from the shelter.
      */
-    void PrintTheAnimalIntroductionRules();
+    String PrintTheAnimalIntroductionRules();
 
     /**
      * Метод выдает список документов, необходимых для того, чтобы взять животное из приюта.
      * -----||-----
      * The method returns a list of documents required to adopt an animal from a shelter.
      */
-    void printListOfDocuments();
+    String printListOfDocuments();
 
     /**
      * Метод выдает список рекомендаций по транспортировке животного.
@@ -22,7 +22,7 @@ public interface SendAnimalData {
      * The method gives a list of recommendations for transporting the animal.
      */
 
-    void printRecommendationsForTransporting();
+    String printRecommendationsForTransporting();
 
     /**
      * Метод выдает список рекомендаций по обустройству дома для щенка/котенка.
@@ -30,7 +30,7 @@ public interface SendAnimalData {
      * The method produces a list of home improvement recommendations for a puppy/kitten.
      */
 
-    void printRecommendationsForHouseSmallAnimal();
+    String printRecommendationsForHouseSmallAnimal();
 
     /**
      * Метод выдает список рекомендаций по обустройству дома для взрослого животного.
@@ -38,7 +38,7 @@ public interface SendAnimalData {
      * The method produces a list of recommendations for home improvement for an adult animal.
      */
 
-    void printRecommendationsForHouseAdultAnimal();
+    String printRecommendationsForHouseAdultAnimal();
 
     /**
      * Метод выдает список рекомендаций по обустройству дома для животного с ограниченными возможностями (зрение, передвижение).
@@ -46,7 +46,7 @@ public interface SendAnimalData {
      * The method gives a list of recommendations for home improvement for an animal with disabilities (vision, movement).
      */
 
-    void printRecommendationsForHouseDisabledAnimal();
+    String printRecommendationsForHouseDisabledAnimal();
 
     /**
      * Метод выдает список причин, почему могут отказать и не дать забрать собаку из приюта.
@@ -54,6 +54,6 @@ public interface SendAnimalData {
      * The method gives a list of reasons why they can refuse and not allow the dog to be taken from the shelter.
      */
 
-    void printRejectionReason();
+    String printRejectionReason();
 
 }

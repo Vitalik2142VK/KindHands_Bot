@@ -2,28 +2,29 @@ package tg.kindhands_bot.kindhands.components.shelters;
 
 public class CatShelter implements Shelter {
     @Override
-    public void getWorkSchedule() {
-        System.out.println("Расписание приюта кошек");
+    public String getWorkSchedule() {
+
+        return "Расписание приюта кошек";
     }
 
     @Override
-    public void getAddress() {
-        System.out.println("Адрес приюта кошек");
+    public String getAddress() {
+        return "Адрес приюта кошек";
     }
 
     @Override
-    public void getDrivingDirections() {
-        System.out.println("Проезд до приюта кошек");
+    public String getDrivingDirections() {
+        return "Проезд до приюта кошек";
     }
 
     @Override
-    public void getSecurityContactDetails() {
-        System.out.println("8-800-555-35-35 контакты охраны для пропуска авто в приют кошек");
+    public String getSecurityContactDetails() {
+        return "8-800-555-35-35 контакты охраны для пропуска авто в приют кошек";
     }
 
     @Override
-    public void getInfoSafetyPrecautions() {
-        System.out.println("Техника безопасности на территории приюта кошек: 1. Не кормить с рук....");
+    public String getInfoSafetyPrecautions() {
+       return "Техника безопасности на территории приюта кошек: 1. Не кормить с рук....";
     }
 
 }
