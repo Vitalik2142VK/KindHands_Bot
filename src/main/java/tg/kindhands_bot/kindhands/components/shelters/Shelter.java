@@ -6,35 +6,39 @@ public interface Shelter {
      * -----||-----
      * Method for displaying shelter timetable
      */
-    void getWorkSchedule();
+    String getWorkSchedule();
 
     /**
      * Метод для вывода адреса приюта
      * -----||-----
      * Method for displaying shelter address
      */
-    void getAddress();
+    String getAddress();
 
     /**
      * Метод для вывода схемы проезда
      * -----||-----
      * Method for displaying directions
      */
-    void getDrivingDirections();
+    String getDrivingDirections();
 
     /**
      * Метод для вывода контактных данных охраны для оформления пропуска на машину.
      * -----||-----
      * Method for displaying the contact details of the guard for issuing a pass for the car.
+     *
+     * @return
      */
-    void getSecurityContactDetails();
+    String getSecurityContactDetails();
 
     /**
      * Метод для вывода общих рекомендации о технике безопасности на территории приюта.
      * -----||-----
      * A method for deriving general safety advice in the shelter area.
+     *
+     * @return
      */
-    void getInfoSafetyPrecautions();
+    String getInfoSafetyPrecautions();
 
 
 }
