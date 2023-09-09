@@ -50,7 +50,7 @@ public class NavigationMenu {
      * The method that displays the "menu" buttons of the shelter.
      */
     public static EditMessageText menuShelter(Update update, String shelter) {
-        EditMessageText message = new EditMessageText();
+        EditMessageText message = new EditMessageText(".");
         message.setChatId(update.getCallbackQuery().getMessage().getChatId());
         message.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
 
@@ -73,19 +73,23 @@ public class NavigationMenu {
         var howGetButton = createButton("Как взять животное из приюта", SCHEMA_TAKE_INFO + animalText);
         var sendReportButton = createButton("Прислать отчёт о питомце", SCHEMA_SEND_REPORT + animalText);
         var callVolunteerButton = createButton("Позвать волонтёра", CALL_VOLUNTEER);
+        var assistanceToShelterButton = createButton("Помощь приюту", ASSISTANCE_SHELTER);
 
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInTwoLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInThreeLine = new ArrayList<>();
 
         rowInLine.add(infoButton);
         rowInLine.add(howGetButton);
         rowInTwoLine.add(sendReportButton);
         rowInTwoLine.add(callVolunteerButton);
+        rowInThreeLine.add(assistanceToShelterButton);
 
         rowsInLine.add(rowInLine);
         rowsInLine.add(rowInTwoLine);
+        rowsInLine.add(rowInThreeLine);
 
         markup.setKeyboard(rowsInLine);
         message.setReplyMarkup(markup);
@@ -94,9 +98,103 @@ public class NavigationMenu {
     }
 
     /**
-     * Метод, для создания кнопки
+     * Метод, выводящий на экран кнопки меню "Помощь приюту".
      * -----//-----
-     * Method for creating a button
+     * A method that displays the "Help Shelter" menu buttons on the screen.
+     */
+    public static EditMessageText menuAssistShelter(Update update) {
+
+        EditMessageText message = new EditMessageText("Выберите пункт:");
+        message.setChatId(update.getCallbackQuery().getMessage().getChatId());
+        message.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+
+        var requisitesButton = createButton("Реквизиты", REQUISITES);
+        var necessaryButton = createButton("Необходимое", NECESSARY);
+        var becomeVolunteer = createButton("Стать волонтёром", BECOME_VOLUNTEER);
+
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInTwoLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInThreeLine = new ArrayList<>();
+
+        rowInLine.add(requisitesButton);
+        rowInTwoLine.add(necessaryButton);
+        rowInThreeLine.add(becomeVolunteer);
+
+        rowsInLine.add(rowInLine);
+        rowsInLine.add(rowInTwoLine);
+        rowsInLine.add(rowInThreeLine);
+
+        markup.setKeyboard(rowsInLine);
+        message.setReplyMarkup(markup);
+
+        return message;
+
+    }
+
+    /**
+     * Метод, выводящий на экран кнопки меню "Узнать информацию о приюте".
+     * -----//-----
+     * A method that displays the menu buttons "Find out information about the shelter".
+     */
+    public static EditMessageText menuShelterInfo(Update update, String shelter) {
+        EditMessageText message = new EditMessageText();
+        message.setChatId(update.getCallbackQuery().getMessage().getChatId());
+        message.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+
+        String animalText;
+
+        switch (shelter) {
+            case DOG_INFO:
+                message.setText("Информация о собачем приюте:");
+                animalText = "_D";
+                break;
+            case CAT_INFO:
+                message.setText("Информация о кошачем приюте:");
+                animalText = "_C";
+                break;
+            default:
+                return null; // заменить на Exception
+        }
+
+        var aboutShelterButton = createButton("Подробнее о приюте", ABOUT_SHELTER + animalText);
+        var scheduleButton = createButton("Расписание приюта", SCHEDULE + animalText);
+        var securityContactButton = createButton("Контактные данные охраны", SECURITY_CONTACT + animalText);
+        var safetyRecommendationButton = createButton("Рекомендации по технике безопасности", SAFETY_RECOMMENDATION);
+        var callContactButton = createButton("Записать контактные данные для связи", USER_CALL_CONTACT);
+
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInTwoLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInThreeLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInFourLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInFiveLine = new ArrayList<>();
+
+        rowInLine.add(aboutShelterButton);
+        rowInTwoLine.add(scheduleButton);
+        rowInThreeLine.add(securityContactButton);
+        rowInFourLine.add(safetyRecommendationButton);
+        rowInFiveLine.add(callContactButton);
+
+        rowsInLine.add(rowInLine);
+        rowsInLine.add(rowInTwoLine);
+        rowsInLine.add(rowInThreeLine);
+        rowsInLine.add(rowInFourLine);
+        rowsInLine.add(rowInFiveLine);
+
+        markup.setKeyboard(rowsInLine);
+        message.setReplyMarkup(markup);
+
+        return message;
+
+    }
+
+    /**
+     * Метод, для создания кнопки.
+     * -----//-----
+     * Method for creating a button.
      */
     private static InlineKeyboardButton createButton(String text, String callbackData) {
 

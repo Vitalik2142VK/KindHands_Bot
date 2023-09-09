@@ -46,7 +46,8 @@ public class ChoosingAction {
                 bot.sendMessage(NavigationMenu.choosingShelter(chatId));
                 break;
             }
-            default: bot.sendMessage(botMessages.defaultMessage());
+            default:
+                bot.sendMessage(botMessages.defaultMessage());
         }
     }
 
@@ -99,20 +100,23 @@ public class ChoosingAction {
             }
         }
 
-        menuShelterHandler(botMessages, callbackData);
+        menuShelterHandler(botMessages, update, callbackData);
+        menuAssistShelterHandler(botMessages, update, callbackData);
+        menuShelterInfoHandler(botMessages, update, callbackData);
 
     }
 
     /**
      * Метод обработки кнопок "меню приюта"
      * -----//-----
-     *The method of processing the "shelter menu" buttons
+     * The method of processing the "shelter menu" buttons
      */
-    private void menuShelterHandler(ProcessingBotMessages botMessages, String callbackData) {
+    private void menuShelterHandler(ProcessingBotMessages botMessages, Update update, String callbackData) {
 
-        switch (callbackData){
+        switch (callbackData) {
+            case CAT_INFO:
             case DOG_INFO:
-                bot.sendMessage(botMessages.editExistMessage("Информация о собачем приюте: "));
+                bot.sendMessage(NavigationMenu.menuShelterInfo(update, callbackData));
                 break;
 
             case DOG_TAKE_INFO:
@@ -123,9 +127,6 @@ public class ChoosingAction {
                 bot.sendMessage(botMessages.editExistMessage("Отчёт о питомце(собаке): "));
                 break;
 
-            case CAT_INFO:
-                bot.sendMessage(botMessages.editExistMessage("Информация о кошачем приюте: "));
-                break;
 
             case CAT_TAKE_INFO:
                 bot.sendMessage(botMessages.editExistMessage("Как взять кошку из приюта: "));
@@ -137,6 +138,75 @@ public class ChoosingAction {
 
             case CALL_VOLUNTEER:
                 bot.sendMessage(botMessages.editExistMessage(volunteers.inviteVolunteer()));
+                break;
+
+            case ASSISTANCE_SHELTER:
+                bot.sendMessage(NavigationMenu.menuAssistShelter(update));
+        }
+    }
+
+
+    /**
+     * Метод обратки кнопок меню "Помощь приюту".
+     * -----//-----
+     * The method of processing the buttons of the "Help to shelter" menu.
+     */
+    private void menuAssistShelterHandler(ProcessingBotMessages botMessages, Update update, String callbackData) {
+
+        switch (callbackData) {
+            case REQUISITES:
+                bot.sendMessage(botMessages.editExistMessage("Реквизиты:"));
+                break;
+
+            case NECESSARY:
+                bot.sendMessage(botMessages.editExistMessage("Необходимое:"));
+                break;
+
+            case BECOME_VOLUNTEER:
+                bot.sendMessage(botMessages.editExistMessage("Стать волонтёром:"));
+                break;
+        }
+
+    }
+
+    /**
+     * Метод обработки кнопок меню "Узнать информацию о приюте".
+     * -----//-----
+     * The method of processing the menu buttons "Find out information about the shelter".
+     */
+    private void menuShelterInfoHandler(ProcessingBotMessages botMessages, Update update, String callbackData) {
+
+        switch (callbackData) {
+            case CAT_ABOUT_SHELTER:
+                bot.sendMessage(botMessages.editExistMessage("."));
+                break;
+
+            case DOG_ABOUT_SHELTER:
+                bot.sendMessage(botMessages.editExistMessage(".."));
+                break;
+
+            case CAT_SCHEDULE:
+                bot.sendMessage(botMessages.editExistMessage("..."));
+                break;
+
+            case DOG_SCHEDULE:
+                bot.sendMessage(botMessages.editExistMessage("...."));
+                break;
+
+            case DOG_SECURITY_CONTACT:
+                bot.sendMessage(botMessages.editExistMessage("....."));
+                break;
+
+            case CAT_SECURITY_CONTACT:
+                bot.sendMessage(botMessages.editExistMessage("......"));
+                break;
+
+            case SAFETY_RECOMMENDATION:
+                bot.sendMessage(botMessages.editExistMessage("......."));
+                break;
+
+            case USER_CALL_CONTACT:
+                bot.sendMessage(botMessages.editExistMessage("........"));
                 break;
         }
     }
