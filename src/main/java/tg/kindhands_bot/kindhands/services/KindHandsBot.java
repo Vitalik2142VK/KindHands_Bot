@@ -1,5 +1,7 @@
 package tg.kindhands_bot.kindhands.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -7,21 +9,22 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tg.kindhands_bot.kindhands.config.BotConfig;
+import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
 @Component
 public class KindHandsBot extends TelegramLongPollingBot {
-
+    private Logger log = LoggerFactory.getLogger(KindHandsBot.class);
     private final ChoosingAction choosingAction;
 
     private final BotConfig config;
 
 
-    public KindHandsBot(UserRepository userRepository,
+    public KindHandsBot(UserRepository userRepository, ReportAnimalRepository reportAnimalRepository,
                         VolunteerService volunteers, BotConfig config) {
         super(config.getToken());
         this.config = config;
-        choosingAction = new ChoosingAction(this, userRepository, volunteers);
+        choosingAction = new ChoosingAction(this, userRepository, reportAnimalRepository, volunteers);
     }
 
     @Override
@@ -40,12 +43,16 @@ public class KindHandsBot extends TelegramLongPollingBot {
      */
     @Override
     public void onUpdateReceived(Update update) {
-        if (choosingAction.checkUser(update)) {
-            if (update.hasMessage() && update.getMessage().hasText()) {
-                choosingAction.textCommands(update);
-            } else if (update.hasCallbackQuery()) {
-                choosingAction.buttonCommands(update);
+        try {
+            if (choosingAction.checkUser(update)) {
+                if (update.hasMessage() && update.getMessage().hasText()) {
+                    choosingAction.textCommands(update);
+                } else if (update.hasCallbackQuery()) {
+                    choosingAction.buttonCommands(update);
+                }
             }
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
     }
 

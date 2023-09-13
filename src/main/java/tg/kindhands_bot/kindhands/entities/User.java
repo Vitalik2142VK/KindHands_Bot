@@ -1,5 +1,7 @@
 package tg.kindhands_bot.kindhands.entities;
 
+import tg.kindhands_bot.kindhands.enums.BotState;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -13,6 +15,7 @@ public class User {
     private String name;
     private Boolean blocked;
     private String denialReason;
+    private BotState botState = BotState.NULL;
     @OneToOne(mappedBy = "user")
     private Animal animal;
 
@@ -42,6 +45,10 @@ public class User {
         return blocked;
     }
 
+    public BotState getBotState() {
+        return botState;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -56,6 +63,10 @@ public class User {
 
     public void setBlocked(Boolean blocked) {
         this.blocked = blocked;
+    }
+
+    public void setBotState(BotState botState) {
+        this.botState = botState;
     }
 
     @Override
