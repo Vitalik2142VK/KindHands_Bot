@@ -161,8 +161,11 @@ public class NavigationMenu {
         var aboutShelterButton = createButton("Подробнее о приюте", ABOUT_SHELTER + animalText);
         var scheduleButton = createButton("Расписание приюта", SCHEDULE + animalText);
         var securityContactButton = createButton("Контактные данные охраны", SECURITY_CONTACT + animalText);
-        var safetyRecommendationButton = createButton("Рекомендации по технике безопасности", SAFETY_RECOMMENDATION);
+        var safetyRecommendationButton = createButton("Рекомендации по технике безопасности",
+                SAFETY_RECOMMENDATION + animalText);
         var callContactButton = createButton("Записать контактные данные для связи", USER_CALL_CONTACT);
+        var addressShelterButton = createButton("Адрес приюта", ADDRESS_SHELTER + animalText);
+        var travelToShelterButton = createButton("Схема проезда", TRAVEL_SHELTER + animalText);
 
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
@@ -171,15 +174,21 @@ public class NavigationMenu {
         List<InlineKeyboardButton> rowInThreeLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInFourLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInFiveLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInSixLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInSevenLine = new ArrayList<>();
 
         rowInLine.add(aboutShelterButton);
         rowInTwoLine.add(scheduleButton);
         rowInThreeLine.add(securityContactButton);
         rowInFourLine.add(safetyRecommendationButton);
         rowInFiveLine.add(callContactButton);
+        rowInSixLine.add(addressShelterButton);
+        rowInSevenLine.add(travelToShelterButton);
 
         rowsInLine.add(rowInLine);
         rowsInLine.add(rowInTwoLine);
+        rowsInLine.add(rowInSixLine);
+        rowsInLine.add(rowInSevenLine);
         rowsInLine.add(rowInThreeLine);
         rowsInLine.add(rowInFourLine);
         rowsInLine.add(rowInFiveLine);
@@ -189,6 +198,96 @@ public class NavigationMenu {
 
         return message;
 
+    }
+
+    /**
+     * Метод, выводящий на экран кнопки меню "Как взять животное из приюта".
+     * -----//-----
+     * A method that displays the menu buttons "How to take an animal from a shelter".
+     */
+    public static EditMessageText menuHowGetAnimalFromShelter(Update update, String shelter) {
+        EditMessageText message = new EditMessageText();
+        message.setChatId(update.getCallbackQuery().getMessage().getChatId());
+        message.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+
+        String animalText;
+
+        switch (shelter) {
+            case DOG_TAKE_INFO:
+                message.setText("Как взять собаку из приюта:");
+                animalText = "_D";
+                break;
+            case CAT_TAKE_INFO:
+                message.setText("Как взять кошку из приюта:");
+                animalText = "_C";
+                break;
+            default:
+                return null; // заменить на Exception
+        }
+
+        var animalIntroductionRulesButton = createButton("Правила знакомства с животным до того, как забрать его из приюта",
+                INTRODUCTION_RULES + animalText);
+        var listOfDocumentsButton = createButton("Список документов, необходимых для того, чтобы взять животное из приюта",
+                LIST_DOCUMENTS + animalText);
+        var recommendationsForTransportingButton = createButton("Список рекомендаций по транспортировке животного",
+                 TRANSPORTING + animalText);
+        var recommendationsForHouseSmallAnimalButton = createButton("Список рекомендаций по обустройству" +
+                " дома для маленького питомца", HOUSE_SMALL_ANIMAL + animalText);
+        var recommendationsForHouseAdultAnimalButton = createButton("Список рекомендаций по обустройству" +
+                " дома для взрослого животного", HOUSE_ADULT_ANIMAL + animalText);
+        var recommendationsForHouseDisabledAnimalButton = createButton("Список рекомендаций по обустройству" +
+                " дома для животного с ограниченными возможностями", HOUSE_DISABLED_ANIMAL + animalText);
+        var rejectionReasonButton = createButton("Список причин, почему могут отказать и не дать" +
+                " забрать животное из приюта", REJECTION_REASON + animalText);
+        var callContactButton = createButton("Принять и записать контактные данные для связи", USER_CALL_CONTACT);
+
+
+        var initialCommunicationCynologistAdvicesButton = createButton("Советы кинолога по первичному" +
+                " общению с собакой", DOG_COMMUNICATION_ADVICES);
+        var informationToVerifiedDogHandlersButton = createButton("Рекомендации по проверенным кинологам для" +
+                " дальнейшего обращения к ним", VERIFIED_DOG_HANDLERS);
+
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInTwoLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInThreeLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInFourLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInFiveLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInSixLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInSevenLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInEightLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInNineLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInTenLine = new ArrayList<>();
+
+        rowInLine.add(animalIntroductionRulesButton);
+        rowInTwoLine.add(listOfDocumentsButton);
+        rowInThreeLine.add(recommendationsForTransportingButton);
+        rowInFourLine.add(recommendationsForHouseSmallAnimalButton);
+        rowInFiveLine.add(recommendationsForHouseAdultAnimalButton);
+        rowInSixLine.add(recommendationsForHouseDisabledAnimalButton);
+        if (animalText == "_D") {
+            rowInSevenLine.add(initialCommunicationCynologistAdvicesButton);
+            rowInEightLine.add(informationToVerifiedDogHandlersButton);
+        }
+        rowInNineLine.add(rejectionReasonButton);
+        rowInTenLine.add(callContactButton);
+
+        rowsInLine.add(rowInLine);
+        rowsInLine.add(rowInTwoLine);
+        rowsInLine.add(rowInThreeLine);
+        rowsInLine.add(rowInFourLine);
+        rowsInLine.add(rowInFiveLine);
+        rowsInLine.add(rowInSixLine);
+        rowsInLine.add(rowInSevenLine);
+        rowsInLine.add(rowInEightLine);
+        rowsInLine.add(rowInNineLine);
+        rowsInLine.add(rowInTenLine);
+
+        markup.setKeyboard(rowsInLine);
+        message.setReplyMarkup(markup);
+
+        return message;
     }
 
     /**

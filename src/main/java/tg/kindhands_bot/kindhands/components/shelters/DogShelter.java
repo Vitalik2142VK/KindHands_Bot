@@ -1,5 +1,7 @@
 package tg.kindhands_bot.kindhands.components.shelters;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
 public class DogShelter implements Shelter {
     @Override
     public String getWorkSchedule() {
@@ -27,5 +29,9 @@ public class DogShelter implements Shelter {
 
     }
 
+    @Override
+    public String getDetailedInfo() {
+        return "Подробная информация собачем о приюте: ";
+    }
 
 }
