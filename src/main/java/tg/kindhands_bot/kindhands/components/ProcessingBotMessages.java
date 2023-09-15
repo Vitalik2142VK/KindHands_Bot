@@ -1,15 +1,17 @@
 package tg.kindhands_bot.kindhands.components;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.entities.ReportAnimal;
 import tg.kindhands_bot.kindhands.entities.User;
+import tg.kindhands_bot.kindhands.enums.BotState;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
 import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDate;
 
 /**
  * Класс для обработки и отправки сообщений.
@@ -17,6 +19,8 @@ import java.time.chrono.ChronoLocalDate;
  * A class for processing and sending messages.
  */
 public class ProcessingBotMessages {
+
+    private final Logger log = LoggerFactory.getLogger(ProcessingBotMessages.class);
 
     private final Update update;
     private final UserRepository userRepository;
@@ -41,37 +45,51 @@ public class ProcessingBotMessages {
         user.setBlocked(false);
         userRepository.save(user);
 
+        log.info("Новый пользователь '" + name + "' добавлен.");
+
         String firstNameUser = update.getMessage().getChat().getFirstName();
         String answer = "Здравствуйте," + firstNameUser + "! Я бот приюта для животных \"В добрые руки\".";
         return returnMessage(answer);
     }
 
     /**
-     *
+     * Переводит статус бота на принятия отчета от пользователя
      * -----||-----
-     *
+     * Translates the status of the bot to accepting a report from the user
      */
-    public SendMessage reportAnimalCommand() {
-        //User user = userRepository
+    public EditMessageText reportAnimalCommand() {
+        User user = userRepository.findByChatId(update.getCallbackQuery().getMessage().getChatId());
+        user.setBotState(BotState.SET_REPORT_ANIMAL);
+        userRepository.save(user);
 
-        return returnMessage("Пришлите фотографию питомца;" +
+        return editExistMessage("Пришлите:" +
+                "\nФотографию питомца;" +
                 "\nРацион животного;" +
                 "\nОбщее самочувствие и привыкание к новому месту;" +
                 "\nИзменение в поведении: отказ от старых привычек, приобретение новых.");
     }
 
     /**
-     *
+     * Принимает отчет о животном от пользователя и меняет статус бота на NULL
      * -----||-----
-     *
+     * Accepts an animal report from the user and changes the bot status to NULL
      */
     public SendMessage setReportAnimal() {
-        ReportAnimal report = new ReportAnimal();
+        LocalDate date = LocalDate.now();
+
+        ReportAnimal report = reportAnimalRepository.findByDateAndChatId(date, update.getMessage().getChatId());
+
+        if (report == null) {
+            report = new ReportAnimal();
+            report.setDate(date);
+            //report.setReportNumber();
+            //Заменить после создания TamedAnimal
+            report.setChatId(update.getMessage().getChatId());
+        }
         report.setDescription(update.getMessage().getText());
-        report.setDate(LocalDate.now());
-
-
         reportAnimalRepository.save(report);
+
+        changeStateBotNull();
 
         return returnMessage("Отчет отправлен.");
     }
@@ -120,5 +138,18 @@ public class ProcessingBotMessages {
         String firstNameUser = update.getMessage().getChat().getFirstName();
         String answer = firstNameUser + ", ваш аккаунт заблокирован";
         return returnMessage(answer);
+    }
+
+    /**
+     * Меняет статус бота для пользователя на NULL
+     * -----||-----
+     * Sending a message when user is blocked
+     */
+    public void changeStateBotNull() {
+        User user = userRepository.findByChatId(update.getMessage().getChatId());
+        if (user == null) throw new NullPointerException();
+
+        user.setBotState(BotState.NULL);
+        userRepository.save(user);
     }
 }

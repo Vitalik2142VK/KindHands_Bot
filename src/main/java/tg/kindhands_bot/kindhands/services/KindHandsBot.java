@@ -14,7 +14,9 @@ import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
 @Component
 public class KindHandsBot extends TelegramLongPollingBot {
-    private Logger log = LoggerFactory.getLogger(KindHandsBot.class);
+
+    private final Logger log = LoggerFactory.getLogger(KindHandsBot.class);
+
     private final ChoosingAction choosingAction;
 
     private final BotConfig config;
@@ -46,9 +48,9 @@ public class KindHandsBot extends TelegramLongPollingBot {
         try {
             if (choosingAction.checkUser(update)) {
                 if (update.hasMessage() && update.getMessage().hasText()) {
-                    choosingAction.textCommands(update);
+                    choosingAction.textCommands();
                 } else if (update.hasCallbackQuery()) {
-                    choosingAction.buttonCommands(update);
+                    choosingAction.buttonCommands();
                 }
             }
         } catch (Exception e) {
@@ -65,7 +67,7 @@ public class KindHandsBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.error("Error description: " + e.getMessage());
         }
     }
 
@@ -73,7 +75,7 @@ public class KindHandsBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.error("Error description: " + e.getMessage());
         }
     }
 }

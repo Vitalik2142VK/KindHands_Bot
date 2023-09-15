@@ -18,7 +18,10 @@ public class ReportAnimal {
     private String description;
     private LocalDate date;
     private int reportNumber;
-    private ReportStatus reportStatus;
+    private ReportStatus reportStatus = ReportStatus.ON_INSPECTION;
+
+    // для тестирования, удалить после добавления TamedAnimal
+    private long chatId;
 
     public long getId() {
         return id;
@@ -71,5 +74,13 @@ public class ReportAnimal {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(long chatId) {
+        this.chatId = chatId;
     }
 }

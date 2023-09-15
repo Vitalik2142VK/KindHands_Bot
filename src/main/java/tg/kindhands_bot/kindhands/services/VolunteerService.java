@@ -1,4 +1,6 @@
 package tg.kindhands_bot.kindhands.services;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -19,6 +21,8 @@ import java.util.List;
 public class VolunteerService {
     private final VolunteersRepository volunteersRepository;
 
+    private final Logger log = LoggerFactory.getLogger(VolunteerService.class);
+
     public VolunteerService(VolunteersRepository volunteersRepository) {
         this.volunteersRepository = volunteersRepository;
     }
@@ -38,6 +42,8 @@ public class VolunteerService {
      * Сreate and save a volunteer method
      */
     public Volunteer createVolunteer(Volunteer volunteer) {
+        log.info("Влонтер '" + volunteer.getName() + "' добавлен.");
+
         return volunteersRepository.save(volunteer);
     }
 
@@ -52,6 +58,9 @@ public class VolunteerService {
         volunteer.setName(update.getMessage().getChat().getFirstName());
         volunteer.setFree(true);
         volunteersRepository.save(volunteer);
+
+        log.info("Влонтер '" + volunteer.getName() + "' добавлен.");
+
         return "Добро пожаловать в волонтеры!";
     }
 
@@ -62,6 +71,9 @@ public class VolunteerService {
      */
     public String deleteVolunteer(long chatId) {
         Volunteer volunteer = volunteersRepository.findByChatId(chatId);
+
+        log.info("Влонтер '" + volunteer.getName() + "' удален.");
+
         volunteersRepository.delete(volunteer);
         return "Вы удалены из волонтеров!";
     }

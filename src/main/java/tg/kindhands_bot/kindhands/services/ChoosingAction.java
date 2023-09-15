@@ -28,6 +28,8 @@ public class ChoosingAction {
 
     private ProcessingBotMessages botMessages = null;
 
+    private Update update;
+
     public ChoosingAction(KindHandsBot bot, UserRepository userRepository, ReportAnimalRepository reportAnimalRepository,
                           VolunteerService volunteers) {
         this.bot = bot;
@@ -41,7 +43,7 @@ public class ChoosingAction {
      * -----||-----
      * A method for processing user-entered text or text commands.
      */
-    public void textCommands(Update update) {
+    public void textCommands() {
         String messageText = update.getMessage().getText();
         long chatId = update.getMessage().getChatId();
 
@@ -53,7 +55,7 @@ public class ChoosingAction {
                 bot.sendMessage(NavigationMenu.choosingShelter(chatId));
                 break;
             }
-            default: checkBotState(update);
+            default: checkBotState();
         }
     }
 
@@ -63,6 +65,8 @@ public class ChoosingAction {
      * A method for handling of blocked users
      */
     public boolean checkUser(Update update) {
+        this.update = update;
+
         if (botMessages == null) {
             botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository);
         }
@@ -92,7 +96,7 @@ public class ChoosingAction {
      * -----||-----
      * The method for processing the button selected by the user.
      */
-    public void buttonCommands(Update update) {
+    public void buttonCommands() {
         String callbackData = update.getCallbackQuery().getData();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
 
@@ -127,7 +131,8 @@ public class ChoosingAction {
                 break;
 
             case DOG_SEND_REPORT:
-                bot.sendMessage(botMessages.editExistMessage("Отчёт о питомце(собаке): "));
+            case CAT_SEND_REPORT:
+                bot.sendMessage(botMessages.reportAnimalCommand());
                 break;
 
             case CAT_INFO:
@@ -138,32 +143,25 @@ public class ChoosingAction {
                 bot.sendMessage(botMessages.editExistMessage("Как взять кошку из приюта: "));
                 break;
 
-            case CAT_SEND_REPORT:
-                bot.sendMessage(botMessages.editExistMessage("Отчёт о питомце(кошке): "));
-                break;
-
             case CALL_VOLUNTEER:
                 bot.sendMessage(botMessages.editExistMessage(volunteers.inviteVolunteer()));
                 break;
         }
     }
 
-    public void checkBotState(Update update) {
-        long chatId = update.getMessage().getChatId();
-        var user = userRepository.findByChatId(chatId);
+    public void checkBotState() {
+        var user = userRepository.findByChatId(update.getMessage().getChatId());
 
-        try {
-            if (user == null) throw new NullPointerException("При попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь не найден");
-        } catch (NullPointerException e) {
-             e.getMessage();
-        }
+        if (user == null) throw new NullPointerException("При попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь не найден");
 
         switch (Objects.requireNonNull(user).getBotState()) {
             case NULL: {
                 bot.sendMessage(botMessages.defaultMessage());
+                break;
             }
             case SET_REPORT_ANIMAL: {
                 bot.sendMessage(botMessages.setReportAnimal());
+                break;
             }
             default: bot.sendMessage(botMessages.defaultMessage());
         }
