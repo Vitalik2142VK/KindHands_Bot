@@ -27,6 +27,7 @@
                 <constraints nullable="false"/>
             </column>
             <column  name="animal_id"  type="BIGINT"/>
+            <column  name="report_animal_photo_id"  type="BIGINT"/>
         </createTable>
     </changeSet>
 
@@ -71,20 +72,75 @@
             <column  name="recommendation"  type="VARCHAR(50)">
                 <constraints  nullable="false"/>
             </column>
-            <column  name="photo"  type="OID"/>
+            <column  name="animal_photo_id"  type="BIGINT"/>
             <column  name="user_id"  type="BIGINT"/>
         </createTable>
     </changeSet>
 
     <changeSet id="4" author="morozov">
-        <addForeignKeyConstraint baseTableName="animals"
-                                 baseColumnNames="user_id"
-                                 constraintName="relation_user"
-                                 referencedTableName="users"
+        <preConditions>
+            <not>
+                <tableExists tableName="report_animal_photos"/>
+                <tableExists tableName="animal_photos"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="report_animal_photos">
+            <column  name="id"  type="BIGINT"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="file_path"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="file_size"  type="BIGINT">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="media_type"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="data"  type="BYTEA">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="time_last_report"  type="TIMESTAMP">
+                <constraints  nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="animal_photos">
+            <column  name="id"  type="BIGINT"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="file_path"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="file_size"  type="BIGINT">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="media_type"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="data"  type="BYTEA">
+                <constraints  nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="5" author="morozov">
+        <addForeignKeyConstraint baseTableName="users"
+                                 baseColumnNames="report_animal_photo_id"
+                                 constraintName="report_animal_photo_id_constraint"
+                                 referencedTableName="report_animal_photos"
                                  referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="animals"
+                                 baseColumnNames="animal_photo_id"
+                                 constraintName="animal_photo_id_constraint"
+                                 referencedTableName="animal_photos"
+                                 referencedColumnNames="id"/>
+
         <addForeignKeyConstraint baseTableName="users"
                                  baseColumnNames="animal_id"
-                                 constraintName="relation_animal"
+                                 constraintName="animal_id_constraint"
                                  referencedTableName="animals"
                                  referencedColumnNames="id"/>
     </changeSet>
