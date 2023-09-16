@@ -1,6 +1,7 @@
 package tg.kindhands_bot.kindhands.entities;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -15,6 +16,7 @@ public class User {
     private String denialReason;
     @OneToOne(mappedBy = "user")
     private Animal animal;
+
 
     public User(Long id, Long chatId, String name, Boolean blocked) {
         this.id = id;
