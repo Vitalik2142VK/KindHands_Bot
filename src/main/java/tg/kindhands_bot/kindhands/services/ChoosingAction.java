@@ -1,13 +1,17 @@
 package tg.kindhands_bot.kindhands.services;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import tg.kindhands_bot.kindhands.components.NavigationMenu;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
+import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.components.shelters.CatShelter;
 import tg.kindhands_bot.kindhands.components.shelters.DogShelter;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 import tg.kindhands_bot.kindhands.send_data.SendCatData;
 import tg.kindhands_bot.kindhands.send_data.SendDogData;
+
+import java.util.Objects;
 
 import static tg.kindhands_bot.kindhands.utils.CommandConstants.START_COMMAND;
 import static tg.kindhands_bot.kindhands.utils.MessageConstants.*;
@@ -22,10 +26,13 @@ public class ChoosingAction {
     private final KindHandsBot bot;
 
     private final UserRepository userRepository;
+    private final ReportAnimalRepository reportAnimalRepository;
 
     private final VolunteerService volunteers;
 
     private ProcessingBotMessages botMessages = null;
+
+    private Update update;
 
     private final DogShelter dogShelter = new DogShelter();
 
@@ -35,9 +42,11 @@ public class ChoosingAction {
 
     private final SendCatData sendCatData = new SendCatData();
 
-    public ChoosingAction(KindHandsBot bot, UserRepository userRepository, VolunteerService volunteers) {
+    public ChoosingAction(KindHandsBot bot, UserRepository userRepository, ReportAnimalRepository reportAnimalRepository,
+                          VolunteerService volunteers) {
         this.bot = bot;
         this.userRepository = userRepository;
+        this.reportAnimalRepository = reportAnimalRepository;
         this.volunteers = volunteers;
     }
 
@@ -46,7 +55,7 @@ public class ChoosingAction {
      * -----||-----
      * A method for processing user-entered text or text commands.
      */
-    public void textCommands(Update update) {
+    public void textCommands() {
         String messageText = update.getMessage().getText();
         long chatId = update.getMessage().getChatId();
 
@@ -58,8 +67,7 @@ public class ChoosingAction {
                 bot.sendMessage(NavigationMenu.choosingShelter(chatId));
                 break;
             }
-            default:
-                bot.sendMessage(botMessages.defaultMessage());
+            default: checkBotState();
         }
     }
 
@@ -69,8 +77,12 @@ public class ChoosingAction {
      * A method for handling of blocked users
      */
     public boolean checkUser(Update update) {
+        this.update = update;
+
         if (botMessages == null) {
-            botMessages = new ProcessingBotMessages(update, userRepository);
+            botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository);
+        } else {
+            botMessages.setUpdate(update);
         }
 
         long chatId;
@@ -98,11 +110,11 @@ public class ChoosingAction {
      * -----||-----
      * The method for processing the button selected by the user.
      */
-    public void buttonCommands(Update update) {
+    public void buttonCommands() {
         String callbackData = update.getCallbackQuery().getData();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-        ProcessingBotMessages botMessages = new ProcessingBotMessages(update, userRepository);
+        botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository);
 
         switch (callbackData) {
             case DOG_BUTTON:
@@ -112,7 +124,7 @@ public class ChoosingAction {
             }
         }
 
-        menuShelterHandler(botMessages, update, callbackData);
+        menuShelterHandler(callbackData);
         menuAssistShelterHandler(botMessages, update, callbackData);
         menuShelterInfoHandler(botMessages, update, callbackData);
         menuHowGetAnimalFromShelterHandler(botMessages, update, callbackData);
@@ -124,7 +136,7 @@ public class ChoosingAction {
      * -----//-----
      * The method of processing the "shelter menu" buttons
      */
-    private void menuShelterHandler(ProcessingBotMessages botMessages, Update update, String callbackData) {
+    private void menuShelterHandler(String callbackData) {
 
         switch (callbackData) {
             case CAT_INFO:
@@ -138,11 +150,8 @@ public class ChoosingAction {
                 break;
 
             case DOG_SEND_REPORT:
-                bot.sendMessage(botMessages.editExistMessage("Отчёт о питомце(собаке): "));
-                break;
-
             case CAT_SEND_REPORT:
-                bot.sendMessage(botMessages.editExistMessage("Отчёт о питомце(кошке): "));
+                bot.sendMessage(botMessages.reportAnimalCommand());
                 break;
 
             case CALL_VOLUNTEER:
@@ -154,6 +163,24 @@ public class ChoosingAction {
         }
     }
 
+    public void checkBotState() {
+        var user = userRepository.findByChatId(update.getMessage().getChatId());
+
+        if (user == null) throw new NullPointerException("Exception при попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь с id: '"
+                + update.getMessage().getChatId() + "' не найден");
+
+        switch (Objects.requireNonNull(user).getBotState()) {
+            case NULL: {
+                bot.sendMessage(botMessages.defaultMessage());
+                break;
+            }
+            case SET_REPORT_ANIMAL: {
+                bot.sendMessage(botMessages.setReportAnimal());
+                break;
+            }
+            default: bot.sendMessage(botMessages.defaultMessage());
+        }
+    }
 
     /**
      * Метод обратки кнопок меню "Помощь приюту".
@@ -318,5 +345,4 @@ public class ChoosingAction {
                 break;
         }
     }
-
 }

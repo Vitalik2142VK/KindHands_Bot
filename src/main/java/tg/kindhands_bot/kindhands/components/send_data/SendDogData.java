@@ -1,4 +1,4 @@
-package tg.kindhands_bot.kindhands.send_data;
+package tg.kindhands_bot.kindhands.components.send_data;
 
 public class SendDogData implements SendAnimalData{
     @Override
