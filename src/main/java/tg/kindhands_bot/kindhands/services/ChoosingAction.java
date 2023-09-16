@@ -125,9 +125,9 @@ public class ChoosingAction {
         }
 
         menuShelterHandler(callbackData);
-        menuAssistShelterHandler(botMessages, update, callbackData);
-        menuShelterInfoHandler(botMessages, update, callbackData);
-        menuHowGetAnimalFromShelterHandler(botMessages, update, callbackData);
+        menuAssistShelterHandler(callbackData);
+        menuShelterInfoHandler(callbackData);
+        menuHowGetAnimalFromShelterHandler(callbackData);
 
     }
 
@@ -187,7 +187,7 @@ public class ChoosingAction {
      * -----//-----
      * The method of processing the buttons of the "Help to shelter" menu.
      */
-    private void menuAssistShelterHandler(ProcessingBotMessages botMessages, Update update, String callbackData) {
+    private void menuAssistShelterHandler(String callbackData) {
 
         switch (callbackData) {
             case REQUISITES:
@@ -210,7 +210,7 @@ public class ChoosingAction {
      * -----//-----
      * The method of processing the menu buttons "Find out information about the shelter".
      */
-    private void menuShelterInfoHandler(ProcessingBotMessages botMessages, Update update, String callbackData) {
+    private void menuShelterInfoHandler(String callbackData) {
 
         switch (callbackData) {
             case CAT_ABOUT_SHELTER:
@@ -272,7 +272,7 @@ public class ChoosingAction {
      * -----//-----
      * The method of processing the menu buttons "How to take an animal from a shelter".
      */
-    private void menuHowGetAnimalFromShelterHandler(ProcessingBotMessages botMessages, Update update, String callbackData) {
+    private void menuHowGetAnimalFromShelterHandler(String callbackData) {
 
         switch (callbackData) {
 
