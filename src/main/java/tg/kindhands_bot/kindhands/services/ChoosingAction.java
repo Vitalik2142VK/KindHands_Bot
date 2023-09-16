@@ -8,8 +8,8 @@ import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.components.shelters.CatShelter;
 import tg.kindhands_bot.kindhands.components.shelters.DogShelter;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
-import tg.kindhands_bot.kindhands.send_data.SendCatData;
-import tg.kindhands_bot.kindhands.send_data.SendDogData;
+import tg.kindhands_bot.kindhands.components.send_data.SendCatData;
+import tg.kindhands_bot.kindhands.components.send_data.SendDogData;
 
 import java.util.Objects;
 
