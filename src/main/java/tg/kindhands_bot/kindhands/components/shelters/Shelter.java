@@ -1,5 +1,7 @@
 package tg.kindhands_bot.kindhands.components.shelters;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
 public interface Shelter {
     /**
      * Метод для вывода расписания работы приюта
@@ -40,5 +42,11 @@ public interface Shelter {
      */
     String getInfoSafetyPrecautions();
 
+    /**
+     * Медод для вывода подробной информации о приюте.
+     * -----//-----
+     * A method for displaying detailed information about the shelter.
+     */
+    String getDetailedInfo();
 
 }
