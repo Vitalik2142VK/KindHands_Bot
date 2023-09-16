@@ -69,6 +69,8 @@ public class ChoosingAction {
 
         if (botMessages == null) {
             botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository);
+        } else {
+            botMessages.setUpdate(update);
         }
 
         long chatId;
@@ -152,7 +154,8 @@ public class ChoosingAction {
     public void checkBotState() {
         var user = userRepository.findByChatId(update.getMessage().getChatId());
 
-        if (user == null) throw new NullPointerException("При попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь не найден");
+        if (user == null) throw new NullPointerException("Exception при попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь с id: '"
+                + update.getMessage().getChatId() + "' не найден");
 
         switch (Objects.requireNonNull(user).getBotState()) {
             case NULL: {

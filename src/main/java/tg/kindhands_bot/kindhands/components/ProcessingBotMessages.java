@@ -22,7 +22,7 @@ public class ProcessingBotMessages {
 
     private final Logger log = LoggerFactory.getLogger(ProcessingBotMessages.class);
 
-    private final Update update;
+    private Update update;
     private final UserRepository userRepository;
 
     private final ReportAnimalRepository reportAnimalRepository;
@@ -151,5 +151,9 @@ public class ProcessingBotMessages {
 
         user.setBotState(BotState.NULL);
         userRepository.save(user);
+    }
+
+    public void setUpdate(Update update) {
+        this.update = update;
     }
 }
