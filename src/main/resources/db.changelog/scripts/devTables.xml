@@ -49,6 +49,9 @@
                 <constraints  nullable="false"/>
             </column>
             <column  name="free"  type="BOOLEAN" defaultValue="true"/>
+            <column  name="phone"  type="VARCHAR(50)">
+            <constraints  nullable="false"/>
+        </column>
         </createTable>
     </changeSet>
 

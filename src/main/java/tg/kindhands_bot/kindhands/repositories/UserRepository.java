@@ -11,4 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "select * from user where chat_id is not null", nativeQuery = true)
     Collection<User> findAllWithExistingChatId();
+
+    User findByBlocked(Long chatId);
 }
