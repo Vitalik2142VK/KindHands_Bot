@@ -31,4 +31,9 @@ public class ReportAnimalPhoto extends Photo {
     public int hashCode() {
         return Objects.hash(super.hashCode(), timeLastReport);
     }
+
+    @Override
+    public String toString() {
+        return "timeLastReport=" + timeLastReport;
+    }
 }

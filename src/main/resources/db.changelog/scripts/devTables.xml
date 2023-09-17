@@ -23,6 +23,7 @@
                 <constraints  nullable="false"/>
             </column>
             <column  name="denial_reason"  type="VARCHAR(50)"/>
+            <column  name="bot_state"  type="INTEGER"/>
             <column  name="blocked"  type="BOOLEAN" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
@@ -143,5 +144,34 @@
                                  constraintName="animal_id_constraint"
                                  referencedTableName="animals"
                                  referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="6" author="morozov">
+        <preConditions>
+            <not>
+                <tableExists tableName="report_animal"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="report_animal">
+            <column  name="id"  type="BIGINT"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="description"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="date"  type="DATE">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="report_number"  type="INTEGER">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="report_status"  type="INTEGER">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="chat_id"  type="BIGINT">
+                <constraints  nullable="false"/>
+            </column>
+        </createTable>
     </changeSet>
 </databaseChangeLog>
