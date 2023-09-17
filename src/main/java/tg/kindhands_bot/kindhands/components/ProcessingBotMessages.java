@@ -156,4 +156,17 @@ public class ProcessingBotMessages {
     public void setUpdate(Update update) {
         this.update = update;
     }
+
+
+    /**
+     * отправка сообщения пользователю.
+     * -----||-----
+     *  Send Message for user.
+     */
+    public static SendMessage returnMessageUser(String text, User user) {
+        SendMessage message = new SendMessage();
+        message.setChatId(user.getChatId());
+        message.setText(text);
+        return message;
+    }
 }

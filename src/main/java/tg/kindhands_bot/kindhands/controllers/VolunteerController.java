@@ -29,6 +29,13 @@ public class VolunteerController {
      * Displays unverified user reports about animals.
      */
     @GetMapping("/reports") // GET http://localhost:8080/volunteer/reports
+    @Operation(summary = "Получение отчетов")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Отчет получен."
+            )})
+
     public ResponseEntity<?> getReports() {
         return ResponseEntity.ok().build();
     }
