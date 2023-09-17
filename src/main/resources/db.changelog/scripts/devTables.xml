@@ -23,6 +23,7 @@
                 <constraints  nullable="false"/>
             </column>
             <column  name="denial_reason"  type="VARCHAR(50)"/>
+            <column  name="bot_state"  type="INTEGER"/>
             <column  name="blocked"  type="BOOLEAN" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
@@ -71,21 +72,93 @@
             <column  name="recommendation"  type="VARCHAR(50)">
                 <constraints  nullable="false"/>
             </column>
-            <column  name="photo"  type="OID"/>
+            <column  name="animal_photo_id"  type="BIGINT"/>
             <column  name="user_id"  type="BIGINT"/>
         </createTable>
     </changeSet>
 
     <changeSet id="4" author="morozov">
+        <preConditions>
+            <not>
+                <tableExists tableName="report_animal_photos"/>
+                <tableExists tableName="animal_photos"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="report_animal_photos">
+            <column  name="id"  type="BIGINT"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="file_path"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="file_size"  type="BIGINT">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="media_type"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="data"  type="BYTEA">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="time_last_report"  type="TIMESTAMP">
+                <constraints  nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="animal_photos">
+            <column  name="id"  type="BIGINT"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="file_path"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="file_size"  type="BIGINT">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="media_type"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="data"  type="BYTEA">
+                <constraints  nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="5" author="morozov">
         <addForeignKeyConstraint baseTableName="animals"
-                                 baseColumnNames="user_id"
-                                 constraintName="relation_user"
-                                 referencedTableName="users"
+                                 baseColumnNames="animal_photo_id"
+                                 constraintName="animal_photo_id_constraint"
+                                 referencedTableName="animal_photos"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="users"
-                                 baseColumnNames="animal_id"
-                                 constraintName="relation_animal"
-                                 referencedTableName="animals"
-                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="6" author="morozov">
+        <preConditions>
+            <not>
+                <tableExists tableName="report_animal"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="report_animal">
+            <column  name="id"  type="BIGINT"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="description"  type="VARCHAR(50)">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="date"  type="DATE">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="report_number"  type="INTEGER">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="report_status"  type="INTEGER">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="chat_id"  type="BIGINT">
+                <constraints  nullable="false"/>
+            </column>
+        </createTable>
     </changeSet>
 </databaseChangeLog>
