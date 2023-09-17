@@ -16,33 +16,6 @@ public class User {
     private Boolean blocked;
     private String denialReason;
     private BotState botState = BotState.NULL;
-    @OneToOne(mappedBy = "user")
-    @JoinColumn(name = "animal_id")
-    private Animal animal;
-    @OneToOne
-    @JoinColumn(name = "report_animal_photo_id")
-    private ReportAnimalPhoto reportAnimalPhoto;
-
-    public User(Long id,
-                Long chatId,
-                String name,
-                Boolean blocked,
-                String denialReason,
-                BotState botState,
-                Animal animal,
-                ReportAnimalPhoto reportAnimalPhoto) {
-        this.id = id;
-        this.chatId = chatId;
-        this.name = name;
-        this.blocked = blocked;
-        this.denialReason = denialReason;
-        this.botState = botState;
-        this.animal = animal;
-        this.reportAnimalPhoto = reportAnimalPhoto;
-    }
-
-    public User() {
-    }
 
     public Long getId() {
         return id;
@@ -92,33 +65,17 @@ public class User {
         this.botState = botState;
     }
 
-    public Animal getAnimal() {
-        return animal;
-    }
-
-    public void setAnimal(Animal animal) {
-        this.animal = animal;
-    }
-
-    public ReportAnimalPhoto getReportAnimalPhoto() {
-        return reportAnimalPhoto;
-    }
-
-    public void setReportAnimalPhoto(ReportAnimalPhoto reportAnimalPhoto) {
-        this.reportAnimalPhoto = reportAnimalPhoto;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(chatId, user.chatId) && Objects.equals(name, user.name) && Objects.equals(blocked, user.blocked) && Objects.equals(denialReason, user.denialReason) && botState == user.botState && Objects.equals(animal, user.animal);
+        return Objects.equals(chatId, user.chatId) && Objects.equals(name, user.name) && Objects.equals(blocked, user.blocked) && Objects.equals(denialReason, user.denialReason) && botState == user.botState;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(chatId, name, blocked, denialReason, botState, animal);
+        return Objects.hash(chatId, name, blocked, denialReason, botState);
     }
 
     @Override
@@ -128,7 +85,6 @@ public class User {
                 ", name='" + name +
                 ", blocked=" + blocked +
                 ", denialReason='" + denialReason +
-                ", botState=" + botState +
-                ", animal=" + animal;
+                ", botState=" + botState;
     }
 }

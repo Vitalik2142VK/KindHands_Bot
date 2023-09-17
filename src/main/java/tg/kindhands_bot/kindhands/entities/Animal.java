@@ -19,18 +19,6 @@ public class Animal {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Animal(Long id, String name, String ration, String recommendation, AnimalPhoto animalPhoto, User user) {
-        this.id = id;
-        this.name = name;
-        this.ration = ration;
-        this.recommendation = recommendation;
-        this.animalPhoto = animalPhoto;
-        this.user = user;
-    }
-
-    public Animal() {
-    }
-
     public Long getId() {
         return id;
     }

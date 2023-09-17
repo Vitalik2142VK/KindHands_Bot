@@ -28,7 +28,6 @@
                 <constraints nullable="false"/>
             </column>
             <column  name="animal_id"  type="BIGINT"/>
-            <column  name="report_animal_photo_id"  type="BIGINT"/>
         </createTable>
     </changeSet>
 
@@ -127,22 +126,10 @@
     </changeSet>
 
     <changeSet id="5" author="morozov">
-        <addForeignKeyConstraint baseTableName="users"
-                                 baseColumnNames="report_animal_photo_id"
-                                 constraintName="report_animal_photo_id_constraint"
-                                 referencedTableName="report_animal_photos"
-                                 referencedColumnNames="id"/>
-
         <addForeignKeyConstraint baseTableName="animals"
                                  baseColumnNames="animal_photo_id"
                                  constraintName="animal_photo_id_constraint"
                                  referencedTableName="animal_photos"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint baseTableName="users"
-                                 baseColumnNames="animal_id"
-                                 constraintName="animal_id_constraint"
-                                 referencedTableName="animals"
                                  referencedColumnNames="id"/>
     </changeSet>
 
