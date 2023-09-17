@@ -6,11 +6,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tg.kindhands_bot.kindhands.entities.Animal;
+import tg.kindhands_bot.kindhands.services.AnimalService;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/volunteer/animal")
 @Tag(name = "Животные.", description = "Эндпоинты для работы с животными.")
 public class AnimalController {
+    private final AnimalService animalService;
+
+    public AnimalController(AnimalService animalService) {
+        this.animalService = animalService;
+    }
+
     /**
      * Выводит список всех животных.
      * -----||-----
@@ -23,8 +33,8 @@ public class AnimalController {
                     responseCode = "200",
                     description = "Все животные получены."
             )})
-    public ResponseEntity<?> getAllAnimals() {
-        return ResponseEntity.ok().build();
+      public ResponseEntity<Collection<Animal>> getAllAnimals() {
+        return ResponseEntity.ok(animalService.getAllAnimals());
     }
 
     /**
@@ -32,32 +42,33 @@ public class AnimalController {
      * -----||-----
      * Adds a new animal.
      */
-    @PostMapping("/add") // POST http://localhost:8080/volunteer/animal
-    @Operation(summary = "Добавить животное")
+  @Operation(summary = "Добавить животное")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Животное добавлено."
             )})
-    public ResponseEntity<?> addAnimal() {
-        return ResponseEntity.ok().build();
+    @PostMapping("/add") // POST http://localhost:8080/volunteer/animal
+    public Animal addAnimal(@RequestBody Animal animal) {
+        return animalService.addAnimal(animal);
     }
 
-    /**
-     * Изменяет статус животного.
-     * -----||-----
-     * Changes the status of the animal.
-     */
-    @PutMapping("/{id}") // POST http://localhost:8080/volunteer/animal/1
-    @Operation(summary = "Изменение статуса животного")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Статус животного изменен."
-            )})
-    public ResponseEntity<?> changeStatusAnimal(@PathVariable Long id) {
-        return ResponseEntity.ok().build();
-    }
+
+//     /**
+//      * Изменяет статус животного.
+//      * -----||-----
+//      * Changes the status of the animal.
+//      */
+//     @PutMapping("/{id}") // POST http://localhost:8080/volunteer/animal/1
+//     @Operation(summary = "Изменение статуса животного")
+//     @ApiResponses(value = {
+//             @ApiResponse(
+//                     responseCode = "200",
+//                     description = "Статус животного изменен."
+//             )})
+//     public ResponseEntity<?> changeStatusAnimal(@PathVariable Long id) {
+//         return ResponseEntity.ok().build();
+//     }
 
     /**
      * Удаляет животное из БД.
@@ -72,6 +83,7 @@ public class AnimalController {
                     description = "Животное удалено."
             )})
     public ResponseEntity<?> removeAnimal(@PathVariable Long id) {
+        animalService.removeAnimal(id);
         return ResponseEntity.ok().build();
     }
 

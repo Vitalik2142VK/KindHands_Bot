@@ -1,10 +1,12 @@
 package tg.kindhands_bot.kindhands.services;
 
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
+@Service
 public class UserService {
     private final UserRepository userRepository;
     private final KindHandsBot bot;
@@ -38,7 +40,6 @@ public class UserService {
      * -----||-----
      *  method
      */
-    //ПРОВЕРЬ РЕАЛИЗАЦИЮ
     public String extendProbationPeriod(Long id, Integer term) {
 //        User user = userRepository.getById(id);
 //        SendMessage message = new SendMessage(user.getChatId(), "Вам продлен испытательный срок на 14 или 30 дней, отправляйте отчеты вовремя");
