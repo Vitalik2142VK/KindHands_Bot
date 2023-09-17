@@ -1,5 +1,6 @@
 package tg.kindhands_bot.kindhands.services;
 
+import ch.qos.logback.classic.joran.action.LoggerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,8 @@ import java.util.regex.Pattern;
 
 @Service
 public class VolunteerService {
+    private final Logger log = LoggerFactory.getLogger(VolunteerService.class);
+
     private final VolunteersRepository volunteersRepository;
 
     public VolunteerService(VolunteersRepository volunteersRepository) {
@@ -45,7 +48,7 @@ public class VolunteerService {
      * Сreate and save a volunteer method
      */
     public Volunteer createVolunteer(Volunteer volunteer) {
-        log.info("Влонтер '" + volunteer.getName() + "' добавлен.");
+        log.info("Волонтер '" + volunteer.getName() + "' добавлен.");
 
         return volunteersRepository.save(volunteer);
     }
