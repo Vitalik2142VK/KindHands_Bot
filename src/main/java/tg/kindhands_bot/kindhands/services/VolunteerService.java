@@ -1,5 +1,6 @@
 package tg.kindhands_bot.kindhands.services;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -7,9 +8,6 @@ import tg.kindhands_bot.kindhands.entities.Volunteer;
 import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Работа с БД волонтеров. Принимает желающих стать волонтерами, а так же удаляет из БД.
@@ -23,8 +21,9 @@ import java.util.regex.Pattern;
 public class VolunteerService {
     private final VolunteersRepository volunteersRepository;
 
+    private final Logger log = LoggerFactory.getLogger(VolunteerService.class);
 
-    public VolunteerService(VolunteersRepository volunteersRepository, Update update) {
+    public VolunteerService(VolunteersRepository volunteersRepository) {
         this.volunteersRepository = volunteersRepository;
     }
 
@@ -34,7 +33,6 @@ public class VolunteerService {
      * Method the user calls a volunteer
      */
     public String inviteVolunteer() {
-
         return "Мы ищем волонтера";
     }
 
@@ -44,6 +42,8 @@ public class VolunteerService {
      * Сreate and save a volunteer method
      */
     public Volunteer createVolunteer(Volunteer volunteer) {
+        log.info("Влонтер '" + volunteer.getName() + "' добавлен.");
+
         return volunteersRepository.save(volunteer);
     }
 
@@ -59,6 +59,7 @@ public class VolunteerService {
         volunteer.setAdopted(true);
         volunteer.setPhone(printPhone(phone));//добавила проверку на приведение номера телефона к единому формату +7(ххх)ххх-хх-хх
         volunteersRepository.save(volunteer);
+        log.info("Влонтер '" + volunteer.getName() + "' добавлен.");
         return "Ваша кандидатура на рассмотрении, с Вами свяжутся";
     }
 
@@ -72,6 +73,7 @@ public class VolunteerService {
         Volunteer volunteer = volunteersRepository.findById(id).orElse(null);
         if (volunteer != null) {
             volunteersRepository.delete(volunteer);
+            log.info("Влонтер '" + volunteer.getName() + "' удален.");
             return "Вы удалены из волонтеров!";
         } else {
             return "Волонтер не найден";
