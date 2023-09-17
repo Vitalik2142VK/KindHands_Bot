@@ -3,6 +3,7 @@ package tg.kindhands_bot.kindhands.entities;
 import tg.kindhands_bot.kindhands.enums.BotState;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity

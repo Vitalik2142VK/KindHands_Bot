@@ -1,4 +1,5 @@
 package tg.kindhands_bot.kindhands.entities;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -10,7 +11,9 @@ public class Volunteer {
     private Long id;
     private Long chatId;
     private String name;
-    private Boolean free; //свободен ли волонтер. true, если да
+    private Boolean adopted; //принят ли волонтер. true, если да
+    private String phone;
+
 
     public Long getId() {
         return id;
@@ -22,6 +25,10 @@ public class Volunteer {
 
     public Long getChatId() {
         return chatId;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 
     public void setChatId(Long chatId) {
@@ -36,34 +43,39 @@ public class Volunteer {
         this.name = name;
     }
 
-    public Boolean getFree() {
-        return free;
+    public Boolean getAdopted() {
+        return adopted;
     }
 
-    public void setFree(Boolean free) {
-        this.free = free;
+    public void setAdopted(Boolean adopted) {
+        this.adopted = adopted;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Volunteer that = (Volunteer) o;
-        return Objects.equals(id, that.id) && Objects.equals(chatId, that.chatId) && Objects.equals(name, that.name) && Objects.equals(free, that.free);
+        Volunteer volunteer = (Volunteer) o;
+        return Objects.equals(id, volunteer.id) && Objects.equals(chatId, volunteer.chatId) && Objects.equals(name, volunteer.name) && Objects.equals(adopted, volunteer.adopted) && Objects.equals(phone, volunteer.phone);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chatId, name, free);
+        return Objects.hash(id, chatId, name, adopted, phone);
     }
 
     @Override
     public String toString() {
-        return "Volunteers{" +
+        return "Volunteer{" +
                 "id=" + id +
                 ", chatId=" + chatId +
                 ", name='" + name + '\'' +
-                ", free=" + free +
+                ", free=" + adopted +
+                ", phone='" + phone + '\'' +
                 '}';
     }
 }
