@@ -66,13 +66,6 @@ public class User {
         this.botState = botState;
     }
 
-    public String getDenialReason() {
-        return denialReason;
-    }
-
-    public void setDenialReason(String denialReason) {
-        this.denialReason = denialReason;
-    }
 
     @Override
     public boolean equals(Object o) {
