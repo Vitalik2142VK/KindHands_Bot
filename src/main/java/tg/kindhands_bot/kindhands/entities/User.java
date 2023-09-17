@@ -16,8 +16,7 @@ public class User {
     private Boolean blocked;
     private String denialReason;
     private BotState botState = BotState.NULL;
-    @OneToOne(mappedBy = "user")
-    private Animal animal;
+
 
     public User(Long id, Long chatId, String name, Boolean blocked) {
         this.id = id;
