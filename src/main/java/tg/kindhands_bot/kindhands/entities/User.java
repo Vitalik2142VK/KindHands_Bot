@@ -50,6 +50,14 @@ public class User {
         this.blocked = blocked;
     }
 
+    public String getDenialReason() {
+        return denialReason;
+    }
+
+    public void setDenialReason(String denialReason) {
+        this.denialReason = denialReason;
+    }
+
     public BotState getBotState() {
         return botState;
     }
@@ -57,7 +65,6 @@ public class User {
     public void setBotState(BotState botState) {
         this.botState = botState;
     }
-
 
     @Override
     public boolean equals(Object o) {
