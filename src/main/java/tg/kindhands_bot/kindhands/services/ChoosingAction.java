@@ -34,11 +34,9 @@ public class ChoosingAction {
     private Update update;
 
     private final DogShelter dogShelter = new DogShelter();
-
     private final CatShelter catShelter = new CatShelter();
 
     private final SendDogData sendDogData = new SendDogData();
-
     private final SendCatData sendCatData = new SendCatData();
 
     public ChoosingAction(KindHandsBot bot, UserRepository userRepository, ReportAnimalRepository reportAnimalRepository,

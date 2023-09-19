@@ -1,0 +1,17 @@
+{
+  "message": {
+    "from": {
+      "id": 102030,
+      "first_name": "Name",
+      "last_name": "LastName",
+      "type": "private"
+    },
+    "chat": {
+      "id": 102030,
+      "first_name": "Name",
+      "last_name": "LastName",
+      "type": "private"
+    },
+    "text": "%text%"
+  }
+}
