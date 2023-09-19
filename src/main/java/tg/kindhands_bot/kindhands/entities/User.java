@@ -15,9 +15,10 @@ public class User {
     private Long chatId;
     private String name;
     private Boolean blocked;
-    private String denialReason;
-    private BotState botState = BotState.NULL;
 
+    private String denialReason;
+
+    private BotState botState = BotState.NULL;
     public Long getId() {
         return id;
     }
@@ -50,20 +51,20 @@ public class User {
         this.blocked = blocked;
     }
 
-    public BotState getBotState() {
-        return botState;
-    }
-
-    public void setBotState(BotState botState) {
-        this.botState = botState;
-    }
-
     public String getDenialReason() {
         return denialReason;
     }
 
     public void setDenialReason(String denialReason) {
         this.denialReason = denialReason;
+    }
+
+    public BotState getBotState() {
+        return botState;
+    }
+
+    public void setBotState(BotState botState) {
+        this.botState = botState;
     }
 
     @Override
