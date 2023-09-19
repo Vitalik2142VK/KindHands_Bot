@@ -164,4 +164,73 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="7" author="morozov">
+        <preConditions>
+            <not>
+                <tableExists tableName="tamed_cat"/>
+                <tableExists tableName="tamed_dog"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="tamed_cat">
+            <column  name="id"  type="BIGINT"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="num_reports"  type="INTEGER">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="num_reports_sent"  type="INTEGER">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="animal_id"  type="BIGINT"/>
+            <column  name="user_id"  type="BIGINT"/>
+        </createTable>
+        
+        <createTable tableName="tamed_dog">
+            <column  name="id"  type="BIGINT"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="num_reports"  type="INTEGER">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="num_reports_sent"  type="INTEGER">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="animal_id"  type="BIGINT"/>
+            <column  name="user_id"  type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="8" author="morozov">
+        <addForeignKeyConstraint baseTableName="tamed_cat"
+                                 baseColumnNames="user_id"
+                                 constraintName="cat_constraint_user_id"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="tamed_dog"
+                                 baseColumnNames="user_id"
+                                 constraintName="dog_constraint_user_id"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="tamed_dog"
+                                 baseColumnNames="animal_id"
+                                 constraintName="dog_constraint_animal_id"
+                                 referencedTableName="animals"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="tamed_cat"
+                                 baseColumnNames="animal_id"
+                                 constraintName="cat_constraint_animal_id"
+                                 referencedTableName="animals"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="9" author="morozov">
+        <addColumn tableName="volunteers">
+            <column name="adopted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -1,8 +1,6 @@
 package tg.kindhands_bot.kindhands.services;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import tg.kindhands_bot.kindhands.entities.Animal;
 import tg.kindhands_bot.kindhands.repositories.AnimalsRepository;
 
