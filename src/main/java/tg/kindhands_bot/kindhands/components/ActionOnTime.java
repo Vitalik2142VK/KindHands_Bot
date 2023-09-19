@@ -1,17 +1,13 @@
 package tg.kindhands_bot.kindhands.components;
 
 import org.springframework.scheduling.annotation.Scheduled;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import tg.kindhands_bot.kindhands.entities.ReportAnimal;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 import tg.kindhands_bot.kindhands.services.KindHandsBot;
 
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Timer;
 
 public class ActionOnTime {
     private final UserRepository userRepository;

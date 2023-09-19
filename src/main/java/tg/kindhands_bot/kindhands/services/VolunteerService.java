@@ -1,10 +1,9 @@
 package tg.kindhands_bot.kindhands.services;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.entities.Volunteer;
 import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
 
