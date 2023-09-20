@@ -2,9 +2,7 @@ package tg.kindhands_bot.kindhands.entities;
 
 import tg.kindhands_bot.kindhands.enums.ReportStatus;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -18,6 +16,7 @@ public class ReportAnimal {
     private String description;
     private LocalDate date;
     private int reportNumber;
+    @Enumerated(EnumType.STRING)
     private ReportStatus reportStatus = ReportStatus.ON_INSPECTION;
 
     // для тестирования, удалить после добавления TamedAnimal

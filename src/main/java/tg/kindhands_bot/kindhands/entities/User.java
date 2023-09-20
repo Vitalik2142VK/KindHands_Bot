@@ -50,20 +50,20 @@ public class User {
         this.blocked = blocked;
     }
 
-    public BotState getBotState() {
-        return botState;
-    }
-
-    public void setBotState(BotState botState) {
-        this.botState = botState;
-    }
-
     public String getDenialReason() {
         return denialReason;
     }
 
     public void setDenialReason(String denialReason) {
         this.denialReason = denialReason;
+    }
+
+    public BotState getBotState() {
+        return botState;
+    }
+
+    public void setBotState(BotState botState) {
+        this.botState = botState;
     }
 
     @Override

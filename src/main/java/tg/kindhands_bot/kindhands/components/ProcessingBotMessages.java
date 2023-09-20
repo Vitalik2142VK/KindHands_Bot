@@ -178,7 +178,8 @@ public class ProcessingBotMessages {
      */
     public void changeStateBotNull() {
         User user = userRepository.findByChatId(update.getMessage().getChatId());
-        if (user == null) throw new NullPointerException();
+        if (user == null) { throw new NullPointerException();}
+
 
         user.setBotState(BotState.NULL);
         userRepository.save(user);

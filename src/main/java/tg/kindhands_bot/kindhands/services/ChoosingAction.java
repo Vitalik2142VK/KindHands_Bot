@@ -40,11 +40,9 @@ public class ChoosingAction {
     private Update update;
 
     private final DogShelter dogShelter = new DogShelter();
-
     private final CatShelter catShelter = new CatShelter();
 
     private final SendDogData sendDogData = new SendDogData();
-
     private final SendCatData sendCatData = new SendCatData();
 
     private final ReportAnimalPhotoRepository reportAnimalPhotoRepository;
@@ -178,8 +176,10 @@ public class ChoosingAction {
         var user = userRepository.findByChatId(update.getMessage().getChatId());
         var photoSizes = update.getMessage().getPhoto();
 
-        if (user == null) throw new NullPointerException("Exception при попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь с id: '"
-                + update.getMessage().getChatId() + "' не найден");
+        if (user == null) {
+            throw new NullPointerException("Exception при попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь с id: '"
+                                + update.getMessage().getChatId() + "' не найден");
+        }
 
         switch (Objects.requireNonNull(user).getBotState()) {
             case NULL: {
