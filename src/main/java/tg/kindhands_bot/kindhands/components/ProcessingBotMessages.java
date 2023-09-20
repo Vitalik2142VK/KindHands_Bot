@@ -38,7 +38,10 @@ public class ProcessingBotMessages {
      * -----||-----
      * The method for sending the edited message.
      */
-    public SendMessage startCommand(Long chatId, String name) {
+    public SendMessage startCommand() {
+        long chatId = update.getMessage().getChatId();
+        String name = update.getMessage().getChat().getFirstName();
+
         User user = new User();
         user.setChatId(chatId);
         user.setName(name);
@@ -47,8 +50,7 @@ public class ProcessingBotMessages {
 
         log.info("Новый пользователь '" + name + "' добавлен.");
 
-        String firstNameUser = update.getMessage().getChat().getFirstName();
-        String answer = "Здравствуйте," + firstNameUser + "! Я бот приюта для животных \"В добрые руки\".";
+        String answer = "Здравствуйте," + name + "! Я бот приюта для животных \"В добрые руки\".";
         return returnMessage(answer);
     }
 

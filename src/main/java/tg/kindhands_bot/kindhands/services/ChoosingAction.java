@@ -59,7 +59,7 @@ public class ChoosingAction {
         switch (messageText) {
             case START_COMMAND: {
                 if (userRepository.findByChatId(chatId) == null) {
-                    bot.sendMessage(botMessages.startCommand(chatId, update.getMessage().getFrom().getFirstName()));
+                    bot.sendMessage(botMessages.startCommand());
                 }
                 bot.sendMessage(NavigationMenu.choosingShelter(chatId));
                 break;
