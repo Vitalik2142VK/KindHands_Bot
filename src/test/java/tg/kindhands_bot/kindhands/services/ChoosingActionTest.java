@@ -19,6 +19,7 @@ import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -28,6 +29,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static tg.kindhands_bot.kindhands.services.AdditionalMethods.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ChoosingActionTest {
@@ -101,7 +103,7 @@ public class ChoosingActionTest {
     }
 
     @Test
-    public void textCommand() {
+    public void textCommand() throws NoSuchFieldException, IllegalAccessException {
         Update update = getUpdate(json, "/start");
         long chatId = update.getMessage().getChatId();
 
@@ -109,49 +111,28 @@ public class ChoosingActionTest {
         List<User> users = new ArrayList<>();
 
         Mockito.when(userRepository.findByChatId(chatId)).thenReturn(null);
-        // сделать отлов аргумента
         Mockito.when(userRepository.save(any(User.class))).thenReturn(addUser(users, user));
 
         choosingAction.checkUser(update);
         choosingAction.textCommands();
 
+        ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
+        Mockito.verify(userRepository).save(argumentCaptor.capture());
+        User actualUser = argumentCaptor.getValue();
+
+        assertEquals(user, actualUser);
+
         botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository);
+
+        Field field = choosingAction.getClass().getDeclaredField("botMessages");
+        field.setAccessible(true);
+        botMessages = (ProcessingBotMessages) field.get(choosingAction);
         SendMessage actual = botMessages.startCommand();
 
         assertEquals("102030" ,actual.getChatId());
-        assertEquals(update.getMessage().getChat().getFirstName() + ", ваш аккаунт заблокирован",
+        assertEquals("Здравствуйте," + update.getMessage().getChat().getFirstName() + "! Я бот приюта для животных \"В добрые руки\".",
                 actual.getText());
     }
 
-    // Дополнительые методы
 
-    private Update getUpdate(String json, String replaced) {
-        return BotUtils.fromJson(json.replace("%text%", replaced), Update.class);
-    }
-
-    private User createUser(Long id, Long chatId, String name, Boolean blocked,
-                            String denialReason, BotState botState) {
-        User user = new User();
-        user.setId(id);
-        user.setChatId(chatId);
-        user.setName(name);
-        user.setBlocked(blocked);
-        user.setDenialReason(denialReason);
-        user.setBotState(botState);
-        return user;
-    }
-
-    private User findUserByChatId(List<User> users, Long chatId) {
-        for (var user : users) {
-            if (user.getChatId().equals(chatId)) {
-                return user;
-            }
-        }
-        throw new NullPointerException();
-    }
-
-    private User addUser(List<User> users, User user) {
-        users.add(user);
-        return user;
-    }
 }
