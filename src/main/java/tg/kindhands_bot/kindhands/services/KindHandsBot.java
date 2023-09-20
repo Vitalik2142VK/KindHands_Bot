@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tg.kindhands_bot.kindhands.config.BotConfig;
+import tg.kindhands_bot.kindhands.repositories.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
@@ -23,10 +24,10 @@ public class KindHandsBot extends TelegramLongPollingBot {
 
 
     public KindHandsBot(UserRepository userRepository, ReportAnimalRepository reportAnimalRepository,
-                        VolunteerService volunteers, BotConfig config) {
+                        VolunteerService volunteers, BotConfig config, ReportAnimalPhotoRepository reportAnimalPhotoRepository) {
         super(config.getToken());
         this.config = config;
-        choosingAction = new ChoosingAction(this, userRepository, reportAnimalRepository, volunteers);
+        choosingAction = new ChoosingAction(this, userRepository, reportAnimalRepository, volunteers, reportAnimalPhotoRepository);
     }
 
     @Override
