@@ -3,10 +3,11 @@ package tg.kindhands_bot.kindhands.entities;
 import javax.persistence.*;
 import java.util.Objects;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Photo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
     private String filePath;
     private long fileSize;
