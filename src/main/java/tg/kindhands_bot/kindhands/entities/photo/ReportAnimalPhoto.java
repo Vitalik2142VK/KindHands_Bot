@@ -1,4 +1,4 @@
-package tg.kindhands_bot.kindhands.entities;
+package tg.kindhands_bot.kindhands.entities.photo;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

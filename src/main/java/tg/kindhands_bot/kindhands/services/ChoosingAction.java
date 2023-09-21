@@ -1,6 +1,7 @@
 package tg.kindhands_bot.kindhands.services;
 
 import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tg.kindhands_bot.kindhands.components.NavigationMenu;
@@ -186,14 +187,18 @@ public class ChoosingAction {
                 bot.sendMessage(botMessages.defaultMessage());
                 break;
             }
-            case SET_REPORT_ANIMAL: {
+            case SET_REPORT_ANIMAL_PHOTO: {
                 try {
                     var photo = bot.downloadFile(bot.execute(new GetFile(photoSizes.get(photoSizes.size() - 1).getFileId())), new File("photos/reports" + UUID.randomUUID() + ".png"));
-                    bot.sendMessage(botMessages.setReportAnimal(photo));
+                    bot.sendMessage(botMessages.setReportAnimalPhoto(photo));
                     break;
                 } catch (TelegramApiException | IOException e) {
                     throw new RuntimeException(e);
                 }
+            }
+            case SET_REPORT_ANIMAL:{
+                bot.sendMessage(botMessages.setReportAnimal());
+                break;
             }
             default: bot.sendMessage(botMessages.defaultMessage());
         }
@@ -361,5 +366,14 @@ public class ChoosingAction {
                 bot.sendMessage(botMessages.editExistMessage("ЗАГЛУШКА!"));
                 break;
         }
+    }
+
+    /**
+     * Отправляет сообщение пользователю в сучае возникновения ошибки
+     * -----//-----
+     * Sends a message to the user in case of an error
+     */
+    public SendMessage errorMessage() {
+        return botMessages.returnMessage("Извините! Что-то пошло не так.\nПовторите попытку позже.");
     }
 }

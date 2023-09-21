@@ -1,5 +1,7 @@
 package tg.kindhands_bot.kindhands.entities;
 
+import tg.kindhands_bot.kindhands.entities.photo.AnimalPhoto;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -15,9 +17,6 @@ public class Animal {
     @OneToOne
     @JoinColumn(name = "animal_photo_id")
     private AnimalPhoto animalPhoto;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     public Long getId() {
         return id;
@@ -59,25 +58,17 @@ public class Animal {
         this.animalPhoto = animalPhoto;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return Objects.equals(name, animal.name) && Objects.equals(ration, animal.ration) && Objects.equals(recommendation, animal.recommendation) && Objects.equals(animalPhoto, animal.animalPhoto) && Objects.equals(user, animal.user);
+        return Objects.equals(name, animal.name) && Objects.equals(ration, animal.ration) && Objects.equals(recommendation, animal.recommendation) && Objects.equals(animalPhoto, animal.animalPhoto);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, ration, recommendation, animalPhoto, user);
+        return Objects.hash(name, ration, recommendation, animalPhoto);
     }
 
     @Override

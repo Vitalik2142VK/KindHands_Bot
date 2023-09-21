@@ -2,13 +2,12 @@ package tg.kindhands_bot.kindhands.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.entities.ReportAnimal;
-import tg.kindhands_bot.kindhands.entities.ReportAnimalPhoto;
+import tg.kindhands_bot.kindhands.entities.photo.ReportAnimalPhoto;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.enums.BotState;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalPhotoRepository;
@@ -75,38 +74,57 @@ public class ProcessingBotMessages {
      */
     public EditMessageText reportAnimalCommand() {
         User user = userRepository.findByChatId(update.getCallbackQuery().getMessage().getChatId());
-        user.setBotState(BotState.SET_REPORT_ANIMAL);
+        user.setBotState(BotState.SET_REPORT_ANIMAL_PHOTO);
         userRepository.save(user);
 
-        return editExistMessage("Пришлите:" +
-                "\nФотографию питомца;" +
+        return editExistMessage("Пришлите Фотографию питомца: ");
+    }
+
+    /**
+     * Создает отчет и добавляет, переданную пользователем фотографию без текста
+     * -----||-----
+     * Creates a report and adds a user-submitted photo without text
+     */
+    public SendMessage setReportAnimalPhoto(java.io.File photo) throws IOException {
+        var date = LocalDate.now();
+        var report = reportAnimalRepository.findByDateAndChatId(date, update.getMessage().getChatId());
+
+        if (report == null) {
+            report = new ReportAnimal();
+            report.setDate(date);
+            //report.setReportNumber();
+            //Заменить после создания TamedAnimal
+            report.setChatId(update.getMessage().getChatId());
+
+            saveReportPhoto(photo);
+        }
+        report.setDescription(update.getMessage().getText());
+        reportAnimalRepository.save(report);
+
+        changeStateBot(BotState.SET_REPORT_ANIMAL);
+
+        return returnMessage("Опишите: " +
                 "\nРацион животного;" +
                 "\nОбщее самочувствие и привыкание к новому месту;" +
                 "\nИзменение в поведении: отказ от старых привычек, приобретение новых.");
     }
 
     /**
-     * Принимает отчет о животном от пользователя и меняет статус бота на NULL
+     * В созданном ранее отчете, добавляет описание от пользователя
      * -----||-----
-     * Accepts an animal report from the user and changes the bot status to NULL
+     * In a previously created report, adds a description from the user
      */
-    public SendMessage setReportAnimal(java.io.File photo) throws IOException {
+    public SendMessage setReportAnimal() {
         var date = LocalDate.now();
         var report = reportAnimalRepository.findByDateAndChatId(date, update.getMessage().getChatId());
 
         if (report == null) {
-            saveReportPhoto(photo);
-
-            report = new ReportAnimal();
-            report.setDate(date);
-            //report.setReportNumber();
-            //Заменить после создания TamedAnimal
-            report.setChatId(update.getMessage().getChatId());
+            throw new NullPointerException("Отчет по id: " + update.getMessage().getChatId() + "не найден!");
         }
         report.setDescription(update.getMessage().getText());
         reportAnimalRepository.save(report);
 
-        changeStateBotNull();
+        changeStateBot(BotState.NULL);
 
         return returnMessage("Отчет отправлен.");
     }
@@ -178,12 +196,11 @@ public class ProcessingBotMessages {
      * -----||-----
      * Sending a message when user is blocked
      */
-    public void changeStateBotNull() {
+    public void changeStateBot(BotState botState) {
         User user = userRepository.findByChatId(update.getMessage().getChatId());
         if (user == null) { throw new NullPointerException();}
 
-
-        user.setBotState(BotState.NULL);
+        user.setBotState(botState);
         userRepository.save(user);
     }
 

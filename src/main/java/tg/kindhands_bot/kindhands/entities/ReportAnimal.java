@@ -11,10 +11,10 @@ public class ReportAnimal {
     @Id
     @GeneratedValue
     private long id;
+    private LocalDate date;
     //private TamedAnimal tamedAnimal;
     //private PhotoReportAnimal photo;
     private String description;
-    private LocalDate date;
     private int reportNumber;
     @Enumerated(EnumType.STRING)
     private ReportStatus reportStatus = ReportStatus.ON_INSPECTION;

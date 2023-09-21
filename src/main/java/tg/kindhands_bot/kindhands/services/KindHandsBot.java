@@ -52,10 +52,14 @@ public class KindHandsBot extends TelegramLongPollingBot {
                     choosingAction.textCommands();
                 } else if (update.hasCallbackQuery()) {
                     choosingAction.buttonCommands();
+                } else if (update.hasMessage() && update.getMessage().hasPhoto()) {
+                    choosingAction.checkBotState();
                 }
             }
         } catch (Exception e) {
+            choosingAction.errorMessage();
             log.error("Exception: '" + e.getMessage() + "'", e);
+
         }
     }
 
@@ -68,6 +72,7 @@ public class KindHandsBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
+            choosingAction.errorMessage();
             log.error("Exception: '" + e.getMessage() + "'", e);
         }
     }
@@ -76,6 +81,7 @@ public class KindHandsBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
+            choosingAction.errorMessage();
             log.error("Exception: '" + e.getMessage() + "'", e);
         }
     }
