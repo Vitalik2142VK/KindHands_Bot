@@ -51,13 +51,13 @@ public class ChoosingAction {
     public ChoosingAction(KindHandsBot bot,
                           UserRepository userRepository,
                           ReportAnimalRepository reportAnimalRepository,
-                          VolunteerService volunteers,
-                          ReportAnimalPhotoRepository reportAnimalPhotoRepository) {
+                          ReportAnimalPhotoRepository reportAnimalPhotoRepository,
+                          VolunteerService volunteers) {
         this.bot = bot;
         this.userRepository = userRepository;
         this.reportAnimalRepository = reportAnimalRepository;
-        this.volunteers = volunteers;
         this.reportAnimalPhotoRepository = reportAnimalPhotoRepository;
+        this.volunteers = volunteers;
     }
 
     /**

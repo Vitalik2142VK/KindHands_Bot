@@ -23,11 +23,14 @@ public class KindHandsBot extends TelegramLongPollingBot {
     private final BotConfig config;
 
 
-    public KindHandsBot(UserRepository userRepository, ReportAnimalRepository reportAnimalRepository,
-                        VolunteerService volunteers, BotConfig config, ReportAnimalPhotoRepository reportAnimalPhotoRepository) {
+    public KindHandsBot(UserRepository userRepository,
+                        ReportAnimalRepository reportAnimalRepository,
+                        ReportAnimalPhotoRepository reportAnimalPhotoRepository,
+                        VolunteerService volunteers,
+                        BotConfig config) {
         super(config.getToken());
         this.config = config;
-        choosingAction = new ChoosingAction(this, userRepository, reportAnimalRepository, volunteers, reportAnimalPhotoRepository);
+        choosingAction = new ChoosingAction(this, userRepository, reportAnimalRepository, reportAnimalPhotoRepository, volunteers);
     }
 
     @Override

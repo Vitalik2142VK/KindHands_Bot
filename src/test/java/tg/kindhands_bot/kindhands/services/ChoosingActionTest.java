@@ -1,7 +1,5 @@
 package tg.kindhands_bot.kindhands.services;
 
-import com.pengrad.telegrambot.BotUtils;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,12 +7,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.OngoingStubbing;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.enums.BotState;
+import tg.kindhands_bot.kindhands.repositories.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
@@ -38,7 +36,11 @@ public class ChoosingActionTest {
     @Mock
     private ReportAnimalRepository reportAnimalRepository;
     @Mock
+    private ReportAnimalPhotoRepository reportPhotoRepository;
+
+    @Mock
     private VolunteerService volunteerService;
+
     @Mock
     private KindHandsBot bot;
 
@@ -50,14 +52,15 @@ public class ChoosingActionTest {
 
     @BeforeEach
     public void beforeEach() throws URISyntaxException, IOException {
-        choosingAction = new ChoosingAction(bot = Mockito.mock(KindHandsBot.class), userRepository, reportAnimalRepository, volunteerService);
+        choosingAction = new ChoosingAction(bot = Mockito.mock(KindHandsBot.class), userRepository, reportAnimalRepository,
+                reportPhotoRepository, volunteerService);
         json = Files.readString(
                 Paths.get(KindHandsBot.class.getResource("text_update.json").toURI())
         );
     }
 
     @Test
-    public void checkUserTrueUserNull() throws URISyntaxException, IOException {
+    public void checkUserTrueUserNull() {
         Update update = getUpdate(json, "/start");
         long chatId = update.getMessage().getChatId();
 
@@ -67,7 +70,7 @@ public class ChoosingActionTest {
     }
 
     @Test
-    public void checkUserTrue() throws URISyntaxException, IOException {
+    public void checkUserTrue() {
         Update update = getUpdate(json, "/start");
 
         long chatId = update.getMessage().getChatId();
@@ -82,7 +85,7 @@ public class ChoosingActionTest {
     }
 
     @Test
-    public void checkUserFalse() throws URISyntaxException, IOException {
+    public void checkUserFalse() {
         Update update = getUpdate(json, "/start");
         long chatId = update.getMessage().getChatId();
 
@@ -94,7 +97,7 @@ public class ChoosingActionTest {
 
         assertFalse(choosingAction.checkUser(update));
 
-        botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository);
+        reflectionBotMessages();
         SendMessage actual = botMessages.blockedMessage();
 
         assertEquals("102030" ,actual.getChatId());
@@ -103,7 +106,7 @@ public class ChoosingActionTest {
     }
 
     @Test
-    public void textCommand() throws NoSuchFieldException, IllegalAccessException {
+    public void textCommand() {
         Update update = getUpdate(json, "/start");
         long chatId = update.getMessage().getChatId();
 
@@ -122,11 +125,12 @@ public class ChoosingActionTest {
 
         assertEquals(user, actualUser);
 
-        botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository);
+        //botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportPhotoRepository);
 
-        Field field = choosingAction.getClass().getDeclaredField("botMessages");
-        field.setAccessible(true);
-        botMessages = (ProcessingBotMessages) field.get(choosingAction);
+//        Field field = choosingAction.getClass().getDeclaredField("botMessages");
+//        field.setAccessible(true);
+//        botMessages = (ProcessingBotMessages) field.get(choosingAction);
+        reflectionBotMessages();
         SendMessage actual = botMessages.startCommand();
 
         assertEquals("102030" ,actual.getChatId());
@@ -134,5 +138,13 @@ public class ChoosingActionTest {
                 actual.getText());
     }
 
-
+    private void reflectionBotMessages() {
+        try {
+            Field field = choosingAction.getClass().getDeclaredField("botMessages");
+            field.setAccessible(true);
+            botMessages = (ProcessingBotMessages) field.get(choosingAction);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
