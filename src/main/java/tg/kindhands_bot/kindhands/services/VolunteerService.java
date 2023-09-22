@@ -2,12 +2,16 @@ package tg.kindhands_bot.kindhands.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tg.kindhands_bot.kindhands.components.CheckMethods;
 import tg.kindhands_bot.kindhands.entities.Volunteer;
+import tg.kindhands_bot.kindhands.exceptions.IncorrectDataException;
 import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
 
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 /**
  * Работа с БД волонтеров. Принимает желающих стать волонтерами, а так же удаляет из БД.
@@ -42,7 +46,7 @@ public class VolunteerService {
      * Сreate and save a volunteer method
      */
     public Volunteer createVolunteer(Volunteer volunteer) {
-        log.info("Влонтер '" + volunteer.getName() + "' добавлен.");
+        log.info("Влонтер '" + volunteer.getFirstName() + "' добавлен.");
 
         return volunteersRepository.save(volunteer);
     }
@@ -55,11 +59,17 @@ public class VolunteerService {
     public String addVolunteer(Update update, String phone) {
         Volunteer volunteer = new Volunteer();
         volunteer.setChatId(update.getMessage().getChatId());
-        volunteer.setName(update.getMessage().getChat().getFirstName());
+        volunteer.setFirstName(update.getMessage().getChat().getFirstName());
         volunteer.setAdopted(true);
-        volunteer.setPhone(printPhone(phone));//добавила проверку на приведение номера телефона к единому формату +7(ххх)ххх-хх-хх
+
+        try {
+            volunteer.setPhone(printPhone(phone));
+        } catch (RuntimeException e) {
+            return e.getMessage();
+        }
+
         volunteersRepository.save(volunteer);
-        log.info("Влонтер '" + volunteer.getName() + "' добавлен.");
+        log.info("Влонтер '" + volunteer.getFirstName() + "' добавлен.");
         return "Ваша кандидатура на рассмотрении, с Вами свяжутся";
     }
 
@@ -73,7 +83,7 @@ public class VolunteerService {
         Volunteer volunteer = volunteersRepository.findById(id).orElse(null);
         if (volunteer != null) {
             volunteersRepository.delete(volunteer);
-            log.info("Влонтер '" + volunteer.getName() + "' удален.");
+            log.info("Влонтер '" + volunteer.getFirstName() + "' удален.");
             return "Вы удалены из волонтеров!";
         } else {
             return "Волонтер не найден";
@@ -121,21 +131,17 @@ public class VolunteerService {
      * Phone format +7(ххх)ххх-хх-хх method
      */
     public String printPhone(String phone) {
-        if (phone == null || "".equalsIgnoreCase(phone)) {
-            return "Введите номер телефона";
-        } else {
-            if (phone.length() < 10 || phone.length() > 16) {
-                return "Это не похоже на номер телефона. Исправьте или введите заново";
+        switch (CheckMethods.checkNumberPhone(phone)) {
+            case NULL: {
+                throw new NullPointerException("Поле с номером телефона не должно быть пустым.");
             }
-            String number = phone.replaceAll("[^0-9]", "");
-            if (number.length() > 10) {
-                number = number.substring(number.length() - 10);
+            case INCORRECT_DATA: {
+                throw new IncorrectDataException("Номер телефона введен некорректно. Исправьте или введите заново." +
+                        "\n(Подходящие форматы: +7(800)000-00-00, 88000000000).");
             }
-            number = "+7" + number;
-            number = number.replaceFirst("(\\d{1})(\\d{3})(\\d{3})(\\d{2})(\\d{2})",
-                    "$1($2)$3-$4-$5");
-            return "Ваш номер телефона записан: " + number;
+            case TRUE: break;
         }
+        return phone;
     }
 
 }

@@ -1,7 +1,6 @@
 package tg.kindhands_bot.kindhands.services;
 
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
@@ -29,10 +28,10 @@ public class UserService {
         user.setDenialReason(messageBlock);
         userRepository.save(user);
 
-        bot.sendMessage(ProcessingBotMessages.returnMessageUser("Уважаемый пользователь, "+user.getName() +
+        bot.sendMessage(ProcessingBotMessages.returnMessageUser("Уважаемый пользователь, "+user.getFirstName() +
                 " Вы заблокированы по причине: "+ messageBlock, user));
 
-        return "Пользователь " + user.getName() + " добавлен в черный список";
+        return "Пользователь " + user.getFirstName() + " добавлен в черный список";
     }
 
     /**

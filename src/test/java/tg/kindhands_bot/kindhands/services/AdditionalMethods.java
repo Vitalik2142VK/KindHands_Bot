@@ -19,7 +19,7 @@ public class AdditionalMethods {
         User user = new User();
         user.setId(id);
         user.setChatId(chatId);
-        user.setName(name);
+        user.setFirstName(name);
         user.setBlocked(blocked);
         user.setDenialReason(denialReason);
         user.setBotState(botState);

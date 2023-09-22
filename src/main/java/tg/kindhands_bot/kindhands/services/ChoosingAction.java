@@ -268,7 +268,7 @@ public class ChoosingAction {
                 break;
 
             case USER_CALL_CONTACT:
-                bot.sendMessage(botMessages.editExistMessage("ЗАГЛУШКА!"));
+                bot.sendMessage(botMessages.setUserContactCommand());
                 break;
 
             case DOG_ADDRESS_SHELTER:
@@ -363,7 +363,7 @@ public class ChoosingAction {
                 break;
 
             case USER_CALL_CONTACT:
-                bot.sendMessage(botMessages.editExistMessage("ЗАГЛУШКА!"));
+                bot.sendMessage(botMessages.setUserContactCommand());
                 break;
         }
     }

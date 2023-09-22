@@ -125,11 +125,6 @@ public class ChoosingActionTest {
 
         assertEquals(user, actualUser);
 
-        //botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportPhotoRepository);
-
-//        Field field = choosingAction.getClass().getDeclaredField("botMessages");
-//        field.setAccessible(true);
-//        botMessages = (ProcessingBotMessages) field.get(choosingAction);
         reflectionBotMessages();
         SendMessage actual = botMessages.startCommand();
 

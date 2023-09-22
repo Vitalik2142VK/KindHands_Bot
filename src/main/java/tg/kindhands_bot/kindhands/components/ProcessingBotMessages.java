@@ -57,7 +57,7 @@ public class ProcessingBotMessages {
 
         User user = new User();
         user.setChatId(chatId);
-        user.setName(name);
+        user.setFirstName(name);
         user.setBlocked(false);
         userRepository.save(user);
 
@@ -68,16 +68,25 @@ public class ProcessingBotMessages {
     }
 
     /**
-     * Переводит статус бота на принятия отчета от пользователя
+     * Переводит статус бота на принятие отчета от пользователя
      * -----||-----
      * Translates the status of the bot to accepting a report from the user
      */
     public EditMessageText reportAnimalCommand() {
-        User user = userRepository.findByChatId(update.getCallbackQuery().getMessage().getChatId());
-        user.setBotState(BotState.SET_REPORT_ANIMAL_PHOTO);
-        userRepository.save(user);
+        changeStateBot(BotState.SET_REPORT_ANIMAL_PHOTO, update.getCallbackQuery().getMessage().getChatId());
 
         return editExistMessage("Пришлите Фотографию питомца: ");
+    }
+
+    /**
+     * Переводит статус бота на принятие контактных данных от пользователя
+     * -----||-----
+     * Translates the status of the bot to accepting contact data from the user
+     */
+    public EditMessageText setUserContactCommand() {
+        changeStateBot(BotState.SET_NUM_PHONE, update.getCallbackQuery().getMessage().getChatId());
+
+        return editExistMessage("Укажите свой номер телефона для связи:");
     }
 
     /**
@@ -86,6 +95,7 @@ public class ProcessingBotMessages {
      * Creates a report and adds a user-submitted photo without text
      */
     public SendMessage setReportAnimalPhoto(java.io.File photo) throws IOException {
+        long chatId = update.getMessage().getChatId();
         var date = LocalDate.now();
         var report = reportAnimalRepository.findByDateAndChatId(date, update.getMessage().getChatId());
 
@@ -94,14 +104,14 @@ public class ProcessingBotMessages {
             report.setDate(date);
             //report.setReportNumber();
             //Заменить после создания TamedAnimal
-            report.setChatId(update.getMessage().getChatId());
+            report.setChatId(chatId);
 
             saveReportPhoto(photo);
         }
         report.setDescription(update.getMessage().getText());
         reportAnimalRepository.save(report);
 
-        changeStateBot(BotState.SET_REPORT_ANIMAL);
+        changeStateBot(BotState.SET_REPORT_ANIMAL, chatId);
 
         return returnMessage("Опишите: " +
                 "\nРацион животного;" +
@@ -115,16 +125,17 @@ public class ProcessingBotMessages {
      * In a previously created report, adds a description from the user
      */
     public SendMessage setReportAnimal() {
+        long chatId = update.getMessage().getChatId();
         var date = LocalDate.now();
-        var report = reportAnimalRepository.findByDateAndChatId(date, update.getMessage().getChatId());
+        var report = reportAnimalRepository.findByDateAndChatId(date, chatId);
 
         if (report == null) {
-            throw new NullPointerException("Отчет по id: " + update.getMessage().getChatId() + "не найден!");
+            throw new NullPointerException("Отчет по id: " + chatId + "не найден!");
         }
         report.setDescription(update.getMessage().getText());
         reportAnimalRepository.save(report);
 
-        changeStateBot(BotState.NULL);
+        changeStateBot(BotState.NULL, chatId);
 
         return returnMessage("Отчет отправлен.");
     }
@@ -196,8 +207,8 @@ public class ProcessingBotMessages {
      * -----||-----
      * Sending a message when user is blocked
      */
-    public void changeStateBot(BotState botState) {
-        User user = userRepository.findByChatId(update.getMessage().getChatId());
+    public void changeStateBot(BotState botState, long chatId) {
+        User user = userRepository.findByChatId(chatId);
         if (user == null) { throw new NullPointerException();}
 
         user.setBotState(botState);
