@@ -1,7 +1,8 @@
 package tg.kindhands_bot.kindhands.entities;
 
+import tg.kindhands_bot.kindhands.entities.photo.AnimalPhoto;
+
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
@@ -13,22 +14,9 @@ public class Animal {
     private String name;
     private String ration;
     private String recommendation;
-    @Lob
-    private byte[] photo;
     @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    public Animal(Long id, String name, String ration, String recommendation, byte[] photo) {
-        this.id = id;
-        this.name = name;
-        this.ration = ration;
-        this.recommendation = recommendation;
-        this.photo = photo;
-    }
-
-    public Animal() {
-    }
+    @JoinColumn(name = "animal_photo_id")
+    private AnimalPhoto animalPhoto;
 
     public Long getId() {
         return id;
@@ -62,12 +50,12 @@ public class Animal {
         this.recommendation = recommendation;
     }
 
-    public byte[] getPhoto() {
-        return photo;
+    public AnimalPhoto getAnimalPhoto() {
+        return animalPhoto;
     }
 
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
+    public void setAnimalPhoto(AnimalPhoto animalPhoto) {
+        this.animalPhoto = animalPhoto;
     }
 
     @Override
@@ -75,14 +63,12 @@ public class Animal {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return Objects.equals(name, animal.name) && Objects.equals(ration, animal.ration) && Objects.equals(recommendation, animal.recommendation) && Arrays.equals(photo, animal.photo);
+        return Objects.equals(name, animal.name) && Objects.equals(ration, animal.ration) && Objects.equals(recommendation, animal.recommendation) && Objects.equals(animalPhoto, animal.animalPhoto);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(name, ration, recommendation);
-        result = 31 * result + Arrays.hashCode(photo);
-        return result;
+        return Objects.hash(name, ration, recommendation, animalPhoto);
     }
 
     @Override

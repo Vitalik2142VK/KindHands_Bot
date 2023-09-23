@@ -1,5 +1,7 @@
 package tg.kindhands_bot.kindhands.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -7,10 +9,14 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tg.kindhands_bot.kindhands.config.BotConfig;
+import tg.kindhands_bot.kindhands.repositories.ReportAnimalPhotoRepository;
+import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 
 @Component
 public class KindHandsBot extends TelegramLongPollingBot {
+
+    private final Logger log = LoggerFactory.getLogger(KindHandsBot.class);
 
     private final ChoosingAction choosingAction;
 
@@ -18,10 +24,13 @@ public class KindHandsBot extends TelegramLongPollingBot {
 
 
     public KindHandsBot(UserRepository userRepository,
-                        VolunteerService volunteers, BotConfig config) {
+                        ReportAnimalRepository reportAnimalRepository,
+                        ReportAnimalPhotoRepository reportAnimalPhotoRepository,
+                        VolunteerService volunteers,
+                        BotConfig config) {
         super(config.getToken());
         this.config = config;
-        choosingAction = new ChoosingAction(this, userRepository, volunteers);
+        choosingAction = new ChoosingAction(this, userRepository, reportAnimalRepository, reportAnimalPhotoRepository, volunteers);
     }
 
     @Override
@@ -40,12 +49,20 @@ public class KindHandsBot extends TelegramLongPollingBot {
      */
     @Override
     public void onUpdateReceived(Update update) {
-        if (choosingAction.checkUser(update)) {
-            if (update.hasMessage() && update.getMessage().hasText()) {
-                choosingAction.textCommands(update);
-            } else if (update.hasCallbackQuery()) {
-                choosingAction.buttonCommands(update);
+        try {
+            if (choosingAction.checkUser(update)) {
+                if (update.hasMessage() && update.getMessage().hasText()) {
+                    choosingAction.textCommands();
+                } else if (update.hasCallbackQuery()) {
+                    choosingAction.buttonCommands();
+                } else if (update.hasMessage() && update.getMessage().hasPhoto()) {
+                    choosingAction.checkBotState();
+                }
             }
+        } catch (Exception e) {
+            choosingAction.errorMessage();
+            log.error("Exception: '" + e.getMessage() + "'", e);
+
         }
     }
 
@@ -58,7 +75,8 @@ public class KindHandsBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            choosingAction.errorMessage();
+            log.error("Exception: '" + e.getMessage() + "'", e);
         }
     }
 
@@ -66,7 +84,8 @@ public class KindHandsBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            choosingAction.errorMessage();
+            log.error("Exception: '" + e.getMessage() + "'", e);
         }
     }
 }
