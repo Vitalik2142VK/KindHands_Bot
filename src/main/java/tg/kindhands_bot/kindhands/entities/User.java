@@ -13,12 +13,12 @@ public class User {
     private Long id;
     private Long chatId;
     private String firstName;
-    private String lastName = "";
-    private String patronymic;
+    private String lastName;
+    private String patronymic = "";
+    private String phone;
     private Boolean blocked;
     private String denialReason;
     private BotState botState = BotState.NULL;
-
     public Long getId() {
         return id;
     }
@@ -57,6 +57,14 @@ public class User {
 
     public void setPatronymic(String patronymic) {
         this.patronymic = patronymic;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public Boolean getBlocked() {

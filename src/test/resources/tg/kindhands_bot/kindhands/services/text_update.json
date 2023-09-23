@@ -1,4 +1,13 @@
 {
+  "callbackQuery":{
+    "data": "DOG_SH",
+    "message": {
+      "messageId": 7416,
+      "chat": {
+        "id": 102030
+      }
+    }
+  },
   "message": {
     "from": {
       "id": 102030,

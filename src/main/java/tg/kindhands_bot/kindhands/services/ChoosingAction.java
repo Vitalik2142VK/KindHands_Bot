@@ -200,6 +200,14 @@ public class ChoosingAction {
                 bot.sendMessage(botMessages.setReportAnimal());
                 break;
             }
+            case SET_NUM_PHONE: {
+                bot.sendMessage(botMessages.setNumberPhoneUser());
+                break;
+            }
+            case SET_FULL_NAME: {
+                bot.sendMessage(botMessages.setFullNameUser());
+                break;
+            }
             default: bot.sendMessage(botMessages.defaultMessage());
         }
     }

@@ -1,5 +1,6 @@
 package tg.kindhands_bot.kindhands.components;
 
+import liquibase.pro.packaged.S;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -10,6 +11,7 @@ import tg.kindhands_bot.kindhands.entities.ReportAnimal;
 import tg.kindhands_bot.kindhands.entities.photo.ReportAnimalPhoto;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.enums.BotState;
+import tg.kindhands_bot.kindhands.exceptions.IncorrectDataException;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Класс для обработки и отправки сообщений.
@@ -86,7 +89,7 @@ public class ProcessingBotMessages {
     public EditMessageText setUserContactCommand() {
         changeStateBot(BotState.SET_NUM_PHONE, update.getCallbackQuery().getMessage().getChatId());
 
-        return editExistMessage("Укажите свой номер телефона для связи:");
+        return editExistMessage("Укажите свой номер телефона для связи. \n\n(Подходящие форматы: +7(800)000-00-00, 88000000000).");
     }
 
     /**
@@ -120,6 +123,22 @@ public class ProcessingBotMessages {
     }
 
     /**
+     * Сохранение фотографий репортов
+     * -----||-----
+     * Saving reports photos.
+     */
+    public void saveReportPhoto(File photo) throws IOException {
+        ReportAnimalPhoto reportAnimalPhoto = new ReportAnimalPhoto();
+        reportAnimalPhoto.setTimeLastReport(LocalDateTime.now());
+        reportAnimalPhoto.setFilePath(photo.getAbsolutePath());
+        reportAnimalPhoto.setFileSize(photo.length());
+        reportAnimalPhoto.setMediaType(StringUtils.getFilenameExtension(photo.getPath()));
+        reportAnimalPhoto.setData(Files.readAllBytes(photo.toPath()));
+
+        reportAnimalPhotoRepository.save(reportAnimalPhoto);
+    }
+
+    /**
      * В созданном ранее отчете, добавляет описание от пользователя
      * -----||-----
      * In a previously created report, adds a description from the user
@@ -141,6 +160,66 @@ public class ProcessingBotMessages {
     }
 
     /**
+     * Проверка и сохранение номера телефона пользователя
+     * -----||-----
+     * Checking and saving the user's phone number
+     */
+    public SendMessage setNumberPhoneUser() {
+        long chatId = update.getMessage().getChatId();
+        String phone = update.getMessage().getText();
+
+        User user = userRepository.findByChatId(chatId);
+        if (user == null) { throw new NullPointerException("Пользователь с chatId '" + chatId + "' не найден."); }
+
+        switch (CheckMethods.checkNumberPhone(phone)) {
+            case NULL: {
+                return returnMessage("Поле с номером телефона не должно быть пустым.");
+            }
+            case INCORRECT_DATA: {
+                return returnMessage("Номер телефона введен некорректно. Исправьте или введите заново." +
+                        "\n(Подходящие форматы: +7(800)000-00-00, 88000000000).");
+            }
+            case TRUE: break;
+        }
+
+        user.setPhone(phone);
+        user.setBotState(BotState.SET_FULL_NAME);
+        userRepository.save(user);
+
+        return returnMessage("Номер телефона добавлен.\n\nВведите одним сообщением Ваше: Фамилию Имя Отчество(при наличии)");
+    }
+
+    /**
+     * Проверка и сохранение номера телефона пользователя
+     * -----||-----
+     * Checking and saving the user's phone number
+     */
+    public SendMessage setFullNameUser() {
+        long chatId = update.getMessage().getChatId();
+        String fullName = update.getMessage().getText();
+
+        User user = userRepository.findByChatId(chatId);
+        if (user == null) { throw new NullPointerException("Пользователь с chatId '" + chatId + "' не найден."); }
+
+        List<String> arrFullName;
+        try {
+            arrFullName = CheckMethods.checkFullName(fullName);
+        } catch (NullPointerException | IncorrectDataException e) {
+            return returnMessage(e.getMessage());
+        }
+
+        user.setLastName(arrFullName.get(0));
+        user.setFirstName(arrFullName.get(1));
+        if (arrFullName.size() == 3) {
+            user.setPatronymic(arrFullName.get(2));
+        }
+        user.setBotState(BotState.NULL);
+        userRepository.save(user);
+
+        return returnMessage("Фамилию Имя Отчество добавлены.");
+    }
+
+    /**
      * Отправка сообщения при вводе некорректных данных со стороны пользователя.
      * -----||-----
      * Sending a message when incorrect data is entered by the user.
@@ -150,26 +229,15 @@ public class ProcessingBotMessages {
         return returnMessage(answer);
     }
 
-    /**
-     * Сохранение фотографий репортов
-     * -----||-----
-     * Saving reports photos.
-     */
-    public void saveReportPhoto(File photo) throws IOException {
-        ReportAnimalPhoto reportAnimalPhoto = new ReportAnimalPhoto();
-        reportAnimalPhoto.setTimeLastReport(LocalDateTime.now());
-        reportAnimalPhoto.setFilePath(photo.getAbsolutePath());
-        reportAnimalPhoto.setFileSize(photo.length());
-        reportAnimalPhoto.setMediaType(StringUtils.getFilenameExtension(photo.getPath()));
-        reportAnimalPhoto.setData(Files.readAllBytes(photo.toPath()));
 
-        reportAnimalPhotoRepository.save(reportAnimalPhoto);
-    }
+    // Рассмотреть вариант вывести в отдельный класс
+    // Вспомогательные методы
+
 
     /**
-     * Метод для редактирования существующего сообщения пользователя.
+     * Метод для редактирования существующего сообщения бота.
      * -----||-----
-     * A method for editing an existing user message.
+     * A method for editing an existing bot message.
      */
     public EditMessageText editExistMessage(String text) {
         EditMessageText message = new EditMessageText();
@@ -209,7 +277,7 @@ public class ProcessingBotMessages {
      */
     public void changeStateBot(BotState botState, long chatId) {
         User user = userRepository.findByChatId(chatId);
-        if (user == null) { throw new NullPointerException();}
+        if (user == null) { throw new NullPointerException("Пользователь с chatId '" + chatId + "' не найден.");}
 
         user.setBotState(botState);
         userRepository.save(user);
