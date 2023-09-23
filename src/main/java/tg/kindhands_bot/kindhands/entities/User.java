@@ -1,8 +1,10 @@
 package tg.kindhands_bot.kindhands.entities;
 
+import jdk.jfr.Timestamp;
 import tg.kindhands_bot.kindhands.enums.BotState;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,6 +19,8 @@ public class User {
     private Boolean blocked;
     private String denialReason;
     private BotState botState = BotState.NULL;
+    @Timestamp
+    private LocalDateTime dateOfLastReport;
 
     public Long getId() {
         return id;
@@ -64,6 +68,14 @@ public class User {
 
     public void setBotState(BotState botState) {
         this.botState = botState;
+    }
+
+    public LocalDateTime getDateOfLastReport() {
+        return dateOfLastReport;
+    }
+
+    public void setDateOfLastReport(LocalDateTime dateOfLastReport) {
+        this.dateOfLastReport = dateOfLastReport;
     }
 
     @Override
