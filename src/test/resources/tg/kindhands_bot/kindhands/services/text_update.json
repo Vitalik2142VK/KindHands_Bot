@@ -1,6 +1,6 @@
 {
   "callbackQuery":{
-    "data": "DOG_SH",
+    "data": "%buttonCommand%",
     "message": {
       "messageId": 7416,
       "chat": {
