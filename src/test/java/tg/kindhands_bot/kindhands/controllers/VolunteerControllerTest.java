@@ -42,14 +42,16 @@ public class VolunteerControllerTest {
     public void getAllVolunteersTest() throws Exception {
         Volunteer volunteer = new Volunteer();
         volunteer.setId(1L);
-        volunteer.setName("Bob");
+        volunteer.setFirstName("Bob");
+        volunteer.setLastName("Singler");
         volunteer.setAdopted(true);
         volunteer.setPhone("8800");
         volunteer.setChatId(123L);
 
         Volunteer volunteer1 = new Volunteer();
         volunteer1.setId(2L);
-        volunteer1.setName("God");
+        volunteer1.setFirstName("God");
+        volunteer1.setLastName("My");
         volunteer1.setAdopted(true);
         volunteer1.setPhone("8800");
         volunteer1.setChatId(123L);
@@ -66,12 +68,14 @@ public class VolunteerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$.[0].id").value(volunteer.getId()))
-                .andExpect(jsonPath("$.[0].name").value(volunteer.getName()))
+                .andExpect(jsonPath("$.[0].firstName").value(volunteer.getFirstName()))
+                .andExpect(jsonPath("$.[0].LastName").value(volunteer.getAdopted()))
                 .andExpect(jsonPath("$.[0].adopted").value(volunteer.getAdopted()))
                 .andExpect(jsonPath("$.[0].phone").value(volunteer.getPhone()))
                 .andExpect(jsonPath("$.[0].chatId").value(volunteer.getChatId()))
                 .andExpect(jsonPath("$.[1].id").value(volunteer1.getId()))
-                .andExpect(jsonPath("$.[1].name").value(volunteer1.getName()))
+                .andExpect(jsonPath("$.[1].firstName").value(volunteer1.getFirstName()))
+                .andExpect(jsonPath("$.[1].LastName").value(volunteer.getAdopted()))
                 .andExpect(jsonPath("$.[1].adopted").value(volunteer.getAdopted()))
                 .andExpect(jsonPath("$.[1].phone").value(volunteer.getPhone()))
                 .andExpect(jsonPath("$.[1].chatId").value(volunteer.getChatId()));
@@ -79,15 +83,15 @@ public class VolunteerControllerTest {
     }
     @Test
     public void deleteVolunteerTest() throws Exception {
-        final String name = "Bob";
+        final String firstName = "Bob";
         final Long id = 1L;
 
         JSONObject volunteerObject = new JSONObject();
-        volunteerObject.put("name", name);
+        volunteerObject.put("firstName", firstName);
 
         Volunteer volunteer = new Volunteer();
         volunteer.setId(id);
-        volunteer.setName(name);
+        volunteer.setFirstName(firstName);
 
         when(volunteersRepository.findById(any(Long.class))).thenReturn(Optional.of(volunteer));
 

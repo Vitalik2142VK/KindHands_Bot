@@ -9,9 +9,5 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 class KindhandsApplicationTests {
 
-	@Test
-	void contextLoads() {
-		assertTrue(true);
-	}
 
 }

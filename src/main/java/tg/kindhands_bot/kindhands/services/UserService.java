@@ -50,7 +50,7 @@ public class UserService {
         user.setNeedHelp(false);
         userRepository.save(user);
 
-        return "Проблема пользователя " + user.getName() + " решена";//добавить фио
+        return "Проблема пользователя " + user.getFirstName() + " решена";//добавить фио
     }
 
     /**
