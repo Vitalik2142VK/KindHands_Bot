@@ -18,7 +18,9 @@ public class User {
     private String phone;
     private Boolean blocked;
     private String denialReason;
+    private boolean needHelp=false;
     private BotState botState = BotState.NULL;
+
     public Long getId() {
         return id;
     }
@@ -82,7 +84,15 @@ public class User {
     public void setDenialReason(String denialReason) {
         this.denialReason = denialReason;
     }
+  
+    public boolean getNeedHelp() {
+        return needHelp;
+    }
 
+    public void setNeedHelp(boolean needHelp) {
+        this.needHelp = needHelp;
+    }
+  
     public BotState getBotState() {
         return botState;
     }
@@ -90,6 +100,7 @@ public class User {
     public void setBotState(BotState botState) {
         this.botState = botState;
     }
+
 
     @Override
     public boolean equals(Object o) {

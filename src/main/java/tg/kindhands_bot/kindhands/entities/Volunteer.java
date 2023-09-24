@@ -13,7 +13,7 @@ public class Volunteer {
     private String firstName;
     private String lastName;
     private String patronymic = "";
-    private Boolean adopted; //принят ли волонтер. true, если да
+    private Boolean adopted=false; //принят ли волонтер. true, если да
     private String phone;
 
     public Long getId() {

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.entities.ReportAnimal;
 import tg.kindhands_bot.kindhands.entities.photo.ReportAnimalPhoto;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.regex.Matcher;
 import java.util.List;
 
 /**
@@ -291,7 +293,7 @@ public class ProcessingBotMessages {
     /**
      * отправка сообщения пользователю.
      * -----||-----
-     *  Send Message for user.
+     * Send Message for user.
      */
     public static SendMessage returnMessageUser(String text, User user) {
         SendMessage message = new SendMessage();
@@ -299,4 +301,29 @@ public class ProcessingBotMessages {
         message.setText(text);
         return message;
     }
+
+    /**
+     * Пользователь запроси помощь волонтера и получил сообщение об этом,
+     * меняется значение поля needHelp.
+     * -----||-----
+     * The user requested the help of a volunteer and received a message about it,
+     * the value of the needHelp field changes.
+     */
+
+    public EditMessageText userNeedHelp() {
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
+        User user = userRepository.findByChatId(chatId);
+        if (user == null) {
+            throw new NullPointerException("Пользователь с id: " + chatId + " не найден");
+        }
+        user.setNeedHelp(true);
+        userRepository.save(user);
+        return editExistMessage("Мы отправили Ваш запрос волонтеру. С Вами свяжутся.");
+    }
 }
+
+
+
+
+
+

@@ -13,4 +13,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Collection<User> findAllWithExistingChatId();
 
     User findByBlocked(Long chatId);
+
+    Collection<User> findByNeedHelpTrue();
 }

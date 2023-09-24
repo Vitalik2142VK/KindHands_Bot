@@ -77,7 +77,8 @@ public class ChoosingAction {
                 bot.sendMessage(NavigationMenu.choosingShelter(chatId));
                 break;
             }
-            default: checkBotState();
+            default:
+                checkBotState();
         }
     }
 
@@ -164,7 +165,7 @@ public class ChoosingAction {
                 break;
 
             case CALL_VOLUNTEER:
-                bot.sendMessage(botMessages.editExistMessage(volunteers.inviteVolunteer()));
+                bot.sendMessage(botMessages.userNeedHelp());
                 break;
 
             case ASSISTANCE_SHELTER:
