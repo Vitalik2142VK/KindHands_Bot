@@ -32,8 +32,8 @@ public class VolunteerControllerTest {
 
         @MockBean
         private VolunteersRepository volunteersRepository;
-    @MockBean
-    private UserRepository userRepository;
+        @MockBean
+        private UserRepository userRepository;
 
         @SpyBean
         private VolunteerService volunteerService;
