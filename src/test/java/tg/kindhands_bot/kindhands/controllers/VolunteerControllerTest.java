@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import tg.kindhands_bot.kindhands.entities.Volunteer;
+import tg.kindhands_bot.kindhands.repositories.UserRepository;
 import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
 import tg.kindhands_bot.kindhands.services.VolunteerService;
 
@@ -31,6 +32,8 @@ public class VolunteerControllerTest {
 
         @MockBean
         private VolunteersRepository volunteersRepository;
+    @MockBean
+    private UserRepository userRepository;
 
         @SpyBean
         private VolunteerService volunteerService;
@@ -69,16 +72,16 @@ public class VolunteerControllerTest {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$.[0].id").value(volunteer.getId()))
                 .andExpect(jsonPath("$.[0].firstName").value(volunteer.getFirstName()))
-                .andExpect(jsonPath("$.[0].LastName").value(volunteer.getAdopted()))
+                .andExpect(jsonPath("$.[0].lastName").value(volunteer.getLastName()))
                 .andExpect(jsonPath("$.[0].adopted").value(volunteer.getAdopted()))
                 .andExpect(jsonPath("$.[0].phone").value(volunteer.getPhone()))
                 .andExpect(jsonPath("$.[0].chatId").value(volunteer.getChatId()))
                 .andExpect(jsonPath("$.[1].id").value(volunteer1.getId()))
                 .andExpect(jsonPath("$.[1].firstName").value(volunteer1.getFirstName()))
-                .andExpect(jsonPath("$.[1].LastName").value(volunteer.getAdopted()))
-                .andExpect(jsonPath("$.[1].adopted").value(volunteer.getAdopted()))
-                .andExpect(jsonPath("$.[1].phone").value(volunteer.getPhone()))
-                .andExpect(jsonPath("$.[1].chatId").value(volunteer.getChatId()));
+                .andExpect(jsonPath("$.[1].lastName").value(volunteer1.getLastName()))
+                .andExpect(jsonPath("$.[1].adopted").value(volunteer1.getAdopted()))
+                .andExpect(jsonPath("$.[1].phone").value(volunteer1.getPhone()))
+                .andExpect(jsonPath("$.[1].chatId").value(volunteer1.getChatId()));
 
     }
     @Test
