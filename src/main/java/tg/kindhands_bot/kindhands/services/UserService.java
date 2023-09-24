@@ -27,7 +27,7 @@ public class UserService {
     public String addUserBlacklist(Long id, String messageBlock) {
         User user = userRepository.getById(id);
         user.setBlocked(true);
-        user.setDenialReason(messageBlock);
+//        user.setDenialReason(messageBlock);
         userRepository.save(user);
 
         bot.sendMessage(ProcessingBotMessages.returnMessageUser("Уважаемый пользователь, "+user.getFirstName() +
