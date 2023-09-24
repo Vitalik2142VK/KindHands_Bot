@@ -60,9 +60,8 @@ public class KindHandsBot extends TelegramLongPollingBot {
                 }
             }
         } catch (Exception e) {
-            choosingAction.errorMessage();
+            sendMessage(choosingAction.errorMessage());
             log.error("Exception: '" + e.getMessage() + "'", e);
-
         }
     }
 
@@ -75,7 +74,6 @@ public class KindHandsBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            choosingAction.errorMessage();
             log.error("Exception: '" + e.getMessage() + "'", e);
         }
     }
@@ -84,7 +82,6 @@ public class KindHandsBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            choosingAction.errorMessage();
             log.error("Exception: '" + e.getMessage() + "'", e);
         }
     }

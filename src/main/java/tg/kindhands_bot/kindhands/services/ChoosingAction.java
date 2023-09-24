@@ -123,9 +123,8 @@ public class ChoosingAction {
      */
     public void buttonCommands() {
         String callbackData = update.getCallbackQuery().getData();
-        long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-        botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportAnimalPhotoRepository);
+//        botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportAnimalPhotoRepository);
 
         switch (callbackData) {
             case DOG_BUTTON:
@@ -171,38 +170,6 @@ public class ChoosingAction {
 
             case ASSISTANCE_SHELTER:
                 bot.sendMessage(NavigationMenu.menuAssistShelter(update));
-        }
-    }
-
-    public void checkBotState() {
-        var user = userRepository.findByChatId(update.getMessage().getChatId());
-        var photoSizes = update.getMessage().getPhoto();
-
-        if (user == null) {
-            throw new NullPointerException("Exception при попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь с id: '"
-                    + update.getMessage().getChatId() + "' не найден");
-        }
-
-        switch (Objects.requireNonNull(user).getBotState()) {
-            case NULL: {
-                bot.sendMessage(botMessages.defaultMessage());
-                break;
-            }
-            case SET_REPORT_ANIMAL_PHOTO: {
-                try {
-                    var photo = bot.downloadFile(bot.execute(new GetFile(photoSizes.get(photoSizes.size() - 1).getFileId())), new File("photos/reports" + UUID.randomUUID() + ".png"));
-                    bot.sendMessage(botMessages.setReportAnimalPhoto(photo));
-                    break;
-                } catch (TelegramApiException | IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            case SET_REPORT_ANIMAL: {
-                bot.sendMessage(botMessages.setReportAnimal());
-                break;
-            }
-            default:
-                bot.sendMessage(botMessages.defaultMessage());
         }
     }
 
@@ -270,7 +237,7 @@ public class ChoosingAction {
                 break;
 
             case USER_CALL_CONTACT:
-                bot.sendMessage(botMessages.editExistMessage("ЗАГЛУШКА!"));
+                bot.sendMessage(botMessages.setUserContactCommand());
                 break;
 
             case DOG_ADDRESS_SHELTER:
@@ -365,8 +332,52 @@ public class ChoosingAction {
                 break;
 
             case USER_CALL_CONTACT:
-                bot.sendMessage(botMessages.editExistMessage("ЗАГЛУШКА!"));
+                bot.sendMessage(botMessages.setUserContactCommand());
                 break;
+        }
+    }
+
+    /**
+     * Проверяет статус пользователя к боту
+     * -----//-----
+     * Checks the status of the user to the bot
+     */
+    public void checkBotState() {
+        var user = userRepository.findByChatId(update.getMessage().getChatId());
+        var photoSizes = update.getMessage().getPhoto();
+
+        if (user == null) {
+            throw new NullPointerException("Exception при попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь с id: '"
+                    + update.getMessage().getChatId() + "' не найден");
+        }
+
+        switch (Objects.requireNonNull(user).getBotState()) {
+            case NULL: {
+                bot.sendMessage(botMessages.defaultMessage());
+                break;
+            }
+            case SET_REPORT_ANIMAL_PHOTO: {
+                try {
+                    var photo = bot.downloadFile(bot.execute(new GetFile(photoSizes.get(photoSizes.size() - 1).getFileId())), new File("photos/reports" + UUID.randomUUID() + ".png"));
+                    bot.sendMessage(botMessages.setReportAnimalPhoto(photo));
+                    break;
+                } catch (TelegramApiException | IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case SET_REPORT_ANIMAL:{
+                bot.sendMessage(botMessages.setReportAnimal());
+                break;
+            }
+            case SET_NUM_PHONE: {
+                bot.sendMessage(botMessages.setNumberPhoneUser());
+                break;
+            }
+            case SET_FULL_NAME: {
+                bot.sendMessage(botMessages.setFullNameUser());
+                break;
+            }
+            default: bot.sendMessage(botMessages.defaultMessage());
         }
     }
 

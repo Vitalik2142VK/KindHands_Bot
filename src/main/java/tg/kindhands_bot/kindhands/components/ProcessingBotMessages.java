@@ -1,5 +1,6 @@
 package tg.kindhands_bot.kindhands.components;
 
+import liquibase.pro.packaged.S;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -11,6 +12,7 @@ import tg.kindhands_bot.kindhands.entities.ReportAnimal;
 import tg.kindhands_bot.kindhands.entities.photo.ReportAnimalPhoto;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.enums.BotState;
+import tg.kindhands_bot.kindhands.exceptions.IncorrectDataException;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
@@ -21,7 +23,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
-
+import java.util.List;
 
 /**
  * Класс для обработки и отправки сообщений.
@@ -60,7 +62,7 @@ public class ProcessingBotMessages {
 
         User user = new User();
         user.setChatId(chatId);
-        user.setName(name);
+        user.setFirstName(name);
         user.setBlocked(false);
         userRepository.save(user);
 
@@ -71,16 +73,25 @@ public class ProcessingBotMessages {
     }
 
     /**
-     * Переводит статус бота на принятия отчета от пользователя
+     * Переводит статус бота на принятие отчета от пользователя
      * -----||-----
      * Translates the status of the bot to accepting a report from the user
      */
     public EditMessageText reportAnimalCommand() {
-        User user = userRepository.findByChatId(update.getCallbackQuery().getMessage().getChatId());
-        user.setBotState(BotState.SET_REPORT_ANIMAL_PHOTO);
-        userRepository.save(user);
+        changeStateBot(BotState.SET_REPORT_ANIMAL_PHOTO, update.getCallbackQuery().getMessage().getChatId());
 
         return editExistMessage("Пришлите Фотографию питомца: ");
+    }
+
+    /**
+     * Переводит статус бота на принятие контактных данных от пользователя
+     * -----||-----
+     * Translates the status of the bot to accepting contact data from the user
+     */
+    public EditMessageText setUserContactCommand() {
+        changeStateBot(BotState.SET_NUM_PHONE, update.getCallbackQuery().getMessage().getChatId());
+
+        return editExistMessage("Укажите свой номер телефона для связи. \n\n(Подходящие форматы: +7(800)000-00-00, 88000000000).");
     }
 
     /**
@@ -89,6 +100,7 @@ public class ProcessingBotMessages {
      * Creates a report and adds a user-submitted photo without text
      */
     public SendMessage setReportAnimalPhoto(java.io.File photo) throws IOException {
+        long chatId = update.getMessage().getChatId();
         var date = LocalDate.now();
         var report = reportAnimalRepository.findByDateAndChatId(date, update.getMessage().getChatId());
 
@@ -97,49 +109,19 @@ public class ProcessingBotMessages {
             report.setDate(date);
             //report.setReportNumber();
             //Заменить после создания TamedAnimal
-            report.setChatId(update.getMessage().getChatId());
+            report.setChatId(chatId);
 
             saveReportPhoto(photo);
         }
         report.setDescription(update.getMessage().getText());
         reportAnimalRepository.save(report);
 
-        changeStateBot(BotState.SET_REPORT_ANIMAL);
+        changeStateBot(BotState.SET_REPORT_ANIMAL, chatId);
 
         return returnMessage("Опишите: " +
                 "\nРацион животного;" +
                 "\nОбщее самочувствие и привыкание к новому месту;" +
                 "\nИзменение в поведении: отказ от старых привычек, приобретение новых.");
-    }
-
-    /**
-     * В созданном ранее отчете, добавляет описание от пользователя
-     * -----||-----
-     * In a previously created report, adds a description from the user
-     */
-    public SendMessage setReportAnimal() {
-        var date = LocalDate.now();
-        var report = reportAnimalRepository.findByDateAndChatId(date, update.getMessage().getChatId());
-
-        if (report == null) {
-            throw new NullPointerException("Отчет по id: " + update.getMessage().getChatId() + "не найден!");
-        }
-        report.setDescription(update.getMessage().getText());
-        reportAnimalRepository.save(report);
-
-        changeStateBot(BotState.NULL);
-
-        return returnMessage("Отчет отправлен.");
-    }
-
-    /**
-     * Отправка сообщения при вводе некорректных данных со стороны пользователя.
-     * -----||-----
-     * Sending a message when incorrect data is entered by the user.
-     */
-    public SendMessage defaultMessage() {
-        String answer = "Не корректно введено сообщение.";
-        return returnMessage(answer);
     }
 
     /**
@@ -159,9 +141,105 @@ public class ProcessingBotMessages {
     }
 
     /**
-     * Метод для редактирования существующего сообщения пользователя.
+     * В созданном ранее отчете, добавляет описание от пользователя
      * -----||-----
-     * A method for editing an existing user message.
+     * In a previously created report, adds a description from the user
+     */
+    public SendMessage setReportAnimal() {
+        long chatId = update.getMessage().getChatId();
+        var date = LocalDate.now();
+        var report = reportAnimalRepository.findByDateAndChatId(date, chatId);
+
+        if (report == null) {
+            throw new NullPointerException("Отчет по id: " + chatId + "не найден!");
+        }
+        report.setDescription(update.getMessage().getText());
+        reportAnimalRepository.save(report);
+
+        changeStateBot(BotState.NULL, chatId);
+
+        return returnMessage("Отчет отправлен.");
+    }
+
+    /**
+     * Проверка и сохранение номера телефона пользователя
+     * -----||-----
+     * Checking and saving the user's phone number
+     */
+    public SendMessage setNumberPhoneUser() {
+        long chatId = update.getMessage().getChatId();
+        String phone = update.getMessage().getText();
+
+        User user = userRepository.findByChatId(chatId);
+        if (user == null) { throw new NullPointerException("Пользователь с chatId '" + chatId + "' не найден."); }
+
+        switch (CheckMethods.checkNumberPhone(phone)) {
+            case NULL: {
+                return returnMessage("Поле с номером телефона не должно быть пустым.");
+            }
+            case INCORRECT_DATA: {
+                return returnMessage("Номер телефона введен некорректно. Исправьте или введите заново." +
+                        "\n(Подходящие форматы: +7(800)000-00-00, 88000000000).");
+            }
+            case TRUE: break;
+        }
+
+        user.setPhone(phone);
+        user.setBotState(BotState.SET_FULL_NAME);
+        userRepository.save(user);
+
+        return returnMessage("Номер телефона добавлен.\n\nВведите одним сообщением Ваше: Фамилию Имя Отчество(при наличии)");
+    }
+
+    /**
+     * Проверка и сохранение номера телефона пользователя
+     * -----||-----
+     * Checking and saving the user's phone number
+     */
+    public SendMessage setFullNameUser() {
+        long chatId = update.getMessage().getChatId();
+        String fullName = update.getMessage().getText();
+
+        User user = userRepository.findByChatId(chatId);
+        if (user == null) { throw new NullPointerException("Пользователь с chatId '" + chatId + "' не найден."); }
+
+        List<String> arrFullName;
+        try {
+            arrFullName = CheckMethods.checkFullName(fullName);
+        } catch (NullPointerException | IncorrectDataException e) {
+            return returnMessage(e.getMessage());
+        }
+
+        user.setLastName(arrFullName.get(0));
+        user.setFirstName(arrFullName.get(1));
+        if (arrFullName.size() == 3) {
+            user.setPatronymic(arrFullName.get(2));
+        }
+        user.setBotState(BotState.NULL);
+        userRepository.save(user);
+
+        return returnMessage("Фамилию Имя Отчество добавлены.");
+    }
+
+    /**
+     * Отправка сообщения при вводе некорректных данных со стороны пользователя.
+     * -----||-----
+     * Sending a message when incorrect data is entered by the user.
+     */
+    public SendMessage defaultMessage() {
+        String answer = "Не корректно введено сообщение.";
+        return returnMessage(answer);
+    }
+
+
+    // Рассмотреть вариант вывести в отдельный класс
+    // Вспомогательные методы
+
+
+    /**
+     * Метод для редактирования существующего сообщения бота.
+     * -----||-----
+     * A method for editing an existing bot message.
      */
     public EditMessageText editExistMessage(String text) {
         EditMessageText message = new EditMessageText();
@@ -199,11 +277,9 @@ public class ProcessingBotMessages {
      * -----||-----
      * Sending a message when user is blocked
      */
-    public void changeStateBot(BotState botState) {
-        User user = userRepository.findByChatId(update.getMessage().getChatId());
-        if (user == null) {
-            throw new NullPointerException();
-        }
+    public void changeStateBot(BotState botState, long chatId) {
+        User user = userRepository.findByChatId(chatId);
+        if (user == null) { throw new NullPointerException("Пользователь с chatId '" + chatId + "' не найден.");}
 
         user.setBotState(botState);
         userRepository.save(user);

@@ -14,12 +14,16 @@ public class AdditionalMethods {
         return BotUtils.fromJson(json.replace("%text%", replaced), Update.class);
     }
 
+    public static Update getUpdateButton(String json, String replaced) {
+        return BotUtils.fromJson(json.replace("%buttonCommand%", replaced), Update.class);
+    }
+
     public static User createUser(Long id, Long chatId, String name, Boolean blocked,
                             String denialReason, BotState botState) {
         User user = new User();
         user.setId(id);
         user.setChatId(chatId);
-        user.setName(name);
+        user.setFirstName(name);
         user.setBlocked(blocked);
         user.setDenialReason(denialReason);
         user.setBotState(botState);

@@ -30,10 +30,10 @@ public class UserService {
         user.setDenialReason(messageBlock);
         userRepository.save(user);
 
-        bot.sendMessage(ProcessingBotMessages.returnMessageUser("Уважаемый пользователь, " + user.getName() +
-                " Вы заблокированы по причине: " + messageBlock, user));
+        bot.sendMessage(ProcessingBotMessages.returnMessageUser("Уважаемый пользователь, "+user.getFirstName() +
+                " Вы заблокированы по причине: "+ messageBlock, user));
 
-        return "Пользователь " + user.getName() + " добавлен в черный список";
+        return "Пользователь " + user.getFirstName() + " добавлен в черный список";
     }
 
 

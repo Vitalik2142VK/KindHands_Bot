@@ -10,10 +10,11 @@ public class Volunteer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long chatId;
-    private String name;
+    private String firstName;
+    private String lastName;
+    private String patronymic = "";
     private Boolean adopted=false; //принят ли волонтер. true, если да
     private String phone;
-
 
     public Long getId() {
         return id;
@@ -35,12 +36,28 @@ public class Volunteer {
         this.chatId = chatId;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPatronymic() {
+        return patronymic;
+    }
+
+    public void setPatronymic(String patronymic) {
+        this.patronymic = patronymic;
     }
 
     public Boolean getAdopted() {
@@ -60,12 +77,12 @@ public class Volunteer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Volunteer volunteer = (Volunteer) o;
-        return Objects.equals(id, volunteer.id) && Objects.equals(chatId, volunteer.chatId) && Objects.equals(name, volunteer.name) && Objects.equals(adopted, volunteer.adopted) && Objects.equals(phone, volunteer.phone);
+        return Objects.equals(id, volunteer.id) && Objects.equals(chatId, volunteer.chatId) && Objects.equals(firstName, volunteer.firstName) && Objects.equals(adopted, volunteer.adopted) && Objects.equals(phone, volunteer.phone);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chatId, name, adopted, phone);
+        return Objects.hash(id, chatId, firstName, adopted, phone);
     }
 
     @Override
@@ -73,7 +90,7 @@ public class Volunteer {
         return "Volunteer{" +
                 "id=" + id +
                 ", chatId=" + chatId +
-                ", name='" + name + '\'' +
+                ", name='" + firstName + '\'' +
                 ", free=" + adopted +
                 ", phone='" + phone + '\'' +
                 '}';
