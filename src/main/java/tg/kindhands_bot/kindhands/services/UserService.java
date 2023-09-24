@@ -33,7 +33,7 @@ public class UserService {
         bot.sendMessage(ProcessingBotMessages.returnMessageUser("Уважаемый пользователь, "+user.getFirstName() +
                 " Вы заблокированы по причине: "+ messageBlock, user));
 
-        return "Пользователь " + user.getFirstName() + " добавлен в черный список";
+        return "Пользователь " + user.getLastName() + " " + user.getFirstName() + " " + user.getPatronymic() + " добавлен в черный список";
     }
 
 
@@ -50,7 +50,7 @@ public class UserService {
         user.setNeedHelp(false);
         userRepository.save(user);
 
-        return "Проблема пользователя " + user.getFirstName() + " решена";//добавить фио
+        return "Проблема пользователя " + user.getLastName() + " " + user.getFirstName() + " " + user.getPatronymic() + " решена";//добавить фио
     }
 
     /**
