@@ -42,7 +42,7 @@ public class UserService {
      * -----||-----
      * Method for changing the value of the user's needHelp field
      */
-    public String isNeedHelp(Long id, boolean needHelp) {
+    public String changeIsNeedHelp(Long id) {
         User user = userRepository.getById(id);
         if (user == null) {
             throw new NullPointerException("Пользователь с id: " + id + " не найден");
@@ -50,7 +50,7 @@ public class UserService {
         user.setNeedHelp(false);
         userRepository.save(user);
 
-        return "Проблема пользователя " + user.getName() + " решена";//добавить фио
+        return "Проблема пользователя " + user.getFirstName() + " " + user.getLastName() + " решена";
     }
 
     /**

@@ -33,8 +33,8 @@ public class UserController {
                     responseCode = "200",
                     description = "Пользователь заблокирован и причина указана."
             )})
-    public ResponseEntity<?> addUserBlacklist(@PathVariable Long id, @RequestParam String messageBlock) {
-        return ResponseEntity.ok().build();
+    public String addUserBlacklist(@PathVariable Long id, @RequestParam String messageBlock) {
+        return userService.addUserBlacklist(id, messageBlock);
     }
 
     /**
@@ -88,5 +88,22 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(users);
+    }
+
+    /**
+     * Волонтер меняет поле пользователя needHelp на false после оказания помощи
+     * -----||-----
+     * The volunteer changes the user's needHelp field to false after providing assistance
+     */
+    @PutMapping("/adopted/help/change/{id}")//GET http://localhost:8080/volunteer/adopted/help/change/3
+    @Operation(summary = "Изменение волонтером статуса пользователя после оказания помощи")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Помощь оказана."
+            )
+    })
+    public String changeIsNeedHelp(@PathVariable Long id) {
+        return userService.changeIsNeedHelp(id);
     }
 }
