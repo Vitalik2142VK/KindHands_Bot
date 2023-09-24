@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.entities.Volunteer;
+import tg.kindhands_bot.kindhands.repositories.UserRepository;
 import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
 
 import java.util.List;
@@ -20,21 +21,16 @@ import java.util.List;
 @Service
 public class VolunteerService {
     private final VolunteersRepository volunteersRepository;
+    private final UserRepository userRepository;
+
 
     private final Logger log = LoggerFactory.getLogger(VolunteerService.class);
 
-    public VolunteerService(VolunteersRepository volunteersRepository) {
+    public VolunteerService(VolunteersRepository volunteersRepository, UserRepository userRepository) {
         this.volunteersRepository = volunteersRepository;
+        this.userRepository = userRepository;
     }
 
-    /**
-     * Метод приглашения пользователем волонтера в чат
-     * -----||-----
-     * Method the user calls a volunteer
-     */
-    public String inviteVolunteer() {
-        return "Мы ищем волонтера";
-    }
 
     /**
      * Метод создания и сохранения волонтера
@@ -42,7 +38,7 @@ public class VolunteerService {
      * Сreate and save a volunteer method
      */
     public Volunteer createVolunteer(Volunteer volunteer) {
-        log.info("Влонтер '" + volunteer.getName() + "' добавлен.");
+        log.info("Вoлонтер '" + volunteer.getName() + "' добавлен.");
 
         return volunteersRepository.save(volunteer);
     }
@@ -57,9 +53,9 @@ public class VolunteerService {
         volunteer.setChatId(update.getMessage().getChatId());
         volunteer.setName(update.getMessage().getChat().getFirstName());
         volunteer.setAdopted(true);
-        volunteer.setPhone(printPhone(phone));//добавила проверку на приведение номера телефона к единому формату +7(ххх)ххх-хх-хх
+        volunteer.setPhone(printPhone(phone));
         volunteersRepository.save(volunteer);
-        log.info("Влонтер '" + volunteer.getName() + "' добавлен.");
+        log.info("Вoлонтер '" + volunteer.getName() + "' добавлен.");
         return "Ваша кандидатура на рассмотрении, с Вами свяжутся";
     }
 
@@ -73,44 +69,39 @@ public class VolunteerService {
         Volunteer volunteer = volunteersRepository.findById(id).orElse(null);
         if (volunteer != null) {
             volunteersRepository.delete(volunteer);
-            log.info("Влонтер '" + volunteer.getName() + "' удален.");
+            log.info("Волонтер '" + volunteer.getName() + "' удален.");
             return "Вы удалены из волонтеров!";
         } else {
             return "Волонтер не найден";
         }
     }
-//// НА ПОТОМ
-//    /**
-//     * Метод находит список свободных волонтеров и конвертирует в SendMessage
-//     * сообщение о том что пользователю нужна помощь
-//     * -----||-----
-//     * list of free volunteers method
-//     */
-//    public List<SendMessage> getFreeVolunteers(Update update) {
+// НА ПОТОМ
+    /**
+     * Метод находит список принятых волонтеров и конвертирует в SendMessage
+     * сообщение о том что пользователю нужна помощь
+     * -----||-----
+     * list of free volunteers method
+     */
+//    public List<SendMessage> getAdoptedVolunteers(Update update) {
 //        if (update.hasMessage() && update.getMessage().hasText()) {
 //            String messageText = update.getMessage().getText();
-//            Long chatId=update.getMessage().getChatId();
+//            Long chatId = update.getMessage().getChatId();
 //
 //            if (messageText.contains("CALL_VOLUNTEER")) {
-//                var textToVolunteers=messageText("Пользователь запросил помощь волонтера");
-//                        var freeVolunteers=volunteersRepository.getVolunteersByIsFreeTrue();
-//                for (Volunteer volunteer : volunteers) {
-//                    sendMessage(volunteer.getChatId(), textToVolunteers);
-//
-//
+//                var textToVolunteers = "Пользователь " + chatId + " запросил помощь волонтера";
+//                var adoptedVolunteers = volunteersRepository.findByAdoptedTrue();
+//                List<SendMessage> messages = new ArrayList<>();
+//                for (Volunteer adoptedVolunteer : adoptedVolunteers) {
+//                    SendMessage message = new SendMessage(adoptedVolunteer.getChatId(), textToVolunteers);
+//                    messages.add(message);
 //                }
-//            }
-//        }
-//      return (List<SendMessage>) volunteersRepository.getVolunteersByIsFreeTrue().stream().findAny()
-//                .orElseThrow(() -> new RuntimeException("Все волонтеры заняты."));
-//    }
+
 
     /**
      * Метод получения всех волонтеров
      * -----||-----
      * Get all volunteers method
      */
-
     public List<Volunteer> getAllVolunteers() {
         return volunteersRepository.findAll();
     }
@@ -137,5 +128,4 @@ public class VolunteerService {
             return "Ваш номер телефона записан: " + number;
         }
     }
-
 }

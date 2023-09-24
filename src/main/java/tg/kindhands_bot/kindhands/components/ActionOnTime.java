@@ -23,35 +23,31 @@ public class ActionOnTime {
     }
 
     /**
-     * Метод для отправки напоминания пользователю об отправке отчета.
+     * Метод для отправки напоминания усыновителю об отправке отчета.
      * -----||-----
      * A method for sending a reminder to the user about sending a report.
      */
-    @Scheduled(cron = "0 00 18 * * *") // каждый день в 18
+    @Scheduled(cron = "0 00 18 * * *") // каждый день в 18 всем усыновителям
     public void sendDailyReportReminder() {
 
         Collection<User> allUsers = userRepository.findAllWithExistingChatId();
-        for (User user : allUsers) {//в дальнейшем реализовать через стримы
-            bot.sendMessage(ProcessingBotMessages.returnMessageUser(
-                    "Добрый день! Напоминаем, что до 21:00 необходимо отправить " +
-                            "отчёт по питомцу. Спасибо!", user));
-
-        }
+        allUsers.stream().map(user -> ProcessingBotMessages.returnMessageUser(
+                "Добрый день! Напоминаем, что до 21:00 необходимо отправить " +
+                        "отчёт по питомцу. Спасибо!", user)).forEach(bot::sendMessage);
     }
 
     /**
-     * Метод для отправки сообщения пользователю "Нет отчета".
+     * Метод для отправки сообщения усыновителю "Нет отчета".
      * -----||-----
      * A method for sending to the user about sending a report.
      */
-    @Scheduled(cron = "0 00 21 * * *") // каждый день в 21
+    @Scheduled(cron = "0 00 21 * * *") // каждый день в 21 всем усыновителям, не приславшим отчет
     public void sendDailyReportNotReceived() {
         Collection<User> allUsers = userRepository.findAllWithExistingChatId();
-        for (User user : allUsers) {//в дальнейшем реализовать через стримы
-            bot.sendMessage(ProcessingBotMessages.returnMessageUser(
-                    "Сегодня мы не получили от Вас отчет! Напоминаем, что до 21:00 необходимо отправить " +
-                            "отчёт по питомцу. Спасибо!", user));
-        }
+        allUsers.stream().map(user -> ProcessingBotMessages.returnMessageUser(
+                "Сегодня мы не получили от Вас отчет! Напоминаем, что до 21:00 необходимо отправить " +
+                        "отчёт по питомцу. Спасибо!", user)).forEach(bot::sendMessage);
     }
 }
+
 

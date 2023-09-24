@@ -11,7 +11,7 @@ public class Volunteer {
     private Long id;
     private Long chatId;
     private String name;
-    private Boolean adopted; //принят ли волонтер. true, если да
+    private Boolean adopted=false; //принят ли волонтер. true, если да
     private String phone;
 
 

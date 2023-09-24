@@ -77,7 +77,8 @@ public class ChoosingAction {
                 bot.sendMessage(NavigationMenu.choosingShelter(chatId));
                 break;
             }
-            default: checkBotState();
+            default:
+                checkBotState();
         }
     }
 
@@ -165,7 +166,7 @@ public class ChoosingAction {
                 break;
 
             case CALL_VOLUNTEER:
-                bot.sendMessage(botMessages.editExistMessage(volunteers.inviteVolunteer()));
+                bot.sendMessage(botMessages.userNeedHelp());
                 break;
 
             case ASSISTANCE_SHELTER:
@@ -179,7 +180,7 @@ public class ChoosingAction {
 
         if (user == null) {
             throw new NullPointerException("Exception при попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь с id: '"
-                                + update.getMessage().getChatId() + "' не найден");
+                    + update.getMessage().getChatId() + "' не найден");
         }
 
         switch (Objects.requireNonNull(user).getBotState()) {
@@ -196,11 +197,12 @@ public class ChoosingAction {
                     throw new RuntimeException(e);
                 }
             }
-            case SET_REPORT_ANIMAL:{
+            case SET_REPORT_ANIMAL: {
                 bot.sendMessage(botMessages.setReportAnimal());
                 break;
             }
-            default: bot.sendMessage(botMessages.defaultMessage());
+            default:
+                bot.sendMessage(botMessages.defaultMessage());
         }
     }
 

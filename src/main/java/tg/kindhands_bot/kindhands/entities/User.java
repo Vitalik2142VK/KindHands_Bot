@@ -17,6 +17,7 @@ public class User {
     private Boolean blocked;
     private String denialReason;
     private BotState botState = BotState.NULL;
+    private boolean needHelp=false;
 
     public Long getId() {
         return id;
@@ -65,6 +66,11 @@ public class User {
     public void setBotState(BotState botState) {
         this.botState = botState;
     }
+
+    public void setNeedHelp(boolean needHelp) {
+        this.needHelp = needHelp;
+    }
+
 
     @Override
     public boolean equals(Object o) {

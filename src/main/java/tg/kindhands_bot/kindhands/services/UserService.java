@@ -1,10 +1,11 @@
 package tg.kindhands_bot.kindhands.services;
 
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
+
+import java.util.Collection;
 
 @Service
 public class UserService {
@@ -29,20 +30,35 @@ public class UserService {
         user.setDenialReason(messageBlock);
         userRepository.save(user);
 
-        bot.sendMessage(ProcessingBotMessages.returnMessageUser("Уважаемый пользователь, "+user.getName() +
-                " Вы заблокированы по причине: "+ messageBlock, user));
+        bot.sendMessage(ProcessingBotMessages.returnMessageUser("Уважаемый пользователь, " + user.getName() +
+                " Вы заблокированы по причине: " + messageBlock, user));
 
         return "Пользователь " + user.getName() + " добавлен в черный список";
     }
 
+
     /**
-     * Метод продления испытательного срока
+     * Метод для изменения значения поля needHelp у пользователя после оказания помощи
      * -----||-----
-     *  method
+     * Method for changing the value of the user's needHelp field
      */
-    public String extendProbationPeriod(Long id, Integer term) {
-//        User user = userRepository.getById(id);
-//        SendMessage message = new SendMessage(user.getChatId(), "Вам продлен испытательный срок на 14 или 30 дней, отправляйте отчеты вовремя");
-        return "Пользователю продлен испытательный срок на "+term;
+    public String isNeedHelp(Long id, boolean needHelp) {
+        User user = userRepository.getById(id);
+        if (user == null) {
+            throw new NullPointerException("Пользователь с id: " + id + " не найден");
+        }
+        user.setNeedHelp(false);
+        userRepository.save(user);
+
+        return "Проблема пользователя " + user.getName() + " решена";//добавить фио
+    }
+
+    /**
+     * Метод полученя всех пользователей, запросивших  помощь волонтера
+     * -----||-----
+     * Method of getting all users who requested the help of a volunteer
+     */
+    public Collection<User> needVolunteerHelper() {
+        return userRepository.findByNeedHelpTrue();
     }
 }

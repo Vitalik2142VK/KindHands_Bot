@@ -6,11 +6,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tg.kindhands_bot.kindhands.entities.User;
+import tg.kindhands_bot.kindhands.services.UserService;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/volunteer/user")
 @Tag(name = "Пользователи.", description = "Эндпоинты для работы волонтера с пользователями.")
 public class UserController {
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     /**
      * Добавляет пользователя в черный список, с указанной причиной.
      * -----||-----
@@ -57,5 +67,26 @@ public class UserController {
             )})
     public ResponseEntity<?> extendProbationPeriod(@PathVariable Long id, @RequestParam Integer term) {
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Волонтеры получают список пользователей, запросивших помощь
+     * -----||-----
+     * Volunteers receive a list of users who have requested help
+     */
+    @GetMapping("/help")//GET http://localhost:8080/volunteer/user/help
+    @Operation(summary = "Получение волонтерами списка пользователей, которым нужна помощь")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Список получен."
+            )
+    })
+    public ResponseEntity<Collection<User>> needVolunteerHelper() {
+        Collection<User> users = userService.needVolunteerHelper();
+        if (users.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(users);
     }
 }
