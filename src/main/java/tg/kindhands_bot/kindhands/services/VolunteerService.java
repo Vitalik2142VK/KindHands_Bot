@@ -5,10 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.components.CheckMethods;
+import tg.kindhands_bot.kindhands.entities.ReportAnimal;
 import tg.kindhands_bot.kindhands.entities.Volunteer;
-import tg.kindhands_bot.kindhands.repositories.UserRepository;
+import tg.kindhands_bot.kindhands.enums.ReportStatus;
+import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
-import tg.kindhands_bot.kindhands.exceptions.IncorrectDataExceptionAndSendMessage;
 
 import java.util.List;
 
@@ -23,16 +24,26 @@ import java.util.List;
 @Service
 public class VolunteerService {
     private final VolunteersRepository volunteersRepository;
-    private final UserRepository userRepository;
+    private final ReportAnimalRepository reportAnimalRepository;
 
 
     private final Logger log = LoggerFactory.getLogger(VolunteerService.class);
 
-    public VolunteerService(VolunteersRepository volunteersRepository, UserRepository userRepository) {
+    public VolunteerService(VolunteersRepository volunteersRepository, ReportAnimalRepository reportAnimalRepository) {
         this.volunteersRepository = volunteersRepository;
-        this.userRepository = userRepository;
+        this.reportAnimalRepository = reportAnimalRepository;
     }
 
+    /**
+     * Выводит не проверенные доклады пользователей о животных.
+     * -----||-----
+     * Displays unverified user reports about animals.
+     */
+    public List<ReportAnimal> getReports() {
+        List<ReportAnimal> reports = reportAnimalRepository.findByReportStatus(ReportStatus.ON_INSPECTION);
+        if (reports.isEmpty()) throw new NullPointerException("Не проверенных отчетов нет.");
+        return reports;
+    }
 
     /**
      * Метод создания и сохранения волонтера

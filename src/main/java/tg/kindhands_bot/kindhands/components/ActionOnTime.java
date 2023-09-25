@@ -79,10 +79,10 @@ public class ActionOnTime {
      */
     @Scheduled(cron = "0 00 21 * * *") // каждый день в 12
     public void checkDailyReportReceived() {
-        userRepository.findAllWithExistingChatId().stream()
-                .filter(user -> Duration.between(LocalDateTime.now(), user.getDateOfLastReport()).toDays() > 2)
-                .forEach(suspect -> bot.sendMessage(ProcessingBotMessages.returnMessageUser(
-                        "Вы не отправляли отчет длительное время. Ждем от вас новостей!", suspect)));
+//        userRepository.findAllWithExistingChatId().stream()
+//                .filter(user -> Duration.between(LocalDateTime.now(), user.getDateOfLastReport()).toDays() > 2)
+//                .forEach(suspect -> bot.sendMessage(ProcessingBotMessages.returnMessageUser(
+//                        "Вы не отправляли отчет длительное время. Ждем от вас новостей!", suspect)));
     }
 }
 

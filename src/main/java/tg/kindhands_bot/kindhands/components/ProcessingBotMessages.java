@@ -145,13 +145,15 @@ public class ProcessingBotMessages {
      * -----||-----
      * Saving reports photos.
      */
-    public ReportAnimalPhoto saveReportPhoto(File photo) throws IOException {
+    public ReportAnimalPhoto saveReportPhoto(File photo) {
+        byte[] data = makeLoweredPhoto(photo.toPath());
+
         ReportAnimalPhoto reportAnimalPhoto = new ReportAnimalPhoto();
         reportAnimalPhoto.setTimeLastReport(LocalDateTime.now());
         reportAnimalPhoto.setFilePath(photo.getAbsolutePath());
-        reportAnimalPhoto.setFileSize(photo.length());
+        reportAnimalPhoto.setFileSize(data.length);
         reportAnimalPhoto.setMediaType(StringUtils.getFilenameExtension(photo.getPath()));
-        reportAnimalPhoto.setData(Files.readAllBytes(photo.toPath()));
+        reportAnimalPhoto.setData(data);
 
         reportAnimalPhotoRepository.save(reportAnimalPhoto);
         return reportAnimalPhoto;
@@ -196,7 +198,8 @@ public class ProcessingBotMessages {
         user.setBotState(BotState.SET_FULL_NAME);
         userRepository.save(user);
 
-        return returnMessage("Номер телефона добавлен.\n\nВведите одним сообщением Ваше: Фамилия Имя Отчество(при наличии)");
+        return returnMessage("Номер телефона добавлен.\n\nВведите одним сообщением Вашу: " +
+                "Фамилию Имя Отчество(при наличии)");
     }
 
     /**
@@ -226,7 +229,7 @@ public class ProcessingBotMessages {
         user.setBotState(BotState.NULL);
         userRepository.save(user);
 
-        return returnMessage("Фамилию Имя Отчество добавлены.");
+        return returnMessage("Фамилия Имя Отчество добавлены.");
     }
 
     /**
@@ -239,22 +242,6 @@ public class ProcessingBotMessages {
         return returnMessage(answer);
     }
 
-
-    /**
-     * Сохранение фотографий репортов
-     * -----||-----
-     * Saving reports photos.
-     */
-    public void saveReportPhoto(File photo) {
-        byte[] data = makeLoweredPhoto(photo.toPath());
-
-        ReportAnimalPhoto reportAnimalPhoto = new ReportAnimalPhoto();
-        reportAnimalPhoto.setTimeLastReport(LocalDateTime.now());
-        reportAnimalPhoto.setFilePath(photo.getAbsolutePath());
-        reportAnimalPhoto.setFileSize(data.length);
-        reportAnimalPhoto.setMediaType(StringUtils.getFilenameExtension(photo.getPath()));
-        reportAnimalPhoto.setData(data);
-      
 
     // Рассмотреть вариант вывести в отдельный класс
     // Вспомогательные методы

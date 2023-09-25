@@ -89,4 +89,21 @@ public class UserController {
         }
         return ResponseEntity.ok(users);
     }
+
+    /**
+     * Волонтер меняет поле пользователя needHelp на false после оказания помощи
+     * -----||-----
+     * The volunteer changes the user's needHelp field to false after providing assistance
+     */
+    @PutMapping("/adopted/help/change/{id}")//GET http://localhost:8080/volunteer/user/help/change/3
+    @Operation(summary = "Изменение волонтером статуса пользователя после оказания помощи")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Помощь оказана."
+            )
+    })
+    public ResponseEntity<Collection<User>> changeIsNeedHelp(@RequestParam(required = false) Long id) {
+        return ResponseEntity.ok().build();
+    }
 }
