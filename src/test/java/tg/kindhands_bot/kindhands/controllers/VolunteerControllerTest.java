@@ -11,8 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import tg.kindhands_bot.kindhands.entities.Volunteer;
+import tg.kindhands_bot.kindhands.repositories.AnimalsRepository;
+import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
+import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 import tg.kindhands_bot.kindhands.services.VolunteerService;
 
 import java.util.List;
@@ -26,20 +29,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = VolunteerController.class)
 public class VolunteerControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
 
-        @Autowired
-        private MockMvc mockMvc;
+    @MockBean
+    private VolunteersRepository volunteersRepository;
+    @MockBean
+    private UserRepository userRepository;
+    @MockBean
+    private AnimalsRepository animalsRepository;
+    @MockBean
+    private TamedAnimalRepository tamedAnimalRepository;
+    @MockBean
+    private ReportAnimalRepository reportAnimalRepository;
 
-        @MockBean
-        private VolunteersRepository volunteersRepository;
-        @MockBean
-        private UserRepository userRepository;
+    @SpyBean
+    private VolunteerService volunteerService;
 
-        @SpyBean
-        private VolunteerService volunteerService;
-
-        @InjectMocks
-        private VolunteerController volunteerController;
+    @InjectMocks
+    private VolunteerController volunteerController;
 
     @Test
     public void getAllVolunteersTest() throws Exception {

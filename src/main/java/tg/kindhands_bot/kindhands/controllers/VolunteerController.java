@@ -39,7 +39,7 @@ public class VolunteerController {
                     description = "Отчет получен."
             )})
     public ResponseEntity<?> getReports() {
-        return ResponseEntity.ok(volunteerService);
+        return ResponseEntity.ok(volunteerService.getReports());
     }
 
 

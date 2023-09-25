@@ -77,13 +77,13 @@ public class User {
         this.blocked = blocked;
     }
 
-//    public String getDenialReason() {
-//        return denialReason;
-//    }
-//
-//    public void setDenialReason(String denialReason) {
-//        this.denialReason = denialReason;
-//    }
+    public String getDenialReason() {
+        return denialReason;
+    }
+
+    public void setDenialReason(String denialReason) {
+        this.denialReason = denialReason;
+    }
   
     public boolean getNeedHelp() {
         return needHelp;

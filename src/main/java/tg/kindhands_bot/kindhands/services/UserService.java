@@ -43,7 +43,7 @@ public class UserService {
     public String addUserBlacklist(Long id, String messageBlock) {
         User user = userRepository.getById(id);
         user.setBlocked(true);
-//        user.setDenialReason(messageBlock);
+        user.setDenialReason(messageBlock);
         userRepository.save(user);
 
         messagesBot.sendMessageUser(user, "Уважаемый " + user.getFirstName() + " " + user.getPatronymic() +
@@ -80,21 +80,10 @@ public class UserService {
         switch (animal.getTypeAnimal()) {
             case CAT: {
                 tamedAnimal = new TamedCat();
-//                TamedCat tamedCat = new TamedCat();
-//                tamedCat.setUser(user);
-//                tamedCat.setAnimal(animal);
-//                tamedCat.setDateAdoption(nowDate);
-//                tamedCat.setDateLastReport(nowDate);
-//                tamedAnimalRepository.save(tamedCat);
                 break;
             }
             case DOG: {
                 tamedAnimal = new TamedDog();
-//                TamedDog tamedDog = new TamedDog();
-//                tamedDog.setUser(user);
-//                tamedDog.setAnimal(animal);
-//                //Дата приручения
-//                tamedAnimalRepository.save(tamedDog);
                 break;
             }
             default: return "Не реализован функционал, для данного вида животного.";
