@@ -11,7 +11,7 @@ import java.util.Objects;
 @Entity
 public class ReportAnimal {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private LocalDate date;
     private String description;

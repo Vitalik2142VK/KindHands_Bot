@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import tg.kindhands_bot.kindhands.components.ActionOnTime;
 import tg.kindhands_bot.kindhands.config.BotConfig;
 import tg.kindhands_bot.kindhands.exceptions.RuntimeExceptionAndSendMessage;
 import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
@@ -23,6 +24,7 @@ public class KindHandsBot extends TelegramLongPollingBot {
     private final ChoosingAction choosingAction;
 
     private final BotConfig config;
+
 
 
     public KindHandsBot(UserRepository userRepository,
@@ -69,7 +71,6 @@ public class KindHandsBot extends TelegramLongPollingBot {
             } else if (update.hasCallbackQuery()) {
                 sendMessage(choosingAction.errorEditMessage(e.getSendMessage()));
             }
-            log.error("Exception: '" + e.getMessage() + "'", e);
         } catch (Exception e) {
             sendMessage(choosingAction.errorMessage());
             log.error("Exception: '" + e.getMessage() + "'", e);
