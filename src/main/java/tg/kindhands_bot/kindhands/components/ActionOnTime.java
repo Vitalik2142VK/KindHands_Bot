@@ -9,6 +9,8 @@ import tg.kindhands_bot.kindhands.entities.tamed.TamedAnimal;
 import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 import tg.kindhands_bot.kindhands.services.KindHandsBot;
 
+
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -68,6 +70,19 @@ public class ActionOnTime {
                         "\n\nСпасибо за понимание!")).forEach(bot::sendMessage);
 
         log.info("Предупреждение не отправившим пользователям в 21:00 отправлено.");
+    }
+
+    /**
+     * Метод выявления тех, кто не отправлял отчет уже больше 2 дней.
+     * -----||-----
+     * A method for identifying people who haven't send report more than 2 days
+     */
+    @Scheduled(cron = "0 00 21 * * *") // каждый день в 12
+    public void checkDailyReportReceived() {
+        userRepository.findAllWithExistingChatId().stream()
+                .filter(user -> Duration.between(LocalDateTime.now(), user.getDateOfLastReport()).toDays() > 2)
+                .forEach(suspect -> bot.sendMessage(ProcessingBotMessages.returnMessageUser(
+                        "Вы не отправляли отчет длительное время. Ждем от вас новостей!", suspect)));
     }
 }
 

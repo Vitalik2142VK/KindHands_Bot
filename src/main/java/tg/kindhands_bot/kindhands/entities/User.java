@@ -20,6 +20,8 @@ public class User {
     private String denialReason;
     private boolean needHelp=false;
     private BotState botState = BotState.NULL;
+    @Timestamp
+    private LocalDateTime dateOfLastReport;
 
     public Long getId() {
         return id;
@@ -100,7 +102,6 @@ public class User {
     public void setBotState(BotState botState) {
         this.botState = botState;
     }
-
 
     @Override
     public boolean equals(Object o) {
