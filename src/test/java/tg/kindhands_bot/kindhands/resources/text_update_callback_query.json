@@ -1,0 +1,10 @@
+{
+  "callback_query": {
+    "from": {
+      "id": 123
+    },
+    "text": {
+      "starts_with" : "%command%"
+    }
+  }
+}

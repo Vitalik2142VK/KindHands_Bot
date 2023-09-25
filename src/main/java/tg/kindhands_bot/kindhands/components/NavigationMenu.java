@@ -166,6 +166,7 @@ public class NavigationMenu {
         var callContactButton = createButton("Записать контактные данные для связи", USER_CALL_CONTACT);
         var addressShelterButton = createButton("Адрес приюта", ADDRESS_SHELTER + animalText);
         var travelToShelterButton = createButton("Схема проезда", TRAVEL_SHELTER + animalText);
+        var callVolunteerButton = createButton("Позвать волонтёра", CALL_VOLUNTEER);
 
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
@@ -176,6 +177,8 @@ public class NavigationMenu {
         List<InlineKeyboardButton> rowInFiveLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInSixLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInSevenLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInEightLine = new ArrayList<>();
+
 
         rowInLine.add(aboutShelterButton);
         rowInTwoLine.add(scheduleButton);
@@ -184,6 +187,7 @@ public class NavigationMenu {
         rowInFiveLine.add(callContactButton);
         rowInSixLine.add(addressShelterButton);
         rowInSevenLine.add(travelToShelterButton);
+        rowInEightLine.add(callVolunteerButton);
 
         rowsInLine.add(rowInLine);
         rowsInLine.add(rowInTwoLine);
@@ -192,6 +196,7 @@ public class NavigationMenu {
         rowsInLine.add(rowInThreeLine);
         rowsInLine.add(rowInFourLine);
         rowsInLine.add(rowInFiveLine);
+        rowsInLine.add(rowInEightLine);
 
         markup.setKeyboard(rowsInLine);
         message.setReplyMarkup(markup);
@@ -246,6 +251,7 @@ public class NavigationMenu {
                 " общению с собакой", DOG_COMMUNICATION_ADVICES);
         var informationToVerifiedDogHandlersButton = createButton("Рекомендации по проверенным кинологам для" +
                 " дальнейшего обращения к ним", VERIFIED_DOG_HANDLERS);
+        var callVolunteerButton = createButton("Позвать волонтёра", CALL_VOLUNTEER);
 
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
@@ -259,6 +265,8 @@ public class NavigationMenu {
         List<InlineKeyboardButton> rowInEightLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInNineLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInTenLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInElevenLine = new ArrayList<>();
+
 
         rowInLine.add(animalIntroductionRulesButton);
         rowInTwoLine.add(listOfDocumentsButton);
@@ -272,6 +280,7 @@ public class NavigationMenu {
         }
         rowInNineLine.add(rejectionReasonButton);
         rowInTenLine.add(callContactButton);
+        rowInElevenLine.add(callVolunteerButton);
 
         rowsInLine.add(rowInLine);
         rowsInLine.add(rowInTwoLine);
@@ -283,6 +292,7 @@ public class NavigationMenu {
         rowsInLine.add(rowInEightLine);
         rowsInLine.add(rowInNineLine);
         rowsInLine.add(rowInTenLine);
+        rowsInLine.add(rowInElevenLine);
 
         markup.setKeyboard(rowsInLine);
         message.setReplyMarkup(markup);
