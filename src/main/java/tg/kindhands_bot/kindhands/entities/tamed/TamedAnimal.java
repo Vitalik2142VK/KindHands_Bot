@@ -19,8 +19,8 @@ public abstract class TamedAnimal {
     @OneToOne
     @JoinColumn(name = "animal_id")
     private Animal animal;
-    private int numReports=30;
-    private int numReportsSent;
+    private int numReports = 30;
+    private int numReportsSent = 0;
 
     public long getId() {
         return id;

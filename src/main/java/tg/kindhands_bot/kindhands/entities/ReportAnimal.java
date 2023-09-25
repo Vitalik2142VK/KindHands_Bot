@@ -1,5 +1,7 @@
 package tg.kindhands_bot.kindhands.entities;
 
+import tg.kindhands_bot.kindhands.entities.photo.ReportAnimalPhoto;
+import tg.kindhands_bot.kindhands.entities.tamed.TamedAnimal;
 import tg.kindhands_bot.kindhands.enums.ReportStatus;
 
 import javax.persistence.*;
@@ -12,15 +14,17 @@ public class ReportAnimal {
     @GeneratedValue
     private long id;
     private LocalDate date;
-    //private TamedAnimal tamedAnimal;
-    //private PhotoReportAnimal photo;
     private String description;
     private int reportNumber;
     @Enumerated(EnumType.STRING)
     private ReportStatus reportStatus = ReportStatus.ON_INSPECTION;
 
-    // для тестирования, удалить после добавления TamedAnimal
-    private long chatId;
+    @ManyToOne
+    @JoinColumn(name = "tamed_animal_id")
+    private TamedAnimal tamedAnimal;
+
+    @OneToOne
+    private ReportAnimalPhoto photo;
 
     public long getId() {
         return id;
@@ -62,6 +66,22 @@ public class ReportAnimal {
         this.reportStatus = reportStatus;
     }
 
+    public TamedAnimal getTamedAnimal() {
+        return tamedAnimal;
+    }
+
+    public void setTamedAnimal(TamedAnimal tamedAnimal) {
+        this.tamedAnimal = tamedAnimal;
+    }
+
+    public ReportAnimalPhoto getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(ReportAnimalPhoto photo) {
+        this.photo = photo;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -73,13 +93,5 @@ public class ReportAnimal {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public long getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(long chatId) {
-        this.chatId = chatId;
     }
 }

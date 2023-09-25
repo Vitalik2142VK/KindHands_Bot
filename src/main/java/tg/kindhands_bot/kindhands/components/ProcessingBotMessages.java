@@ -1,28 +1,28 @@
 package tg.kindhands_bot.kindhands.components;
 
-import liquibase.pro.packaged.S;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.entities.ReportAnimal;
+import tg.kindhands_bot.kindhands.entities.photo.AnimalPhoto;
 import tg.kindhands_bot.kindhands.entities.photo.ReportAnimalPhoto;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.enums.BotState;
 import tg.kindhands_bot.kindhands.exceptions.IncorrectDataException;
-import tg.kindhands_bot.kindhands.repositories.ReportAnimalPhotoRepository;
+import tg.kindhands_bot.kindhands.exceptions.NullPointerExceptionAndSendMessage;
+import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
+import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.regex.Matcher;
 import java.util.List;
 
 /**
@@ -36,19 +36,19 @@ public class ProcessingBotMessages {
 
     private Update update;
     private final UserRepository userRepository;
-
     private final ReportAnimalRepository reportAnimalRepository;
-
     private final ReportAnimalPhotoRepository reportAnimalPhotoRepository;
+    private final TamedAnimalRepository tamedAnimalRepository;
 
     public ProcessingBotMessages(Update update,
                                  UserRepository userRepository,
                                  ReportAnimalRepository reportAnimalRepository,
-                                 ReportAnimalPhotoRepository reportAnimalPhotoRepository) {
+                                 ReportAnimalPhotoRepository reportAnimalPhotoRepository, TamedAnimalRepository tamedAnimalRepository) {
         this.update = update;
         this.userRepository = userRepository;
         this.reportAnimalRepository = reportAnimalRepository;
         this.reportAnimalPhotoRepository = reportAnimalPhotoRepository;
+        this.tamedAnimalRepository = tamedAnimalRepository;
     }
 
     /**
@@ -78,7 +78,15 @@ public class ProcessingBotMessages {
      * Translates the status of the bot to accepting a report from the user
      */
     public EditMessageText reportAnimalCommand() {
-        changeStateBot(BotState.SET_REPORT_ANIMAL_PHOTO, update.getCallbackQuery().getMessage().getChatId());
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
+
+        var tamedAnimal = tamedAnimalRepository.findByUser_ChatId(chatId);
+        if (tamedAnimal == null) {
+            throw new NullPointerExceptionAndSendMessage("Пользователь с id: '" + chatId + "' не зарегистрирован, как приютивший животное.",
+                    "Вы не брали животное в нашем приюте или произошла ошибка.\nОбратитесь к волонтерам.");
+        }
+
+        changeStateBot(BotState.SET_REPORT_ANIMAL_PHOTO, chatId);
 
         return editExistMessage("Пришлите Фотографию питомца: ");
     }
@@ -102,18 +110,26 @@ public class ProcessingBotMessages {
     public SendMessage setReportAnimalPhoto(java.io.File photo) throws IOException {
         long chatId = update.getMessage().getChatId();
         var date = LocalDate.now();
-        var report = reportAnimalRepository.findByDateAndChatId(date, update.getMessage().getChatId());
 
+        var tamedAnimal = tamedAnimalRepository.findByUser_ChatId(chatId);
+        if (tamedAnimal == null) {
+            throw new NullPointerException("Пользователь с id: '" + chatId + "' не зарегистрирован, как приютивший животное.");
+        }
+
+        var report = reportAnimalRepository.findByDateAndTamedAnimal_Id(date, tamedAnimal.getId());
         if (report == null) {
             report = new ReportAnimal();
             report.setDate(date);
+
+            tamedAnimal.setNumReportsSent(tamedAnimal.getNumReportsSent() + 1);
+            //добавить обновление даты последнего отправленного отчета
+            tamedAnimalRepository.save(tamedAnimal);
+
+            report.setTamedAnimal(tamedAnimal);
             //report.setReportNumber();
             //Заменить после создания TamedAnimal
-            report.setChatId(chatId);
-
-            saveReportPhoto(photo);
         }
-        report.setDescription(update.getMessage().getText());
+        report.setPhoto(saveReportPhoto(photo));
         reportAnimalRepository.save(report);
 
         changeStateBot(BotState.SET_REPORT_ANIMAL, chatId);
@@ -129,7 +145,7 @@ public class ProcessingBotMessages {
      * -----||-----
      * Saving reports photos.
      */
-    public void saveReportPhoto(File photo) throws IOException {
+    public ReportAnimalPhoto saveReportPhoto(File photo) throws IOException {
         ReportAnimalPhoto reportAnimalPhoto = new ReportAnimalPhoto();
         reportAnimalPhoto.setTimeLastReport(LocalDateTime.now());
         reportAnimalPhoto.setFilePath(photo.getAbsolutePath());
@@ -138,6 +154,7 @@ public class ProcessingBotMessages {
         reportAnimalPhoto.setData(Files.readAllBytes(photo.toPath()));
 
         reportAnimalPhotoRepository.save(reportAnimalPhoto);
+        return reportAnimalPhoto;
     }
 
     /**
@@ -148,10 +165,10 @@ public class ProcessingBotMessages {
     public SendMessage setReportAnimal() {
         long chatId = update.getMessage().getChatId();
         var date = LocalDate.now();
-        var report = reportAnimalRepository.findByDateAndChatId(date, chatId);
+        var report = reportAnimalRepository.findByDateAndTamedAnimal_User_ChatId(date, chatId);
 
         if (report == null) {
-            throw new NullPointerException("Отчет по id: " + chatId + "не найден!");
+            throw new NullPointerException("Отчет пользователя по id: '" + chatId + "' не найден.");
         }
         report.setDescription(update.getMessage().getText());
         reportAnimalRepository.save(report);
@@ -256,7 +273,11 @@ public class ProcessingBotMessages {
      */
     public SendMessage returnMessage(String text) {
         SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId());
+        if (update.hasMessage()) {
+            message.setChatId(update.getMessage().getChatId());
+        } else if (update.hasCallbackQuery()) {
+            message.setChatId(update.getCallbackQuery().getMessage().getChatId());
+        }
         message.setText(text);
         return message;
     }

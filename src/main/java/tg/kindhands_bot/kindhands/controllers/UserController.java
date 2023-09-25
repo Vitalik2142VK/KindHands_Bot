@@ -50,7 +50,7 @@ public class UserController {
                     description = "Пользователю добавлено животное."
             )})
     public ResponseEntity<?> addUserAnimal(@PathVariable Long id, @RequestParam Long idAnimal) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userService.addUserAnimal(id, idAnimal));
     }
 
     /**
