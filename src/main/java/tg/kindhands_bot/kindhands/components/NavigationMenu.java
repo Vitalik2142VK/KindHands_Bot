@@ -50,7 +50,7 @@ public class NavigationMenu {
      * The method that displays the "menu" buttons of the shelter.
      */
     public static EditMessageText menuShelter(Update update, String shelter) {
-        EditMessageText message = new EditMessageText(".");
+        EditMessageText message = new EditMessageText();
         message.setChatId(update.getCallbackQuery().getMessage().getChatId());
         message.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
 

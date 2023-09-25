@@ -2,17 +2,19 @@ package tg.kindhands_bot.kindhands.services;
 
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tg.kindhands_bot.kindhands.components.NavigationMenu;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
-import tg.kindhands_bot.kindhands.repositories.ReportAnimalPhotoRepository;
+import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.components.shelters.CatShelter;
 import tg.kindhands_bot.kindhands.components.shelters.DogShelter;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 import tg.kindhands_bot.kindhands.components.send_data.SendCatData;
 import tg.kindhands_bot.kindhands.components.send_data.SendDogData;
+import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +35,8 @@ public class ChoosingAction {
 
     private final UserRepository userRepository;
     private final ReportAnimalRepository reportAnimalRepository;
+    private final ReportAnimalPhotoRepository reportAnimalPhotoRepository;
+    private final TamedAnimalRepository tamedAnimalRepository;
 
     private final VolunteerService volunteers;
 
@@ -46,17 +50,18 @@ public class ChoosingAction {
     private final SendDogData sendDogData = new SendDogData();
     private final SendCatData sendCatData = new SendCatData();
 
-    private final ReportAnimalPhotoRepository reportAnimalPhotoRepository;
 
     public ChoosingAction(KindHandsBot bot,
                           UserRepository userRepository,
                           ReportAnimalRepository reportAnimalRepository,
                           ReportAnimalPhotoRepository reportAnimalPhotoRepository,
+                          TamedAnimalRepository tamedAnimalRepository,
                           VolunteerService volunteers) {
         this.bot = bot;
         this.userRepository = userRepository;
         this.reportAnimalRepository = reportAnimalRepository;
         this.reportAnimalPhotoRepository = reportAnimalPhotoRepository;
+        this.tamedAnimalRepository = tamedAnimalRepository;
         this.volunteers = volunteers;
     }
 
@@ -77,7 +82,8 @@ public class ChoosingAction {
                 bot.sendMessage(NavigationMenu.choosingShelter(chatId));
                 break;
             }
-            default: checkBotState();
+            default:
+                checkBotState();
         }
     }
 
@@ -90,7 +96,7 @@ public class ChoosingAction {
         this.update = update;
 
         if (botMessages == null) {
-            botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportAnimalPhotoRepository);
+            botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportAnimalPhotoRepository, tamedAnimalRepository);
         } else {
             botMessages.setUpdate(update);
         }
@@ -122,9 +128,8 @@ public class ChoosingAction {
      */
     public void buttonCommands() {
         String callbackData = update.getCallbackQuery().getData();
-        long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-        botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportAnimalPhotoRepository);
+//        botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportAnimalPhotoRepository);
 
         switch (callbackData) {
             case DOG_BUTTON:
@@ -165,42 +170,11 @@ public class ChoosingAction {
                 break;
 
             case CALL_VOLUNTEER:
-                bot.sendMessage(botMessages.editExistMessage(volunteers.inviteVolunteer()));
+                bot.sendMessage(botMessages.userNeedHelp());
                 break;
 
             case ASSISTANCE_SHELTER:
                 bot.sendMessage(NavigationMenu.menuAssistShelter(update));
-        }
-    }
-
-    public void checkBotState() {
-        var user = userRepository.findByChatId(update.getMessage().getChatId());
-        var photoSizes = update.getMessage().getPhoto();
-
-        if (user == null) {
-            throw new NullPointerException("Exception при попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь с id: '"
-                                + update.getMessage().getChatId() + "' не найден");
-        }
-
-        switch (Objects.requireNonNull(user).getBotState()) {
-            case NULL: {
-                bot.sendMessage(botMessages.defaultMessage());
-                break;
-            }
-            case SET_REPORT_ANIMAL_PHOTO: {
-                try {
-                    var photo = bot.downloadFile(bot.execute(new GetFile(photoSizes.get(photoSizes.size() - 1).getFileId())), new File("photos/reports" + UUID.randomUUID() + ".png"));
-                    bot.sendMessage(botMessages.setReportAnimalPhoto(photo));
-                    break;
-                } catch (TelegramApiException | IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            case SET_REPORT_ANIMAL:{
-                bot.sendMessage(botMessages.setReportAnimal());
-                break;
-            }
-            default: bot.sendMessage(botMessages.defaultMessage());
         }
     }
 
@@ -268,7 +242,7 @@ public class ChoosingAction {
                 break;
 
             case USER_CALL_CONTACT:
-                bot.sendMessage(botMessages.editExistMessage("ЗАГЛУШКА!"));
+                bot.sendMessage(botMessages.setUserContactCommand());
                 break;
 
             case DOG_ADDRESS_SHELTER:
@@ -363,8 +337,52 @@ public class ChoosingAction {
                 break;
 
             case USER_CALL_CONTACT:
-                bot.sendMessage(botMessages.editExistMessage("ЗАГЛУШКА!"));
+                bot.sendMessage(botMessages.setUserContactCommand());
                 break;
+        }
+    }
+
+    /**
+     * Проверяет статус пользователя к боту
+     * -----//-----
+     * Checks the status of the user to the bot
+     */
+    public void checkBotState() {
+        var user = userRepository.findByChatId(update.getMessage().getChatId());
+        var photoSizes = update.getMessage().getPhoto();
+
+        if (user == null) {
+            throw new NullPointerException("Exception при попытке поиска user в методе checkBotState() класса ChoosingAction, пользователь с id: '"
+                    + update.getMessage().getChatId() + "' не найден");
+        }
+
+        switch (Objects.requireNonNull(user).getBotState()) {
+            case NULL: {
+                bot.sendMessage(botMessages.defaultMessage());
+                break;
+            }
+            case SET_REPORT_ANIMAL_PHOTO: {
+                try {
+                    var photo = bot.downloadFile(bot.execute(new GetFile(photoSizes.get(photoSizes.size() - 1).getFileId())), new File("photos/reports" + UUID.randomUUID() + ".png"));
+                    bot.sendMessage(botMessages.setReportAnimalPhoto(photo));
+                    break;
+                } catch (TelegramApiException | IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case SET_REPORT_ANIMAL:{
+                bot.sendMessage(botMessages.setReportAnimal());
+                break;
+            }
+            case SET_NUM_PHONE: {
+                bot.sendMessage(botMessages.setNumberPhoneUser());
+                break;
+            }
+            case SET_FULL_NAME: {
+                bot.sendMessage(botMessages.setFullNameUser());
+                break;
+            }
+            default: bot.sendMessage(botMessages.defaultMessage());
         }
     }
 
@@ -374,6 +392,14 @@ public class ChoosingAction {
      * Sends a message to the user in case of an error
      */
     public SendMessage errorMessage() {
-        return botMessages.returnMessage("Извините! Что-то пошло не так.\nПовторите попытку позже.");
+        return botMessages.returnMessage("Извините! Что-то пошло не так.\nПовторите попытку позже или обратитесь к волонтерам.");
+    }
+
+    public SendMessage errorMessage(String message) {
+        return botMessages.returnMessage(message);
+    }
+
+    public EditMessageText errorEditMessage(String message) {
+        return botMessages.editExistMessage(message);
     }
 }

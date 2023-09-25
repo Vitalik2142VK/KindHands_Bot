@@ -1,11 +1,8 @@
 package tg.kindhands_bot.kindhands.entities;
 
-import jdk.jfr.Timestamp;
 import tg.kindhands_bot.kindhands.enums.BotState;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -15,9 +12,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long chatId;
-    private String name;
+    private String firstName;
+    private String lastName;
+    private String patronymic = "";
+    private String phone;
     private Boolean blocked;
     private String denialReason;
+    private boolean needHelp=false;
     private BotState botState = BotState.NULL;
     @Timestamp
     private LocalDateTime dateOfLastReport;
@@ -38,12 +39,36 @@ public class User {
         this.chatId = chatId;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPatronymic() {
+        return patronymic;
+    }
+
+    public void setPatronymic(String patronymic) {
+        this.patronymic = patronymic;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public Boolean getBlocked() {
@@ -61,7 +86,15 @@ public class User {
     public void setDenialReason(String denialReason) {
         this.denialReason = denialReason;
     }
+  
+    public boolean getNeedHelp() {
+        return needHelp;
+    }
 
+    public void setNeedHelp(boolean needHelp) {
+        this.needHelp = needHelp;
+    }
+  
     public BotState getBotState() {
         return botState;
     }
@@ -70,32 +103,24 @@ public class User {
         this.botState = botState;
     }
 
-    public LocalDateTime getDateOfLastReport() {
-        return dateOfLastReport;
-    }
-
-    public void setDateOfLastReport(LocalDateTime dateOfLastReport) {
-        this.dateOfLastReport = dateOfLastReport;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(chatId, user.chatId) && Objects.equals(name, user.name) && Objects.equals(blocked, user.blocked) && Objects.equals(denialReason, user.denialReason) && botState == user.botState;
+        return Objects.equals(chatId, user.chatId) && Objects.equals(firstName, user.firstName) && Objects.equals(blocked, user.blocked) && Objects.equals(denialReason, user.denialReason) && botState == user.botState;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(chatId, name, blocked, denialReason, botState);
+        return Objects.hash(chatId, firstName, blocked, denialReason, botState);
     }
 
     @Override
     public String toString() {
         return "id=" + id +
                 ", chatId=" + chatId +
-                ", name='" + name +
+                ", name='" + firstName +
                 ", blocked=" + blocked +
                 ", denialReason='" + denialReason +
                 ", botState=" + botState;
