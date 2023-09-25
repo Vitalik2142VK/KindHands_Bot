@@ -233,4 +233,11 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="10" author="morozov">
+        <addColumn tableName="users">
+            <column name="date_of_last_report" type="TIMESTAMP"/>
+        </addColumn>
+        <modifyDataType tableName="report_animal" columnName="report_status" newDataType="VARCHAR(50)"/>
+    </changeSet>
 </databaseChangeLog>

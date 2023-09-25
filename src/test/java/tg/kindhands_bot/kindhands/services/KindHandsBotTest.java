@@ -13,13 +13,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import tg.kindhands_bot.kindhands.components.NavigationMenu;
-import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
 import tg.kindhands_bot.kindhands.config.BotConfig;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.enums.BotState;
-import tg.kindhands_bot.kindhands.repositories.ReportAnimalPhotoRepository;
+import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
+import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -46,6 +46,8 @@ public class KindHandsBotTest {
     private ReportAnimalRepository reportAnimalRepository;
     @Mock
     private ReportAnimalPhotoRepository reportPhotoRepository;
+    @Mock
+    private TamedAnimalRepository tamedAnimalRepository;
 
     @InjectMocks
     private VolunteerService volunteerService;
@@ -58,7 +60,7 @@ public class KindHandsBotTest {
 
     @BeforeEach
     public void beforeEach() throws URISyntaxException, IOException {
-        bot = new KindHandsBot(userRepository, reportAnimalRepository, reportPhotoRepository, volunteerService, botConfig);
+        bot = new KindHandsBot(userRepository, reportAnimalRepository, reportPhotoRepository,tamedAnimalRepository ,volunteerService, botConfig);
         json = Files.readString(
                 Paths.get(KindHandsBot.class.getResource("text_update.json").toURI())
         );

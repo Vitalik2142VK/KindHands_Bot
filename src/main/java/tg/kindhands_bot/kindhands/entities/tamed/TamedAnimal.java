@@ -4,6 +4,7 @@ import tg.kindhands_bot.kindhands.entities.Animal;
 import tg.kindhands_bot.kindhands.entities.User;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -19,8 +20,10 @@ public abstract class TamedAnimal {
     @OneToOne
     @JoinColumn(name = "animal_id")
     private Animal animal;
-    private int numReports=30;
-    private int numReportsSent;
+    private int numReports = 30;
+    private int numReportsSent = 0;
+    private LocalDate dateAdoption;
+    private LocalDate dateLastReport;
 
     public long getId() {
         return id;
@@ -60,6 +63,22 @@ public abstract class TamedAnimal {
 
     public void setNumReportsSent(int numReportsSent) {
         this.numReportsSent = numReportsSent;
+    }
+
+    public LocalDate getDateAdoption() {
+        return dateAdoption;
+    }
+
+    public void setDateAdoption(LocalDate dateAdoption) {
+        this.dateAdoption = dateAdoption;
+    }
+
+    public LocalDate getDateLastReport() {
+        return dateLastReport;
+    }
+
+    public void setDateLastReport(LocalDate dateLastReport) {
+        this.dateLastReport = dateLastReport;
     }
 
     @Override

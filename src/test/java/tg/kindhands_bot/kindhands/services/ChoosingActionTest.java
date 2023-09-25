@@ -16,9 +16,10 @@ import tg.kindhands_bot.kindhands.components.NavigationMenu;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.enums.BotState;
-import tg.kindhands_bot.kindhands.repositories.ReportAnimalPhotoRepository;
+import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
+import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -42,6 +43,8 @@ public class ChoosingActionTest {
     private ReportAnimalRepository reportAnimalRepository;
     @Mock
     private ReportAnimalPhotoRepository reportPhotoRepository;
+    @Mock
+    private TamedAnimalRepository tamedAnimalRepository;
 
     @Mock
     private VolunteerService volunteerService;
@@ -59,7 +62,7 @@ public class ChoosingActionTest {
     @BeforeEach
     public void beforeEach() throws URISyntaxException, IOException {
         choosingAction = new ChoosingAction(bot = Mockito.mock(KindHandsBot.class), userRepository, reportAnimalRepository,
-                reportPhotoRepository, volunteerService);
+                reportPhotoRepository, tamedAnimalRepository, volunteerService);
         json = Files.readString(
                 Paths.get(KindHandsBot.class.getResource("text_update.json").toURI())
         );

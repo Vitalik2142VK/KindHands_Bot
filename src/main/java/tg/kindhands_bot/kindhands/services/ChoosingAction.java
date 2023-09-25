@@ -2,17 +2,19 @@ package tg.kindhands_bot.kindhands.services;
 
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tg.kindhands_bot.kindhands.components.NavigationMenu;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
-import tg.kindhands_bot.kindhands.repositories.ReportAnimalPhotoRepository;
+import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.components.shelters.CatShelter;
 import tg.kindhands_bot.kindhands.components.shelters.DogShelter;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 import tg.kindhands_bot.kindhands.components.send_data.SendCatData;
 import tg.kindhands_bot.kindhands.components.send_data.SendDogData;
+import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +35,8 @@ public class ChoosingAction {
 
     private final UserRepository userRepository;
     private final ReportAnimalRepository reportAnimalRepository;
+    private final ReportAnimalPhotoRepository reportAnimalPhotoRepository;
+    private final TamedAnimalRepository tamedAnimalRepository;
 
     private final VolunteerService volunteers;
 
@@ -46,17 +50,18 @@ public class ChoosingAction {
     private final SendDogData sendDogData = new SendDogData();
     private final SendCatData sendCatData = new SendCatData();
 
-    private final ReportAnimalPhotoRepository reportAnimalPhotoRepository;
 
     public ChoosingAction(KindHandsBot bot,
                           UserRepository userRepository,
                           ReportAnimalRepository reportAnimalRepository,
                           ReportAnimalPhotoRepository reportAnimalPhotoRepository,
+                          TamedAnimalRepository tamedAnimalRepository,
                           VolunteerService volunteers) {
         this.bot = bot;
         this.userRepository = userRepository;
         this.reportAnimalRepository = reportAnimalRepository;
         this.reportAnimalPhotoRepository = reportAnimalPhotoRepository;
+        this.tamedAnimalRepository = tamedAnimalRepository;
         this.volunteers = volunteers;
     }
 
@@ -91,7 +96,7 @@ public class ChoosingAction {
         this.update = update;
 
         if (botMessages == null) {
-            botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportAnimalPhotoRepository);
+            botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportAnimalPhotoRepository, tamedAnimalRepository);
         } else {
             botMessages.setUpdate(update);
         }
@@ -395,6 +400,14 @@ public class ChoosingAction {
      * Sends a message to the user in case of an error
      */
     public SendMessage errorMessage() {
-        return botMessages.returnMessage("Извините! Что-то пошло не так.\nПовторите попытку позже.");
+        return botMessages.returnMessage("Извините! Что-то пошло не так.\nПовторите попытку позже или обратитесь к волонтерам.");
+    }
+
+    public SendMessage errorMessage(String message) {
+        return botMessages.returnMessage(message);
+    }
+
+    public EditMessageText errorEditMessage(String message) {
+        return botMessages.editExistMessage(message);
     }
 }
