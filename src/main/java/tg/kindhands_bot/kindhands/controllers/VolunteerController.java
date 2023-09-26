@@ -39,9 +39,8 @@ public class VolunteerController {
                     responseCode = "200",
                     description = "Отчет получен."
             )})
-
     public ResponseEntity<?> getReports() {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(volunteerService.getReports());
     }
 
 
@@ -82,4 +81,18 @@ public class VolunteerController {
         }
         return ResponseEntity.ok(result);
     }
+
+
+//    @PostMapping("/add") // GET http://localhost:8080/volunteer/add
+//    @Operation(summary = "Добавление волонтера.")
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Волонтер добавлен"
+//            )
+//    })
+//    public ResponseEntity<Volunteer> addSVolunteer(@RequestBody Volunteer volunteer) {
+//        Volunteer addedVolunteer = volunteerService.addVolunteer(update, volunteer.getPhone());
+//        return ResponseEntity.ok(addedVolunteer);
+//    }
 }

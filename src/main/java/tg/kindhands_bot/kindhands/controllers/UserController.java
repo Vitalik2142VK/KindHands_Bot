@@ -95,7 +95,7 @@ public class UserController {
      * -----||-----
      * The volunteer changes the user's needHelp field to false after providing assistance
      */
-    @PutMapping("/adopted/help/change/{id}")//GET http://localhost:8080/volunteer/adopted/help/change/3
+    @PutMapping("/adopted/help/change/{id}")//GET http://localhost:8080/volunteer/user/help/change/3
     @Operation(summary = "Изменение волонтером статуса пользователя после оказания помощи")
     @ApiResponses(value = {
             @ApiResponse(
@@ -103,7 +103,7 @@ public class UserController {
                     description = "Помощь оказана."
             )
     })
-    public String changeIsNeedHelp(@PathVariable Long id) {
-        return userService.changeIsNeedHelp(id);
+    public ResponseEntity<Collection<User>> changeIsNeedHelp(@RequestParam(required = false) Long id) {
+        return ResponseEntity.ok().build();
     }
 }
