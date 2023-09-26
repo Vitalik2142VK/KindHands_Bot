@@ -260,6 +260,10 @@ public class ChoosingAction {
             case CAT_TRAVEL_SHELTER:
                 bot.sendMessage(botMessages.editExistMessage(catShelter.getDrivingDirections()));
                 break;
+
+            case CALL_VOLUNTEER:
+                bot.sendMessage(botMessages.userNeedHelp());
+                break;
         }
     }
 
@@ -338,6 +342,10 @@ public class ChoosingAction {
 
             case USER_CALL_CONTACT:
                 bot.sendMessage(botMessages.setUserContactCommand());
+                break;
+
+            case CALL_VOLUNTEER:
+                bot.sendMessage(botMessages.userNeedHelp());
                 break;
         }
     }

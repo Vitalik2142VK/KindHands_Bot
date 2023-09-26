@@ -21,9 +21,9 @@ public class MessageConstants {
     public static final String ASSISTANCE_SHELTER = "ASSIST_SH";
     public static final String REQUISITES = "REQUISITES";
     public static final String NECESSARY = "NECESSARY";
-
-
     public static final String BECOME_VOLUNTEER = "BECOME_VL";
+
+
     public static final String ABOUT_SHELTER = "ABOUT_SH";
     public static final String DOG_ABOUT_SHELTER = "ABOUT_SH_D";
     public static final String CAT_ABOUT_SHELTER = "ABOUT_SH_C";
