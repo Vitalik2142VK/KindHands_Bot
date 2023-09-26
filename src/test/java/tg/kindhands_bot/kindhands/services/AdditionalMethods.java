@@ -25,7 +25,7 @@ public class AdditionalMethods {
         user.setChatId(chatId);
         user.setFirstName(name);
         user.setBlocked(blocked);
-//        user.setDenialReason(denialReason);
+        user.setDenialReason(denialReason);
         user.setBotState(botState);
         return user;
     }
