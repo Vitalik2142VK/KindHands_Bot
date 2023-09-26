@@ -1,6 +1,5 @@
 package tg.kindhands_bot.kindhands.components;
 
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.services.KindHandsBot;
 
@@ -32,7 +31,9 @@ public class MessagesBotFromControllers {
      * -----//-----
      * Sends a message to the user in the bot
      */
-    public void sendMessageUsers(List<User> users) {
-
+    public void sendMessageUsers(List<User> users, String message) {
+        for (var user : users) {
+            sendMessageUser(user, message);
+        }
     }
 }

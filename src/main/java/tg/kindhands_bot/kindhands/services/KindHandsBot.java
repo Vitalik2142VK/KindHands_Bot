@@ -25,8 +25,6 @@ public class KindHandsBot extends TelegramLongPollingBot {
 
     private final BotConfig config;
 
-
-
     public KindHandsBot(UserRepository userRepository,
                         ReportAnimalRepository reportAnimalRepository,
                         ReportAnimalPhotoRepository reportAnimalPhotoRepository,

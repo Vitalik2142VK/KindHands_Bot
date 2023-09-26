@@ -65,7 +65,7 @@ public class UserService {
             throw new NullPointerException("Пользователь с id '" + idUser + "' не найден");
         }
 
-        if (user.getPhone().isEmpty() || user.getPhone() == null) {
+        if (user.getPhone() == null || user.getPhone().isEmpty()) {
             return "Пользователю " + user.getFirstName() + " необходимо, через бота, заполнить контактные данные.";
         }
 

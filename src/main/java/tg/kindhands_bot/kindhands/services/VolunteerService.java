@@ -41,7 +41,10 @@ public class VolunteerService {
      */
     public List<ReportAnimal> getReports() {
         List<ReportAnimal> reports = reportAnimalRepository.findByReportStatus(ReportStatus.ON_INSPECTION);
-        if (reports.isEmpty()) throw new NullPointerException("Не проверенных отчетов нет.");
+        if (reports.isEmpty()) {
+            throw new NullPointerException("Не проверенных отчетов нет.");
+        }
+
         return reports;
     }
 
@@ -70,6 +73,7 @@ public class VolunteerService {
         try {
             volunteer.setPhone(CheckMethods.checkNumberPhone(phone));
         } catch (RuntimeException e) {
+            log.error("Exception: '" + e.getMessage() + "'", e);
             return e.getMessage();
         }
 
