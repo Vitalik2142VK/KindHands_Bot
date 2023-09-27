@@ -27,11 +27,11 @@ public class UserService {
     public UserService(UserRepository userRepository,
                        AnimalsRepository animalsRepository,
                        TamedAnimalRepository tamedAnimalRepository,
-                       KindHandsBot bot) {
+                       MessagesBotFromControllers messagesBot) {
         this.userRepository = userRepository;
         this.animalsRepository = animalsRepository;
         this.tamedAnimalRepository = tamedAnimalRepository;
-        messagesBot = new MessagesBotFromControllers(bot);
+        this.messagesBot = messagesBot;
     }
 
     /**
@@ -113,7 +113,7 @@ public class UserService {
      * -----||-----
      * Extends the probation period to the user.
      */
-    public Object extendProbationPeriod(Long id, Integer term) {
+    public String extendProbationPeriod(Long id, Integer term) {
         TamedAnimal tamedAnimal = tamedAnimalRepository.findByUser_Id(id);
         if (tamedAnimal == null) {
             throw new NullPointerException("Пользователь с id '" + id + "' не найден или не приручал животное");

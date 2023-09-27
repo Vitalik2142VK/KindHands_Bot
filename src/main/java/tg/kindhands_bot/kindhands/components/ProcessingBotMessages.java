@@ -144,6 +144,7 @@ public class ProcessingBotMessages {
             tamedAnimal.setDateLastReport(date);
             tamedAnimalRepository.save(tamedAnimal);
 
+            report.setReportNumber(tamedAnimal.getNumReportsSent());
             report.setTamedAnimal(tamedAnimal);
         }
         report.setPhoto(saveReportPhoto(photo));
@@ -265,6 +266,7 @@ public class ProcessingBotMessages {
 
         Volunteer volunteer = new Volunteer();
         volunteer.setPhone(CheckMethods.checkNumberPhone(phone));
+        volunteer.setUser(user);
         if (user.getLastName() == null || user.getLastName().isEmpty()) {
             user.setBotState(BotState.SET_FULL_NAME);
             message = "Номер телефона добавлен.\n\nВведите одним сообщением Вашу: " +

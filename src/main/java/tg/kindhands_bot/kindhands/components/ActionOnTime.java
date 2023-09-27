@@ -51,7 +51,7 @@ public class ActionOnTime {
      * -----||-----
      * A method for sending to the user about sending a report.
      */
-    @Scheduled(cron = "0 00 21 * * *") // каждый день в 21 всем усыновителям, не приславшим отчет
+    @Scheduled(cron = "0 37 22 * * *") // каждый день в 21 всем усыновителям, не приславшим отчет
     public void sendDailyReportNotReceived() {
         Collection<User> users = getAllUser();
         if (users.isEmpty()) {

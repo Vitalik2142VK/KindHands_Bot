@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.entities.Volunteer;
+import tg.kindhands_bot.kindhands.enums.ReportStatus;
 import tg.kindhands_bot.kindhands.services.UserService;
 import tg.kindhands_bot.kindhands.services.VolunteerService;
 
@@ -28,7 +29,7 @@ public class VolunteerController {
     }
 
     /**
-     * Выводит не проверенные доклады пользователей о животных.
+     * Выводит не проверенные отчеты пользователей о животных.
      * -----||-----
      * Displays unverified user reports about animals.
      */
@@ -43,6 +44,38 @@ public class VolunteerController {
         return ResponseEntity.ok(volunteerService.getReports());
     }
 
+    /**
+     * Меняет статус отчета, указанный волонтером.
+     * -----||-----
+     * Changes the status of the report specified by the volunteer.
+     */
+    @PutMapping("/reports/{id}") // GET http://localhost:8080/volunteer/reports
+    @Operation(summary = "Изменить статус отчета")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Статус отчета изменен."
+            )})
+    public ResponseEntity<?> changeStatusReport(@PathVariable Long id, @RequestParam String messageUser, @RequestParam ReportStatus reportStatus) {
+        return ResponseEntity.ok(volunteerService.changeStatusReport(id, messageUser, reportStatus));
+    }
+
+
+    /**
+     * Принимает кандидата в волонтеры
+     * -----||-----
+     * Accepts a volunteer candidate
+     */
+    @PutMapping("{id}") // PUT http://localhost:8080/volunteer/2
+    @Operation(summary = "Принять волонтера")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Волонтер принят."
+            )})
+    public ResponseEntity<?> addVolunteer(@PathVariable Long id) {
+        return ResponseEntity.ok(volunteerService.addVolunteer(id));
+    }
 
     /**
      * Удалить волонтера.
@@ -61,9 +94,9 @@ public class VolunteerController {
     }
 
     /**
-     * Выводит всех волонтеров.
+     * Получение всех действующих волонтеров
      * -----||-----
-     * get all volunteers
+     * Getting all active volunteers
      */
     @GetMapping //GET http://localhost:8080/volunteer
     @Operation(summary = "Получение всех волонтеров.")
