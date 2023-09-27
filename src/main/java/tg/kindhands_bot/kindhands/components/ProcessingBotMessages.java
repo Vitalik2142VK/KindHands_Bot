@@ -7,11 +7,13 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.entities.ReportAnimal;
+import tg.kindhands_bot.kindhands.entities.Volunteer;
 import tg.kindhands_bot.kindhands.entities.photo.ReportAnimalPhoto;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.enums.BotState;
 import tg.kindhands_bot.kindhands.exceptions.IncorrectDataExceptionAndSendMessage;
 import tg.kindhands_bot.kindhands.exceptions.NullPointerExceptionAndSendMessage;
+import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
 import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
@@ -24,7 +26,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -41,16 +42,20 @@ public class ProcessingBotMessages {
     private final ReportAnimalRepository reportAnimalRepository;
     private final ReportAnimalPhotoRepository reportAnimalPhotoRepository;
     private final TamedAnimalRepository tamedAnimalRepository;
+    private final VolunteersRepository volunteersRepository;
 
     public ProcessingBotMessages(Update update,
                                  UserRepository userRepository,
                                  ReportAnimalRepository reportAnimalRepository,
-                                 ReportAnimalPhotoRepository reportAnimalPhotoRepository, TamedAnimalRepository tamedAnimalRepository) {
+                                 ReportAnimalPhotoRepository reportAnimalPhotoRepository,
+                                 TamedAnimalRepository tamedAnimalRepository,
+                                 VolunteersRepository volunteersRepository) {
         this.update = update;
         this.userRepository = userRepository;
         this.reportAnimalRepository = reportAnimalRepository;
         this.reportAnimalPhotoRepository = reportAnimalPhotoRepository;
         this.tamedAnimalRepository = tamedAnimalRepository;
+        this.volunteersRepository = volunteersRepository;
     }
 
     /**
@@ -105,6 +110,18 @@ public class ProcessingBotMessages {
     }
 
     /**
+     * Переводит статус бота на стать волонтером
+     * -----||-----
+     * Transfers the status of the bot to become a volunteer
+     */
+    public EditMessageText becomeVolunteerCommand() {
+        changeStateBot(BotState.BECOME_VOLUNTEER, update.getCallbackQuery().getMessage().getChatId());
+
+        return editExistMessage("Вы изъявили желание стать волонтером.\nУкажите свой рабочий номер телефона для связи. " +
+                "\n\n(Подходящие форматы: +7(800)000-00-00, 88000000000).");
+    }
+
+    /**
      * Создает отчет и добавляет, переданную пользователем фотографию без текста
      * -----||-----
      * Creates a report and adds a user-submitted photo without text
@@ -149,7 +166,6 @@ public class ProcessingBotMessages {
         byte[] data = makeLoweredPhoto(photo.toPath());
 
         ReportAnimalPhoto reportAnimalPhoto = new ReportAnimalPhoto();
-        reportAnimalPhoto.setTimeLastReport(LocalDateTime.now());
         reportAnimalPhoto.setFilePath(photo.getAbsolutePath());
         reportAnimalPhoto.setFileSize(data.length);
         reportAnimalPhoto.setMediaType(StringUtils.getFilenameExtension(photo.getPath()));
@@ -233,6 +249,37 @@ public class ProcessingBotMessages {
     }
 
     /**
+     * Создает желающиего стать волонтером
+     * -----||-----
+     * Creates a willing volunteer
+     */
+    public SendMessage becomeVolunteer() {
+        long chatId = update.getMessage().getChatId();
+        String phone = update.getMessage().getText();
+        String message;
+
+        User user = userRepository.findByChatId(chatId);
+        if (user == null) {
+            throw new NullPointerException("Пользователь с chatId '" + chatId + "' не найден.");
+        }
+
+        Volunteer volunteer = new Volunteer();
+        volunteer.setPhone(CheckMethods.checkNumberPhone(phone));
+        if (user.getLastName() == null || user.getLastName().isEmpty()) {
+            user.setBotState(BotState.SET_FULL_NAME);
+            message = "Номер телефона добавлен.\n\nВведите одним сообщением Вашу: " +
+                    "Фамилию Имя Отчество(при наличии)";
+        } else {
+            user.setBotState(BotState.NULL);
+            message = "Ваша кандидатура в волонтеры принята, с Вами свяжутся.";
+        }
+        userRepository.save(user);
+        volunteersRepository.save(volunteer);
+
+        return returnMessage(message);
+    }
+
+    /**
      * Отправка сообщения при вводе некорректных данных со стороны пользователя.
      * -----||-----
      * Sending a message when incorrect data is entered by the user.
@@ -309,9 +356,9 @@ public class ProcessingBotMessages {
      * -----||-----
      * Sending a message when user is blocked
      */
-    public SendMessage blockedMessage() {
-        String firstNameUser = update.getMessage().getChat().getFirstName();
-        String answer = firstNameUser + ", ваш аккаунт заблокирован";
+    public SendMessage blockedMessage(User user) {
+        String answer = user.getFirstName() + " " + user.getPatronymic() + ", ваш аккаунт заблокирован по причине:\n" +
+                user.getDenialReason();
         return returnMessage(answer);
     }
 

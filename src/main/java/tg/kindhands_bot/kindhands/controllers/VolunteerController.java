@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -56,8 +57,7 @@ public class VolunteerController {
                     description = "Волонтер удален."
             )})
     public ResponseEntity<?> deleteVolunteer(@PathVariable Long id) {
-        volunteerService.deleteVolunteer(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(volunteerService.deleteVolunteer(id));
     }
 
     /**
@@ -76,7 +76,28 @@ public class VolunteerController {
     public ResponseEntity<List<Volunteer>> getAllVolunteers() {
         List<Volunteer> result = volunteerService.getAllVolunteers();
         if (result.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Выводит список всех желающих стать волонтером.
+     * -----||-----
+     * Displays a list of everyone who wants to become a volunteer.
+     */
+    @GetMapping("/become") //GET http://localhost:8080/volunteer/become
+    @Operation(summary = "получить всех желающих стать волонтером.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Все желающие получены."
+            )
+    })
+    public ResponseEntity<List<Volunteer>> getAllBecomeVolunteers() {
+        List<Volunteer> result = volunteerService.getAllBecomeVolunteers();
+        if (result.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(result);
     }

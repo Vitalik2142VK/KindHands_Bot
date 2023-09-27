@@ -50,7 +50,6 @@ public class ChoosingAction {
     private final SendDogData sendDogData = new SendDogData();
     private final SendCatData sendCatData = new SendCatData();
 
-
     public ChoosingAction(KindHandsBot bot,
                           UserRepository userRepository,
                           ReportAnimalRepository reportAnimalRepository,
@@ -115,7 +114,7 @@ public class ChoosingAction {
         var user = userRepository.findByChatId(chatId);
 
         if (user != null && user.getBlocked()) {
-            bot.sendMessage(botMessages.blockedMessage());
+            bot.sendMessage(botMessages.blockedMessage(user));
             return false;
         }
         return true;
@@ -195,7 +194,7 @@ public class ChoosingAction {
                 break;
 
             case BECOME_VOLUNTEER:
-                bot.sendMessage(botMessages.editExistMessage("Стать волонтёром:"));
+                bot.sendMessage(botMessages.becomeVolunteerCommand());
                 break;
         }
 
@@ -388,6 +387,10 @@ public class ChoosingAction {
             }
             case SET_FULL_NAME: {
                 bot.sendMessage(botMessages.setFullNameUser());
+                break;
+            }
+            case BECOME_VOLUNTEER: {
+                bot.sendMessage(botMessages.becomeVolunteer());
                 break;
             }
             default: bot.sendMessage(botMessages.defaultMessage());

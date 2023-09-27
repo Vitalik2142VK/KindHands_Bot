@@ -88,18 +88,16 @@ public class VolunteerService {
      * -----||-----
      * Delete a volunteer method
      */
-
     public String deleteVolunteer(long id) {
         Volunteer volunteer = volunteersRepository.findById(id).orElse(null);
-        if (volunteer != null) {
-            volunteersRepository.delete(volunteer);
-          
-            log.info("Влонтер '" + volunteer.getFirstName() + "' удален.");
-          
-            return "Вы удалены из волонтеров!";
-        } else {
-            return "Волонтер не найден";
+        if (volunteer == null) {
+            throw new NullPointerException("Волонтер с id '" + id + "' не найден.");
         }
+        volunteersRepository.delete(volunteer);
+
+        log.info("Влонтер '" + volunteer.getFirstName() + "' удален.");
+
+        return "Волонтер " + volunteer.getLastName() + " " + volunteer.getFirstName() + ", удален." ;
     }
 // НА ПОТОМ
     /**
@@ -130,5 +128,14 @@ public class VolunteerService {
      */
     public List<Volunteer> getAllVolunteers() {
         return volunteersRepository.findAll();
+    }
+
+    /**
+     * Выводит список всех желающих стать волонтером.
+     * -----||-----
+     * Displays a list of everyone who wants to become a volunteer.
+     */
+    public List<Volunteer> getAllBecomeVolunteers() {
+        return volunteersRepository.findByAdoptedFalse();
     }
 }

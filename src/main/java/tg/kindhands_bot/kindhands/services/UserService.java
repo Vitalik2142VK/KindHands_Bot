@@ -41,13 +41,16 @@ public class UserService {
      */
 
     public String addUserBlacklist(Long id, String messageBlock) {
-        User user = userRepository.getById(id);
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            throw new NullPointerException("Пользователь с id '" + id + "' не найден.");
+        }
         user.setBlocked(true);
         user.setDenialReason(messageBlock);
         userRepository.save(user);
 
         messagesBot.sendMessageUser(user, "Уважаемый " + user.getFirstName() + " " + user.getPatronymic() +
-                "\nВы били заблокированы по причине: " + user.getDenialReason() +
+                "\nВы были заблокированы по причине: " + user.getDenialReason() +
                 "\n\nЕсли произошла ошибка или вы хотите оспорить данное решение, то обратитесь к нашим волонтерам." +
                 "\n\nВсего доброго!");
 
@@ -106,19 +109,26 @@ public class UserService {
     }
 
     /**
-     * Метод для изменения значения поля needHelp у пользователя после оказания помощи
+     * Продлевает испытательный срок пользователю.
      * -----||-----
-     * Method for changing the value of the user's needHelp field
+     * Extends the probation period to the user.
      */
-    public String isNeedHelp(Long id) {
-        User user = userRepository.getById(id);
-        if (user == null) {
-            throw new NullPointerException("Пользователь с id: " + id + " не найден");
+    public Object extendProbationPeriod(Long id, Integer term) {
+        TamedAnimal tamedAnimal = tamedAnimalRepository.findByUser_Id(id);
+        if (tamedAnimal == null) {
+            throw new NullPointerException("Пользователь с id '" + id + "' не найден или не приручал животное");
         }
-        user.setNeedHelp(false);
-        userRepository.save(user);
+        User user = tamedAnimal.getUser();
+        tamedAnimal.setNumReports(tamedAnimal.getNumReports() + term);
+        tamedAnimalRepository.save(tamedAnimal);
 
-        return "Проблема пользователя " + user.getLastName() + " " + user.getFirstName() + " " + user.getPatronymic() + " решена";//добавить фио
+        messagesBot.sendMessageUser(user, "Уважаемый " + user.getFirstName() + " " + user.getPatronymic() +
+                ", вам был продлен испытательный срок на " + term + " дней.\n" +
+                "За дополнительной информацией вы можете обратиться к волонтерам." +
+                "Спасибо!");
+
+        return "Пользователю " + user.getLastName() + " " + user.getFirstName() + " " + user.getPatronymic() + ", был продлен " +
+                "испытательный срок.";
     }
 
     /**
@@ -128,5 +138,24 @@ public class UserService {
      */
     public Collection<User> needVolunteerHelper() {
         return userRepository.findByNeedHelpTrue();
+    }
+
+    /**
+     * Метод для изменения значения поля needHelp у пользователя после оказания помощи
+     * -----||-----
+     * Method for changing the value of the user's needHelp field
+     */
+    public String isNeedHelp(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            throw new NullPointerException("Пользователь с id '" + id + "' не найден.");
+        }
+        user.setNeedHelp(false);
+        userRepository.save(user);
+
+        messagesBot.sendMessageUser(user, user.getFirstName() + " " + user.getPatronymic() + ", Ваша проблема" +
+                "была решена. Если это не так, пожалуйста, повторите попытку.");
+
+        return "Проблема пользователя " + user.getLastName() + " " + user.getFirstName() + " " + user.getPatronymic() + " решена";//добавить фио
     }
 }
