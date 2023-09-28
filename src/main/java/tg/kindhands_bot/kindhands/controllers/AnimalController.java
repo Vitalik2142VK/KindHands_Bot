@@ -54,22 +54,6 @@ public class AnimalController {
     }
 
 
-//     /**
-//      * Изменяет статус животного.
-//      * -----||-----
-//      * Changes the status of the animal.
-//      */
-//     @PutMapping("/{id}") // POST http://localhost:8080/volunteer/animal/1
-//     @Operation(summary = "Изменение статуса животного")
-//     @ApiResponses(value = {
-//             @ApiResponse(
-//                     responseCode = "200",
-//                     description = "Статус животного изменен."
-//             )})
-//     public ResponseEntity<?> changeStatusAnimal(@PathVariable Long id) {
-//         return ResponseEntity.ok().build();
-//     }
-
     /**
      * Удаляет животное из БД.
      * -----||-----

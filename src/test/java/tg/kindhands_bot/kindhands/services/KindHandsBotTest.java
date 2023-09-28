@@ -16,6 +16,7 @@ import tg.kindhands_bot.kindhands.components.NavigationMenu;
 import tg.kindhands_bot.kindhands.config.BotConfig;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.enums.BotState;
+import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
 import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
@@ -48,9 +49,8 @@ public class KindHandsBotTest {
     private ReportAnimalPhotoRepository reportPhotoRepository;
     @Mock
     private TamedAnimalRepository tamedAnimalRepository;
-
-    @InjectMocks
-    private VolunteerService volunteerService;
+    @Mock
+    private VolunteersRepository volunteersRepository;
 
     @InjectMocks
     private KindHandsBot bot;
@@ -60,7 +60,7 @@ public class KindHandsBotTest {
 
     @BeforeEach
     public void beforeEach() throws URISyntaxException, IOException {
-        bot = new KindHandsBot(userRepository, reportAnimalRepository, reportPhotoRepository,tamedAnimalRepository ,volunteerService, botConfig);
+        bot = new KindHandsBot(userRepository, reportAnimalRepository, reportPhotoRepository,tamedAnimalRepository ,volunteersRepository, botConfig);
         json = Files.readString(
                 Paths.get(KindHandsBot.class.getResource("text_update.json").toURI())
         );

@@ -23,7 +23,7 @@ public class CheckMethods {
      * Method of checking and converting a phone number to the format +7(xxx)xxx-xx-xx
      */
     public static String checkNumberPhone(String phone) {
-        if (phone == null || "".equalsIgnoreCase(phone)) {
+        if (phone == null || phone.isEmpty()) {
             throw new NullPointerExceptionAndSendMessage("При вводе номера телефона, была отправлена пустая строка." , "Поле с номером телефона не должно быть пустым.");
         } else {
             if (phone.length() < 10 || phone.length() > 30) {
@@ -46,7 +46,7 @@ public class CheckMethods {
      * Method of checking and converting a phone number to the format +7(xxx)xxx-xx-xx
      */
     public static List<String> checkFullName(String fullName) {
-        if (fullName == null || "".equalsIgnoreCase(fullName)) {
+        if (fullName == null || fullName.isEmpty()) {
             throw new NullPointerException("Была отправленная пустая трока. Повторите попытку.\n(Подходящий формат: Иванов Иван Иванович)");
         }
         List<String> arrFullName = new ArrayList<>(List.of(fullName.split(" ")));
