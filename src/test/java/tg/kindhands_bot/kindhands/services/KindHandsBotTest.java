@@ -114,4 +114,5 @@ public class KindHandsBotTest {
         rowsInLine.add(rowInLine);
         return rowsInLine;
     }
+
 }
