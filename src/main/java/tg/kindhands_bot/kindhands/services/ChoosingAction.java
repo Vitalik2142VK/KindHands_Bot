@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tg.kindhands_bot.kindhands.components.NavigationMenu;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
+import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
 import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.components.shelters.CatShelter;
@@ -37,8 +38,7 @@ public class ChoosingAction {
     private final ReportAnimalRepository reportAnimalRepository;
     private final ReportAnimalPhotoRepository reportAnimalPhotoRepository;
     private final TamedAnimalRepository tamedAnimalRepository;
-
-    private final VolunteerService volunteers;
+    private final VolunteersRepository volunteersRepository;
 
     private ProcessingBotMessages botMessages = null;
 
@@ -50,19 +50,18 @@ public class ChoosingAction {
     private final SendDogData sendDogData = new SendDogData();
     private final SendCatData sendCatData = new SendCatData();
 
-
     public ChoosingAction(KindHandsBot bot,
                           UserRepository userRepository,
                           ReportAnimalRepository reportAnimalRepository,
                           ReportAnimalPhotoRepository reportAnimalPhotoRepository,
                           TamedAnimalRepository tamedAnimalRepository,
-                          VolunteerService volunteers) {
+                          VolunteersRepository volunteersRepository) {
         this.bot = bot;
         this.userRepository = userRepository;
         this.reportAnimalRepository = reportAnimalRepository;
         this.reportAnimalPhotoRepository = reportAnimalPhotoRepository;
         this.tamedAnimalRepository = tamedAnimalRepository;
-        this.volunteers = volunteers;
+        this.volunteersRepository = volunteersRepository;
     }
 
     /**
@@ -96,7 +95,8 @@ public class ChoosingAction {
         this.update = update;
 
         if (botMessages == null) {
-            botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportAnimalPhotoRepository, tamedAnimalRepository);
+            botMessages = new ProcessingBotMessages(update, userRepository, reportAnimalRepository, reportAnimalPhotoRepository,
+                    tamedAnimalRepository, volunteersRepository);
         } else {
             botMessages.setUpdate(update);
         }
@@ -115,7 +115,7 @@ public class ChoosingAction {
         var user = userRepository.findByChatId(chatId);
 
         if (user != null && user.getBlocked()) {
-            bot.sendMessage(botMessages.blockedMessage());
+            bot.sendMessage(botMessages.blockedMessage(user));
             return false;
         }
         return true;
@@ -195,7 +195,7 @@ public class ChoosingAction {
                 break;
 
             case BECOME_VOLUNTEER:
-                bot.sendMessage(botMessages.editExistMessage("Стать волонтёром:"));
+                bot.sendMessage(botMessages.becomeVolunteerCommand());
                 break;
         }
 
@@ -388,6 +388,10 @@ public class ChoosingAction {
             }
             case SET_FULL_NAME: {
                 bot.sendMessage(botMessages.setFullNameUser());
+                break;
+            }
+            case BECOME_VOLUNTEER: {
+                bot.sendMessage(botMessages.becomeVolunteer());
                 break;
             }
             default: bot.sendMessage(botMessages.defaultMessage());

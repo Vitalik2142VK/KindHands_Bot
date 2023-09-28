@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tg.kindhands_bot.kindhands.components.ActionOnTime;
 import tg.kindhands_bot.kindhands.config.BotConfig;
 import tg.kindhands_bot.kindhands.exceptions.RuntimeExceptionAndSendMessage;
+import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
 import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
@@ -25,18 +26,16 @@ public class KindHandsBot extends TelegramLongPollingBot {
 
     private final BotConfig config;
 
-
-
     public KindHandsBot(UserRepository userRepository,
                         ReportAnimalRepository reportAnimalRepository,
                         ReportAnimalPhotoRepository reportAnimalPhotoRepository,
                         TamedAnimalRepository tamedAnimalRepository,
-                        VolunteerService volunteers,
+                        VolunteersRepository volunteersRepository,
                         BotConfig config) {
         super(config.getToken());
         this.config = config;
         choosingAction = new ChoosingAction(this, userRepository, reportAnimalRepository, reportAnimalPhotoRepository,
-                tamedAnimalRepository ,volunteers);
+                tamedAnimalRepository ,volunteersRepository);
     }
 
     @Override

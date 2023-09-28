@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.http.protocol.HttpCoreContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tg.kindhands_bot.kindhands.entities.User;
@@ -33,8 +35,8 @@ public class UserController {
                     responseCode = "200",
                     description = "Пользователь заблокирован и причина указана."
             )})
-    public String addUserBlacklist(@PathVariable Long id, @RequestParam String messageBlock) {
-        return userService.addUserBlacklist(id, messageBlock);
+    public ResponseEntity<?> addUserBlacklist(@PathVariable Long id, @RequestParam String messageBlock) {
+        return ResponseEntity.ok(userService.addUserBlacklist(id, messageBlock));
     }
 
     /**
@@ -66,7 +68,7 @@ public class UserController {
                     description = "Пользователю продлен испытательный срок."
             )})
     public ResponseEntity<?> extendProbationPeriod(@PathVariable Long id, @RequestParam Integer term) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userService.extendProbationPeriod(id, term));
     }
 
     /**
@@ -103,7 +105,7 @@ public class UserController {
                     description = "Помощь оказана."
             )
     })
-    public ResponseEntity<Collection<User>> changeIsNeedHelp(@RequestParam(required = false) Long id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> changeIsNeedHelp(@RequestParam(required = false) Long id) {
+        return ResponseEntity.ok(userService.isNeedHelp(id));
     }
 }

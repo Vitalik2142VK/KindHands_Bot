@@ -16,9 +16,10 @@ public class User {
     private String lastName;
     private String patronymic = "";
     private String phone;
-    private Boolean blocked;
+    private boolean blocked;
     private String denialReason;
     private boolean needHelp=false;
+    @Enumerated(EnumType.STRING)
     private BotState botState = BotState.NULL;
 
     public Long getId() {
@@ -69,11 +70,11 @@ public class User {
         this.phone = phone;
     }
 
-    public Boolean getBlocked() {
+    public boolean getBlocked() {
         return blocked;
     }
 
-    public void setBlocked(Boolean blocked) {
+    public void setBlocked(boolean blocked) {
         this.blocked = blocked;
     }
 
