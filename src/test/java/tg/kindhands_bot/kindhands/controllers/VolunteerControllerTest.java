@@ -57,76 +57,72 @@ public class VolunteerControllerTest {
     @InjectMocks
     private VolunteerController volunteerController;
 
-//    @Test
-//    public void getAllVolunteersTest() throws Exception {
-//        Volunteer volunteer = new Volunteer();
-//        User user = new User();
-//        user.setFirstName("Bob");
-//        user.setLastName("Singler");
-//        user.setChatId(123L);
-//        user.setPatronymic("");
-//        user.setPhone("");
-//        user.setBlocked(false);
-//        user.setDenialReason(null);
-//        user.setNeedHelp(false);
-//        user.setBotState(BotState.NULL);
-//        volunteer.setId(1L);
-//        volunteer.setAdopted(true);
-//        volunteer.setPhone("8800");
-//        volunteer.setUser(user);
-//
-//        Volunteer volunteer1 = new Volunteer();
-//        User user1 = new User();
-//        user1.setFirstName("God");
-//        user1.setLastName("My");
-//        user1.setChatId(123L);
-//        user.setPatronymic("");
-//        user.setPhone("");
-//        user.setBlocked(false);
-//        user.setDenialReason(null);
-//        user.setNeedHelp(false);
-//        user.setBotState(BotState.NULL);
-//        volunteer1.setId(2L);
-//        volunteer1.setAdopted(true);
-//        volunteer1.setPhone("8800");
-//        volunteer1.setUser(user1);
-//
-//        List<Volunteer> list = List.of(volunteer, volunteer1);
-//
-//        when(volunteersRepository.findAll()).thenReturn(list);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .get("/volunteer")
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$", hasSize(2)))
-//                .andExpect(jsonPath("$.[0].id").value(volunteer.getId()))
-//                .andExpect(jsonPath("$.[0].adopted").value(volunteer.getAdopted()))
-//                .andExpect(jsonPath("$.[0].phone").value(volunteer.getPhone()))
-//                .andExpect(jsonPath("$.[0].user.chatId").value(volunteer.getUser().getChatId()))
-//                .andExpect(jsonPath("$.[0].user.firstName").value(volunteer.getUser().getFirstName()))
-//                .andExpect(jsonPath("$.[0].user.lastName").value(volunteer.getUser().getLastName()))
-//                .andExpect(jsonPath("$.[0].user.patronymic").value(volunteer.getUser().getPatronymic()))
-//                .andExpect(jsonPath("$.[0].user.phone").value(volunteer.getUser().getPhone()))
-//                .andExpect(jsonPath("$.[0].user.blocked").value(volunteer.getUser().getBlocked()))
-//                .andExpect(jsonPath("$.[0].user.denialReason").value(volunteer.getUser().getDenialReason()))
-//                .andExpect(jsonPath("$.[0].user.needHelp").value(volunteer.getUser().getNeedHelp()))
-//                .andExpect(jsonPath("$.[0].user.botState").value(volunteer.getUser().getBotState()))
-//                .andExpect(jsonPath("$.[1].id").value(volunteer1.getId()))
-//                .andExpect(jsonPath("$.[1].adopted").value(volunteer1.getAdopted()))
-//                .andExpect(jsonPath("$.[1].phone").value(volunteer1.getPhone()))
-//                .andExpect(jsonPath("$.[1].user.chatId").value(volunteer1.getUser().getChatId()))
-//                .andExpect(jsonPath("$.[1].user.firstName").value(volunteer1.getUser().getFirstName()))
-//                .andExpect(jsonPath("$.[1].user.lastName").value(volunteer1.getUser().getLastName()))
-//                .andExpect(jsonPath("$.[1].user.patronymic").value(volunteer.getUser().getPatronymic()))
-//                .andExpect(jsonPath("$.[1].user.phone").value(volunteer.getUser().getPhone()))
-//                .andExpect(jsonPath("$.[1].user.blocked").value(volunteer.getUser().getBlocked()))
-//                .andExpect(jsonPath("$.[1].user.denialReason").value(volunteer.getUser().getDenialReason()))
-//                .andExpect(jsonPath("$.[1].user.needHelp").value(volunteer.getUser().getNeedHelp()))
-//                .andExpect(jsonPath("$.[1].user.botState").value(volunteer.getUser().getBotState()));
-//
-//    }
-//
+    @Test
+    public void getAllVolunteersTest() throws Exception {
+        Volunteer volunteer = new Volunteer();
+        User user = new User();
+        user.setFirstName("Bob");
+        user.setLastName("Singler");
+        user.setChatId(123L);
+        user.setPatronymic("");
+        user.setPhone("");
+        user.setBlocked(false);
+        user.setDenialReason(null);
+        user.setNeedHelp(false);
+        volunteer.setId(1L);
+        volunteer.setAdopted(true);
+        volunteer.setPhone("8800");
+        volunteer.setUser(user);
+
+        Volunteer volunteer1 = new Volunteer();
+        User user1 = new User();
+        user1.setFirstName("God");
+        user1.setLastName("My");
+        user1.setChatId(123L);
+        user.setPatronymic("");
+        user.setPhone("");
+        user.setBlocked(false);
+        user.setDenialReason(null);
+        user.setNeedHelp(false);
+        volunteer1.setId(2L);
+        volunteer1.setAdopted(true);
+        volunteer1.setPhone("8800");
+        volunteer1.setUser(user1);
+
+        List<Volunteer> list = List.of(volunteer, volunteer1);
+
+        when(volunteersRepository.findByAdoptedTrue()).thenReturn(list);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/volunteer")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$.[0].id").value(volunteer.getId()))
+                .andExpect(jsonPath("$.[0].adopted").value(volunteer.getAdopted()))
+                .andExpect(jsonPath("$.[0].phone").value(volunteer.getPhone()))
+                .andExpect(jsonPath("$.[0].user.chatId").value(volunteer.getUser().getChatId()))
+                .andExpect(jsonPath("$.[0].user.firstName").value(volunteer.getUser().getFirstName()))
+                .andExpect(jsonPath("$.[0].user.lastName").value(volunteer.getUser().getLastName()))
+                .andExpect(jsonPath("$.[0].user.patronymic").value(volunteer.getUser().getPatronymic()))
+                .andExpect(jsonPath("$.[0].user.phone").value(volunteer.getUser().getPhone()))
+                .andExpect(jsonPath("$.[0].user.blocked").value(volunteer.getUser().getBlocked()))
+                .andExpect(jsonPath("$.[0].user.denialReason").value(volunteer.getUser().getDenialReason()))
+                .andExpect(jsonPath("$.[0].user.needHelp").value(volunteer.getUser().getNeedHelp()))
+                .andExpect(jsonPath("$.[1].id").value(volunteer1.getId()))
+                .andExpect(jsonPath("$.[1].adopted").value(volunteer1.getAdopted()))
+                .andExpect(jsonPath("$.[1].phone").value(volunteer1.getPhone()))
+                .andExpect(jsonPath("$.[1].user.chatId").value(volunteer1.getUser().getChatId()))
+                .andExpect(jsonPath("$.[1].user.firstName").value(volunteer1.getUser().getFirstName()))
+                .andExpect(jsonPath("$.[1].user.lastName").value(volunteer1.getUser().getLastName()))
+                .andExpect(jsonPath("$.[1].user.patronymic").value(volunteer1.getUser().getPatronymic()))
+                .andExpect(jsonPath("$.[1].user.phone").value(volunteer1.getUser().getPhone()))
+                .andExpect(jsonPath("$.[1].user.blocked").value(volunteer1.getUser().getBlocked()))
+                .andExpect(jsonPath("$.[1].user.denialReason").value(volunteer1.getUser().getDenialReason()))
+                .andExpect(jsonPath("$.[1].user.needHelp").value(volunteer1.getUser().getNeedHelp()));
+
+    }
+
     @Test
     public void deleteVolunteerTest() throws Exception {
         final String firstName = "Bob";
