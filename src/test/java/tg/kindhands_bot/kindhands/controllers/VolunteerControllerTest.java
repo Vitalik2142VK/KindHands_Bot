@@ -304,5 +304,6 @@ public class VolunteerControllerTest {
                 .andExpect(jsonPath("$.[1].user.blocked").value(volunteer1.getUser().getBlocked()))
                 .andExpect(jsonPath("$.[1].user.denialReason").value(volunteer1.getUser().getDenialReason()))
                 .andExpect(jsonPath("$.[1].user.needHelp").value(volunteer1.getUser().getNeedHelp()));
+
     }
 }
