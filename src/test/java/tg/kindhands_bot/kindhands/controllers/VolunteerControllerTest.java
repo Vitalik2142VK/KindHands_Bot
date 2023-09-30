@@ -91,11 +91,11 @@ public class VolunteerControllerTest {
         user1.setFirstName("God");
         user1.setLastName("My");
         user1.setChatId(123L);
-        user.setPatronymic("");
-        user.setPhone("");
-        user.setBlocked(false);
-        user.setDenialReason(null);
-        user.setNeedHelp(false);
+        user1.setPatronymic("");
+        user1.setPhone("");
+        user1.setBlocked(false);
+        user1.setDenialReason(null);
+        user1.setNeedHelp(false);
         volunteer1.setId(2L);
         volunteer1.setAdopted(true);
         volunteer1.setPhone("8800");
@@ -132,7 +132,6 @@ public class VolunteerControllerTest {
                 .andExpect(jsonPath("$.[1].user.blocked").value(volunteer1.getUser().getBlocked()))
                 .andExpect(jsonPath("$.[1].user.denialReason").value(volunteer1.getUser().getDenialReason()))
                 .andExpect(jsonPath("$.[1].user.needHelp").value(volunteer1.getUser().getNeedHelp()));
-
     }
 
     @Test

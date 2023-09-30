@@ -21,6 +21,16 @@
       "lastName": "LastName",
       "type": "private"
     },
+    "photo": [
+      {
+        "fileId": "10203",
+        "fileUniqueId": "987654",
+        "width": 720,
+        "height": 1080,
+        "fileSize": 100,
+        "filePath": "D:\\folder"
+      }
+    ],
     "text": "%text%"
   }
 
