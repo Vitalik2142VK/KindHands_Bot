@@ -113,7 +113,8 @@ public class ChoosingActionTest {
         SendMessage actual = botMessages.blockedMessage(users.get(0));
 
         assertEquals("102030" ,actual.getChatId());
-        assertEquals(update.getMessage().getChat().getFirstName() + ", ваш аккаунт заблокирован",
+        assertEquals(users.get(0).getFirstName() + " " + users.get(0).getPatronymic() + ", ваш аккаунт заблокирован по причине:\n" +
+                        users.get(0).getDenialReason(),
                 actual.getText());
     }
 
