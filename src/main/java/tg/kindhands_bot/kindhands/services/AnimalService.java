@@ -54,12 +54,11 @@ public class AnimalService {
 
     public Pair<byte[], String> uploadPhoto(Long id, MultipartFile photo) {
         try {
-            AnimalPhoto animalPhoto = animalPhotoRepository.findById(id).orElse(null);
-            if (animalPhoto == null) {
-                animalPhoto = new AnimalPhoto();
-            } else {
-                Files.delete(Path.of(animalPhoto.getFilePath()));
-            }
+            var animalPhoto = animalPhotoRepository.findById(id).orElse(new AnimalPhoto());
+            var filePath = animalPhoto.getFilePath();
+
+            if (filePath != null) Files.delete(Path.of(filePath));
+
             var contentType = photo.getContentType();
             var extension = StringUtils.getFilenameExtension(photo.getOriginalFilename());
             var fileName = UUID.randomUUID() + "." + extension;

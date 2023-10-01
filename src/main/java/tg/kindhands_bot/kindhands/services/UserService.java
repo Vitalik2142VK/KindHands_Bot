@@ -172,10 +172,7 @@ public class UserService {
      */
 
     public Pair<byte[], String> getPhoto(Long id) {
-        ReportAnimalPhoto reportAnimalPhoto = reportAnimalPhotoRepository.findById(id).orElse(null);
-        if (reportAnimalPhoto == null) {
-            throw new RuntimeException("The photo is not found");
-        }
+        ReportAnimalPhoto reportAnimalPhoto = reportAnimalPhotoRepository.findById(id).orElseThrow(() -> new RuntimeException("The photo is not found"));
         return Pair.of(reportAnimalPhoto.getData(), reportAnimalPhoto.getMediaType());
     }
 }
