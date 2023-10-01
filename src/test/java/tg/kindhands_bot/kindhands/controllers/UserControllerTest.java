@@ -28,6 +28,7 @@ import tg.kindhands_bot.kindhands.repositories.AnimalsRepository;
 import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
+import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 import tg.kindhands_bot.kindhands.services.KindHandsBot;
 import tg.kindhands_bot.kindhands.services.UserService;
@@ -62,6 +63,9 @@ public class UserControllerTest {
     private ReportAnimalRepository reportAnimalRepository;
     @MockBean
     private KindHandsBot bot;
+    @MockBean
+    private ReportAnimalPhotoRepository reportAnimalPhotoRepository;
+
     @SpyBean
     private UserService userService;
     @SpyBean

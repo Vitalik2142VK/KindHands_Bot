@@ -39,10 +39,8 @@ public class AnimalService {
      */
 
     public Pair<byte[], String> getPhoto(Long id) {
-        AnimalPhoto animalPhoto = animalPhotoRepository.findById(id).orElse(null);
-        if (animalPhoto == null) {
-            throw new RuntimeException("The photo is not found");
-        }
+        AnimalPhoto animalPhoto = animalPhotoRepository.findById(id).orElseThrow(() -> new NullPointerException("The photo is not found"));
+
         return Pair.of(animalPhoto.getData(), animalPhoto.getMediaType());
     }
 
@@ -92,6 +90,11 @@ public class AnimalService {
      * Adds a new animal.
      */
     public Animal addAnimal(Animal animal) {
+        long idPhoto = animal.getAnimalPhoto().getId();
+
+        AnimalPhoto photo = animalPhotoRepository.findById(idPhoto).orElseThrow(() -> new NullPointerException("Фото животного с id '" + idPhoto + "' не найдено."));
+        animal.setAnimalPhoto(photo);
+
         return animalsRepository.save(animal);
     }
 
