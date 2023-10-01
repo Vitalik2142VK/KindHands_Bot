@@ -105,7 +105,7 @@ public class UserController {
                     description = "Помощь оказана."
             )
     })
-    public ResponseEntity<?> changeIsNeedHelp(@RequestParam(required = false) Long id) {
+    public ResponseEntity<?> changeIsNeedHelp(@PathVariable Long id) {
         return ResponseEntity.ok(userService.isNeedHelp(id));
     }
 }
