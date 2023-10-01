@@ -1,28 +1,19 @@
 package tg.kindhands_bot.kindhands.services;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import tg.kindhands_bot.kindhands.components.CheckMethods;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.enums.BotState;
 import tg.kindhands_bot.kindhands.exceptions.IncorrectDataExceptionAndSendMessage;
-import tg.kindhands_bot.kindhands.exceptions.NullPointerExceptionAndSendMessage;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tg.kindhands_bot.kindhands.services.AdditionalMethods.createUser;
-import static tg.kindhands_bot.kindhands.services.AdditionalMethods.getUpdateButton;
+
+import static tg.kindhands_bot.kindhands.AdditionalMethods.createUser;
+//import static tg.kindhands_bot.kindhands.services.AdditionalMethods.getUpdateButton;
 
 @ExtendWith(MockitoExtension.class)
 public class CheckMethodsTest {
@@ -68,7 +59,7 @@ public class CheckMethodsTest {
         assertEquals(102030, actual.getChatId());
         assertEquals("Ван", actual.getFirstName());
         assertEquals("Дамм", actual.getPatronymic());
-        assertEquals("Жан-клод", actual.getLastName());
+        assertEquals("Жан-Клод", actual.getLastName());
 
     }
 
