@@ -190,36 +190,4 @@ public class UserService {
         }
         return Pair.of(reportAnimalPhoto.getData(), reportAnimalPhoto.getMediaType());
     }
-
-    /**
-     * Сохранение принятой фотографии
-     * -----||-----
-     * Uploading photo in DB
-     */
-
-    public Pair<byte[], String> uploadPhoto(Long id, MultipartFile photo) {
-        try {
-            ReportAnimalPhoto reportAnimalPhoto = reportAnimalPhotoRepository.getById(id);
-            if (reportAnimalPhoto == null) {
-                reportAnimalPhoto = new ReportAnimalPhoto();
-            } else {
-                Files.delete(Path.of(reportAnimalPhoto.getFilePath()));
-            }
-            var contentType = photo.getContentType();
-            var extension = StringUtils.getFilenameExtension(photo.getOriginalFilename());
-            var fileName = UUID.randomUUID() + "." + extension;
-            var pathToPhoto = photoPath.resolve(fileName);
-            byte[] data = photo.getBytes();
-
-            reportAnimalPhoto.setFilePath(pathToPhoto.toString());
-            reportAnimalPhoto.setFileSize(photo.getSize());
-            reportAnimalPhoto.setMediaType(contentType);
-            reportAnimalPhoto.setData(makeLoweredPhoto(pathToPhoto));
-            reportAnimalPhotoRepository.save(reportAnimalPhoto);
-
-            return Pair.of(data, contentType);
-        } catch (IOException e) {
-            throw new RuntimeException();
-        }
-    }
 }

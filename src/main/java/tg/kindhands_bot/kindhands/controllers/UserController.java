@@ -114,29 +114,6 @@ public class UserController {
      * -----||-----
      * Show the original photo
      */
-    @PatchMapping(value = "/photo/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    // PATCH http://localhost:8080/volunteer/animal/photo/1
-    @Operation(summary = "Добавить фотографию отчета")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Отчет добавлен"
-            )})
-    public ResponseEntity<?> uploadPhoto(@PathVariable Long id, @RequestPart MultipartFile photo) {
-        var pair = userService.uploadPhoto(id, photo);
-        byte[] data = pair.getLeft();
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(pair.getRight()))
-                .contentLength(data.length)
-                .body(data);
-    }
-
-    /**
-     * Сохранение принятой фотографии
-     * -----||-----
-     * Uploading photo in DB
-     */
     @GetMapping("/photo/{id}")
     // GET http://localhost:8080/volunteer/animal/photo/1
     @Operation(summary = "Получить фотографию животного")
