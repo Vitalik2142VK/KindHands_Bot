@@ -32,7 +32,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tg.kindhands_bot.kindhands.services.AdditionalMethods.*;
+import static tg.kindhands_bot.kindhands.AdditionalMethods.*;
 import static tg.kindhands_bot.kindhands.utils.MessageConstants.CAT_BUTTON;
 import static tg.kindhands_bot.kindhands.utils.MessageConstants.DOG_BUTTON;
 

@@ -12,11 +12,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import tg.kindhands_bot.kindhands.components.NavigationMenu;
 import tg.kindhands_bot.kindhands.components.ProcessingBotMessages;
-import tg.kindhands_bot.kindhands.components.send_data.SendAnimalData;
-import tg.kindhands_bot.kindhands.components.send_data.SendCatData;
-import tg.kindhands_bot.kindhands.components.send_data.SendDogData;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.enums.BotState;
 import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
@@ -36,7 +32,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static tg.kindhands_bot.kindhands.services.AdditionalMethods.*;
+import static tg.kindhands_bot.kindhands.AdditionalMethods.*;
 import static tg.kindhands_bot.kindhands.utils.MessageConstants.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,7 +46,7 @@ public class ChoosingActionTest {
     @Mock
     private TamedAnimalRepository tamedAnimalRepository;
     @Mock
-    private VolunteersRepository VolunteersRepository;
+    private VolunteersRepository volunteersRepository;
 
     @Mock
     private KindHandsBot bot;
@@ -65,7 +61,7 @@ public class ChoosingActionTest {
     @BeforeEach
     public void beforeEach() throws URISyntaxException, IOException {
         choosingAction = new ChoosingAction(bot = Mockito.mock(KindHandsBot.class), userRepository, reportAnimalRepository,
-                reportPhotoRepository, tamedAnimalRepository, VolunteersRepository);
+                reportPhotoRepository, tamedAnimalRepository, volunteersRepository);
         json = Files.readString(
                 Paths.get(KindHandsBot.class.getResource("text_update.json").toURI())
         );
@@ -113,7 +109,8 @@ public class ChoosingActionTest {
         SendMessage actual = botMessages.blockedMessage(users.get(0));
 
         assertEquals("102030" ,actual.getChatId());
-        assertEquals(update.getMessage().getChat().getFirstName() + ", ваш аккаунт заблокирован",
+        assertEquals(users.get(0).getFirstName() + " " + users.get(0).getPatronymic() + ", ваш аккаунт заблокирован по причине:\n" +
+                        users.get(0).getDenialReason(),
                 actual.getText());
     }
 
@@ -790,25 +787,6 @@ public class ChoosingActionTest {
         assertEquals(menuHowGetAnimalFromShelterButton("SAFETY_RCM_C"), actual.getReplyMarkup());
     }
 
-
-    // Дополнительные методы
-
-    private void reflectionBotMessages() {
-        try {
-            Field field = choosingAction.getClass().getDeclaredField("botMessages");
-            field.setAccessible(true);
-            botMessages = (ProcessingBotMessages) field.get(choosingAction);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private EditMessageText getEditMessageTextActual() {
-        ArgumentCaptor<EditMessageText> argumentCaptor = ArgumentCaptor.forClass(EditMessageText.class);
-        Mockito.verify(bot).sendMessage(argumentCaptor.capture());
-        return argumentCaptor.getValue();
-    }
-
     private InlineKeyboardMarkup menuShelterButton(String shelter) {
 
         String animalText;
@@ -1032,5 +1010,23 @@ public class ChoosingActionTest {
         button.setCallbackData(callbackData);
 
         return button;
+    }
+
+    // Дополнительные методы
+
+    private void reflectionBotMessages() {
+        try {
+            Field field = choosingAction.getClass().getDeclaredField("botMessages");
+            field.setAccessible(true);
+            botMessages = (ProcessingBotMessages) field.get(choosingAction);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private EditMessageText getEditMessageTextActual() {
+        ArgumentCaptor<EditMessageText> argumentCaptor = ArgumentCaptor.forClass(EditMessageText.class);
+        Mockito.verify(bot).sendMessage(argumentCaptor.capture());
+        return argumentCaptor.getValue();
     }
 }
