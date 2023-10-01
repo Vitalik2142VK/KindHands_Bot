@@ -10,7 +10,10 @@ import tg.kindhands_bot.kindhands.entities.photo.AnimalPhoto;
 import tg.kindhands_bot.kindhands.repositories.AnimalsRepository;
 import tg.kindhands_bot.kindhands.repositories.photo.AnimalPhotoRepository;
 
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -50,26 +53,22 @@ public class AnimalService {
      * Uploading photo in DB
      */
 
-    public Pair<byte[], String> uploadPhoto(Long id, MultipartFile photo) {
+    public void uploadPhoto(MultipartFile photo) {
         try {
-            var animalPhoto = animalPhotoRepository.findById(id).orElse(new AnimalPhoto());
-            var filePath = animalPhoto.getFilePath();
-
-            if (filePath != null) Files.delete(Path.of(filePath));
+            var animalPhoto = new AnimalPhoto();
 
             var contentType = photo.getContentType();
             var extension = StringUtils.getFilenameExtension(photo.getOriginalFilename());
             var fileName = UUID.randomUUID() + "." + extension;
             var pathToPhoto = photoPath.resolve(fileName);
             byte[] data = photo.getBytes();
+            Files.write(pathToPhoto, data);
 
             animalPhoto.setFilePath(pathToPhoto.toString());
             animalPhoto.setFileSize(photo.getSize());
             animalPhoto.setMediaType(contentType);
-            animalPhoto.setData(makeLoweredPhoto(pathToPhoto));
+            animalPhoto.setData(data);
             animalPhotoRepository.save(animalPhoto);
-
-            return Pair.of(data, contentType);
         } catch (IOException e) {
             throw new RuntimeException();
         }
