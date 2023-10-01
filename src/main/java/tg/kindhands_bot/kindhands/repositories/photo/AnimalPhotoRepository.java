@@ -6,5 +6,4 @@ import tg.kindhands_bot.kindhands.entities.photo.AnimalPhoto;
 import java.util.Optional;
 
 public interface AnimalPhotoRepository extends JpaRepository<AnimalPhoto, Long> {
-    AnimalPhoto getById(Long id);
 }
