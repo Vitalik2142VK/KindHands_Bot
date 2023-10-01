@@ -1,12 +1,9 @@
 package tg.kindhands_bot.kindhands.services;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import tg.kindhands_bot.kindhands.components.MessagesBotFromControllers;
 import tg.kindhands_bot.kindhands.entities.Animal;
 import tg.kindhands_bot.kindhands.entities.User;
@@ -19,14 +16,8 @@ import tg.kindhands_bot.kindhands.repositories.UserRepository;
 import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.UUID;
-
-import static tg.kindhands_bot.kindhands.components.CheckMethods.makeLoweredPhoto;
 
 @Service
 public class UserService {
@@ -35,9 +26,6 @@ public class UserService {
     private final TamedAnimalRepository tamedAnimalRepository;
     private final ReportAnimalPhotoRepository reportAnimalPhotoRepository;
     private final MessagesBotFromControllers messagesBot;
-
-    @Value("${reports.photo.storage.path}")
-    private Path photoPath;
 
     public UserService(UserRepository userRepository,
                        AnimalsRepository animalsRepository,
@@ -184,7 +172,7 @@ public class UserService {
      */
 
     public Pair<byte[], String> getPhoto(Long id) {
-        ReportAnimalPhoto reportAnimalPhoto = reportAnimalPhotoRepository.getById(id);
+        ReportAnimalPhoto reportAnimalPhoto = reportAnimalPhotoRepository.findById(id).orElse(null);
         if (reportAnimalPhoto == null) {
             throw new RuntimeException("The photo is not found");
         }
