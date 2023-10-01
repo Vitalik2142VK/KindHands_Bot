@@ -1,9 +1,12 @@
 package tg.kindhands_bot.kindhands.services;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import tg.kindhands_bot.kindhands.components.MessagesBotFromControllers;
 import tg.kindhands_bot.kindhands.entities.Animal;
 import tg.kindhands_bot.kindhands.entities.User;
@@ -69,19 +72,13 @@ public class UserService {
      * Adds an animal taken by the user.
      */
     public String addUserAnimal(@PathVariable Long idUser, @RequestParam Long idAnimal) {
-        User user = userRepository.findById(idUser).orElse(null);
-        if (user == null) {
-            throw new NullPointerException("Пользователь с id '" + idUser + "' не найден");
-        }
+        User user = userRepository.findById(idUser).orElseThrow(() -> new NullPointerException("Пользователь с id '" + idUser + "' не найден"));
 
         if (user.getPhone() == null || user.getPhone().isEmpty()) {
             return "Пользователю " + user.getFirstName() + " необходимо, через бота, заполнить контактные данные.";
         }
 
-        Animal animal = animalsRepository.findById(idAnimal).orElse(null);
-        if (animal == null) {
-            throw new NullPointerException("Животное с id '" + idUser + "' не найдено");
-        }
+        Animal animal = animalsRepository.findById(idAnimal).orElseThrow(() -> new NullPointerException("Животное с id '" + idUser + "' не найдено"));
 
         LocalDate nowDate = LocalDate.now();
 
@@ -152,10 +149,8 @@ public class UserService {
      * Method for changing the value of the user's needHelp field
      */
     public String isNeedHelp(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            throw new NullPointerException("Пользователь с id '" + id + "' не найден.");
-        }
+        User user = userRepository.findById(id).orElseThrow(() -> new NullPointerException("Пользователь с id '" + id + "' не найден."));
+
         user.setNeedHelp(false);
         userRepository.save(user);
 
@@ -174,5 +169,18 @@ public class UserService {
     public Pair<byte[], String> getPhoto(Long id) {
         ReportAnimalPhoto reportAnimalPhoto = reportAnimalPhotoRepository.findById(id).orElseThrow(() -> new RuntimeException("The photo is not found"));
         return Pair.of(reportAnimalPhoto.getData(), reportAnimalPhoto.getMediaType());
+    }
+
+    /**
+     * Отправляет сообщение пользователю
+     * -----||-----
+     * Sends a message to the user
+     */
+    public Object sendMessageUser(Long id, String messageUser) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NullPointerException("Пользователь с id '" + id + "' не найден."));
+
+        messagesBot.sendMessageUser(user, messageUser);
+
+        return "Сообщение пользователю отправлено";
     }
 }

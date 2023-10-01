@@ -82,7 +82,6 @@ public class AnimalService {
      * -----||-----
      * Displays a list of all animals.
      */
-
     public Collection<Animal> getAllAnimals() {
         return animalsRepository.findAll();
     }
@@ -96,21 +95,11 @@ public class AnimalService {
         return animalsRepository.save(animal);
     }
 
-//    /**
-//     * Изменяет статус животного.
-//     * -----||-----
-//     * Changes the status of the animal.
-//     */
-//    public ResponseEntity<?> changeStatusAnimal(@PathVariable Long id) {
-//        return ResponseEntity.ok().build();
-//    }
-
     /**
      * Удаляет животное из БД.
      * -----||-----
      * Removes an animal from the database.
      */
-
     public void removeAnimal(Long id) {
        animalsRepository.deleteById(id);
     }

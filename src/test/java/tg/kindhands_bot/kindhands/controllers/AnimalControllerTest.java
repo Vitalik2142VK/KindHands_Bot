@@ -21,6 +21,7 @@ import tg.kindhands_bot.kindhands.entities.Animal;
 import tg.kindhands_bot.kindhands.entities.photo.AnimalPhoto;
 import tg.kindhands_bot.kindhands.enums.TypeAnimal;
 import tg.kindhands_bot.kindhands.repositories.AnimalsRepository;
+import tg.kindhands_bot.kindhands.repositories.photo.AnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.services.AnimalService;
 
 import java.util.List;
@@ -33,6 +34,8 @@ public class AnimalControllerTest {
 
     @MockBean
     private AnimalsRepository animalsRepository;
+    @MockBean
+    private AnimalPhotoRepository animalPhotoRepository;
 
     @SpyBean
     private AnimalService animalService;

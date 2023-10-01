@@ -57,10 +57,8 @@ public class VolunteerService {
      * Changes the status of the report specified by the volunteer.
      */
     public String changeStatusReport(Long id, String messageUser, ReportStatus reportStatus) {
-        ReportAnimal reportAnimal = reportAnimalRepository.findById(id).orElse(null);
-        if (reportAnimal == null) {
-            throw new NullPointerException("Отчет с id '" + id + "' не найден.");
-        }
+        ReportAnimal reportAnimal = reportAnimalRepository.findById(id).orElseThrow(() -> new NullPointerException("Отчет с id '" + id + "' не найден."));
+
         User user = reportAnimal.getTamedAnimal().getUser();
         reportAnimal.setReportStatus(reportStatus);
         reportAnimalRepository.save(reportAnimal);
@@ -83,10 +81,8 @@ public class VolunteerService {
      * Accepts a volunteer candidate
      */
     public String addVolunteer(Long id) {
-        Volunteer volunteer = volunteersRepository.findById(id).orElse(null);
-        if (volunteer == null) {
-            throw new NullPointerException("Волонтер с id '" + id + "' не найден.");
-        }
+        Volunteer volunteer = volunteersRepository.findById(id).orElseThrow(() -> new NullPointerException("Волонтер с id '" + id + "' не найден."));
+
         User user = volunteer.getUser();
         volunteer.setAdopted(true);
 
@@ -104,10 +100,8 @@ public class VolunteerService {
      * Delete a volunteer method
      */
     public String deleteVolunteer(long id) {
-        Volunteer volunteer = volunteersRepository.findById(id).orElse(null);
-        if (volunteer == null) {
-            throw new NullPointerException("Волонтер с id '" + id + "' не найден.");
-        }
+        Volunteer volunteer = volunteersRepository.findById(id).orElseThrow(() -> new NullPointerException("Волонтер с id '" + id + "' не найден."));
+
         User user = volunteer.getUser();
         volunteersRepository.delete(volunteer);
 

@@ -130,4 +130,20 @@ public class UserController {
                 .contentLength(data.length)
                 .body(data);
     }
+
+    /**
+     * Отправляет сообщение пользователю
+     * -----||-----
+     * Sends a message to the user
+     */
+    @PutMapping("/send_message/{id}") // GET http://localhost:8080/send_message/reports
+    @Operation(summary = "Изменить статус отчета")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Статус отчета изменен."
+            )})
+    public ResponseEntity<?> sendMessageUser(@PathVariable Long id, @RequestParam String messageUser) {
+        return ResponseEntity.ok(userService.sendMessageUser(id, messageUser));
+    }
 }

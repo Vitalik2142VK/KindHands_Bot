@@ -20,7 +20,7 @@ import java.util.Collection;
 public class AnimalController {
     private final AnimalService animalService;
 
-    public AnimalController(AnimalService animalService, AnimalPhotoRepository animalPhotoRepository) {
+    public AnimalController(AnimalService animalService) {
         this.animalService = animalService;
     }
 
