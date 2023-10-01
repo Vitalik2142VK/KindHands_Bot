@@ -14,7 +14,7 @@ public interface TamedAnimalRepository extends JpaRepository<TamedAnimal, Long> 
 
     TamedAnimal findByUser_Id(Long id);
 
-
+    List<TamedAnimal> findByDateLastReportBefore(LocalDate dateLastReport);
 
 //    @Query(value = "SELECT u.* FROM tamed_cat tc, users u\n" +
 //            "WHERE tc.user_id = u.id\n" +

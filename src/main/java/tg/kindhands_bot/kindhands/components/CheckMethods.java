@@ -5,7 +5,6 @@ import tg.kindhands_bot.kindhands.exceptions.NullPointerExceptionAndSendMessage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -59,7 +58,14 @@ public class CheckMethods {
         }
 
         return arrFullName.stream()
-                .map(s -> s.substring(0,1).toUpperCase() + s.substring(1).toLowerCase())
+                .map(s -> {
+                    if (s.contains("-"))
+                        s = s.substring(0,1).toUpperCase() + s.substring(1, s.indexOf('-')).toLowerCase() + "-" +
+                                s.substring(s.indexOf('-') + 1, s.indexOf('-') + 2).toUpperCase() +
+                                s.substring(s.indexOf('-') + 2).toLowerCase();
+                    else
+                        s = s.substring(0,1).toUpperCase() + s.substring(1).toLowerCase();
+                    return s.replaceAll("[!\"#$%&'()*+,./:;<=>?@\\[\\\\\\]^_`{|}~]", "");})
                 .collect(Collectors.toList());
     }
 }
