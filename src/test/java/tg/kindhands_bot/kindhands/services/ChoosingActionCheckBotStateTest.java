@@ -123,7 +123,7 @@ public class ChoosingActionCheckBotStateTest {
 //        File file = new File();
 //
 //        Mockito.when(userRepository.findByChatId(chatId)).thenReturn(findUserByChatId(users, chatId));
-//        Mockito.when(bot.downloadFile(any(File.class))).thenReturn(file);
+//        //Mockito.when(bot.downloadFile(any(File.class))).thenReturn(file);
 //        Mockito.when(tamedAnimalRepository.findByUser_ChatId(chatId)).thenReturn(tamedAnimal);
 //        Mockito.when(tamedAnimalRepository.save(any(TamedAnimal.class))).thenReturn(tamedAnimal);
 //        Mockito.when(reportAnimalRepository.findByDateAndTamedAnimal_Id(date, tamedAnimal.getId())).thenReturn(null);
@@ -139,7 +139,7 @@ public class ChoosingActionCheckBotStateTest {
 //    }
 
     @Test
-    public void checkBotStateSetReportAnimalPhoto() throws TelegramApiException {
+    public void checkBotStateSetReportAnimal() {
         Update update = getUpdate(json, "Description report.");
         long chatId = update.getMessage().getChatId();
 

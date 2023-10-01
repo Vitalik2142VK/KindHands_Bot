@@ -81,19 +81,13 @@ public class UserService {
      * Adds an animal taken by the user.
      */
     public String addUserAnimal(@PathVariable Long idUser, @RequestParam Long idAnimal) {
-        User user = userRepository.findById(idUser).orElse(null);
-        if (user == null) {
-            throw new NullPointerException("Пользователь с id '" + idUser + "' не найден");
-        }
+        User user = userRepository.findById(idUser).orElseThrow(() -> new NullPointerException("Пользователь с id '" + idUser + "' не найден"));
 
         if (user.getPhone() == null || user.getPhone().isEmpty()) {
             return "Пользователю " + user.getFirstName() + " необходимо, через бота, заполнить контактные данные.";
         }
 
-        Animal animal = animalsRepository.findById(idAnimal).orElse(null);
-        if (animal == null) {
-            throw new NullPointerException("Животное с id '" + idUser + "' не найдено");
-        }
+        Animal animal = animalsRepository.findById(idAnimal).orElseThrow(() -> new NullPointerException("Животное с id '" + idUser + "' не найдено"));
 
         LocalDate nowDate = LocalDate.now();
 
@@ -164,10 +158,8 @@ public class UserService {
      * Method for changing the value of the user's needHelp field
      */
     public String isNeedHelp(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            throw new NullPointerException("Пользователь с id '" + id + "' не найден.");
-        }
+        User user = userRepository.findById(id).orElseThrow(() -> new NullPointerException("Пользователь с id '" + id + "' не найден."));
+
         user.setNeedHelp(false);
         userRepository.save(user);
 
@@ -184,10 +176,21 @@ public class UserService {
      */
 
     public Pair<byte[], String> getPhoto(Long id) {
-        ReportAnimalPhoto reportAnimalPhoto = reportAnimalPhotoRepository.getById(id);
-        if (reportAnimalPhoto == null) {
-            throw new RuntimeException("The photo is not found");
-        }
+        ReportAnimalPhoto reportAnimalPhoto = reportAnimalPhotoRepository.findById(id).orElseThrow(() -> new RuntimeException("The photo is not found"));
+
         return Pair.of(reportAnimalPhoto.getData(), reportAnimalPhoto.getMediaType());
+    }
+
+    /**
+     * Отправляет сообщение пользователю
+     * -----||-----
+     * Sends a message to the user
+     */
+    public Object sendMessageUser(Long id, String messageUser) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NullPointerException("Пользователь с id '" + id + "' не найден."));
+
+        messagesBot.sendMessageUser(user, messageUser);
+
+        return "Сообщение пользователю отправлено";
     }
 }
