@@ -4,10 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.http.protocol.HttpCoreContext;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.services.UserService;
 
@@ -97,7 +97,7 @@ public class UserController {
      * -----||-----
      * The volunteer changes the user's needHelp field to false after providing assistance
      */
-    @PutMapping("/adopted/help/change/{id}")//GET http://localhost:8080/volunteer/user/help/change/3
+    @PutMapping("/adopted/help/change/{id}")//PUT http://localhost:8080/volunteer/user/help/change/3
     @Operation(summary = "Изменение волонтером статуса пользователя после оказания помощи")
     @ApiResponses(value = {
             @ApiResponse(
@@ -107,5 +107,51 @@ public class UserController {
     })
     public ResponseEntity<?> changeIsNeedHelp(@RequestParam(required = false) Long id) {
         return ResponseEntity.ok(userService.isNeedHelp(id));
+    }
+
+    /**
+     * Выводит оригинал фотографии животного
+     * -----||-----
+     * Show the original photo
+     */
+    @PatchMapping(value = "/photo/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // PATCH http://localhost:8080/volunteer/animal/photo/1
+    @Operation(summary = "Добавить фотографию отчета")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Отчет добавлен"
+            )})
+    public ResponseEntity<?> uploadPhoto(@PathVariable Long id, @RequestPart MultipartFile photo) {
+        var pair = userService.uploadPhoto(id, photo);
+        byte[] data = pair.getLeft();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(pair.getRight()))
+                .contentLength(data.length)
+                .body(data);
+    }
+
+    /**
+     * Сохранение принятой фотографии
+     * -----||-----
+     * Uploading photo in DB
+     */
+    @GetMapping("/photo/{id}")
+    // GET http://localhost:8080/volunteer/animal/photo/1
+    @Operation(summary = "Получить фотографию животного")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Фотографию успешно найдена"
+            )})
+    public ResponseEntity<?> getPhotoAnimal(Long id) {
+        var pair = userService.getPhoto(id);
+        byte[] data = pair.getLeft();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(pair.getRight()))
+                .contentLength(data.length)
+                .body(data);
     }
 }

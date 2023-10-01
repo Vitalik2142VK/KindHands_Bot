@@ -1,36 +1,53 @@
 package tg.kindhands_bot.kindhands.services;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import tg.kindhands_bot.kindhands.components.MessagesBotFromControllers;
 import tg.kindhands_bot.kindhands.entities.Animal;
 import tg.kindhands_bot.kindhands.entities.User;
+import tg.kindhands_bot.kindhands.entities.photo.ReportAnimalPhoto;
 import tg.kindhands_bot.kindhands.entities.tamed.TamedAnimal;
 import tg.kindhands_bot.kindhands.entities.tamed.TamedCat;
 import tg.kindhands_bot.kindhands.entities.tamed.TamedDog;
 import tg.kindhands_bot.kindhands.repositories.AnimalsRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
+import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.UUID;
+
+import static tg.kindhands_bot.kindhands.components.CheckMethods.makeLoweredPhoto;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final AnimalsRepository animalsRepository;
     private final TamedAnimalRepository tamedAnimalRepository;
-
+    private final ReportAnimalPhotoRepository reportAnimalPhotoRepository;
     private final MessagesBotFromControllers messagesBot;
+
+    @Value("${reports.photo.storage.path}")
+    private Path photoPath;
 
     public UserService(UserRepository userRepository,
                        AnimalsRepository animalsRepository,
                        TamedAnimalRepository tamedAnimalRepository,
+                       ReportAnimalPhotoRepository reportAnimalPhotoRepository,
                        MessagesBotFromControllers messagesBot) {
         this.userRepository = userRepository;
         this.animalsRepository = animalsRepository;
         this.tamedAnimalRepository = tamedAnimalRepository;
+        this.reportAnimalPhotoRepository = reportAnimalPhotoRepository;
         this.messagesBot = messagesBot;
     }
 
@@ -58,7 +75,8 @@ public class UserService {
     }
 
     /**
-     * Добавляет пользователю, взятое им, животное.
+     * Добавляет пользователю, взятое им, ж
+     * ивотное.
      * -----||-----
      * Adds an animal taken by the user.
      */
@@ -157,5 +175,51 @@ public class UserService {
                 "была решена. Если это не так, пожалуйста, повторите попытку.");
 
         return "Проблема пользователя " + user.getLastName() + " " + user.getFirstName() + " " + user.getPatronymic() + " решена";//добавить фио
+    }
+
+    /**
+     * Возвращает оригинальный файл.
+     * -----||-----
+     * It returns original file.
+     */
+
+    public Pair<byte[], String> getPhoto(Long id) {
+        ReportAnimalPhoto reportAnimalPhoto = reportAnimalPhotoRepository.getById(id);
+        if (reportAnimalPhoto == null) {
+            throw new RuntimeException("The photo is not found");
+        }
+        return Pair.of(reportAnimalPhoto.getData(), reportAnimalPhoto.getMediaType());
+    }
+
+    /**
+     * Сохранение принятой фотографии
+     * -----||-----
+     * Uploading photo in DB
+     */
+
+    public Pair<byte[], String> uploadPhoto(Long id, MultipartFile photo) {
+        try {
+            ReportAnimalPhoto reportAnimalPhoto = reportAnimalPhotoRepository.getById(id);
+            if (reportAnimalPhoto == null) {
+                reportAnimalPhoto = new ReportAnimalPhoto();
+            } else {
+                Files.delete(Path.of(reportAnimalPhoto.getFilePath()));
+            }
+            var contentType = photo.getContentType();
+            var extension = StringUtils.getFilenameExtension(photo.getOriginalFilename());
+            var fileName = UUID.randomUUID() + "." + extension;
+            var pathToPhoto = photoPath.resolve(fileName);
+            byte[] data = photo.getBytes();
+
+            reportAnimalPhoto.setFilePath(pathToPhoto.toString());
+            reportAnimalPhoto.setFileSize(photo.getSize());
+            reportAnimalPhoto.setMediaType(contentType);
+            reportAnimalPhoto.setData(makeLoweredPhoto(pathToPhoto));
+            reportAnimalPhotoRepository.save(reportAnimalPhoto);
+
+            return Pair.of(data, contentType);
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
     }
 }
