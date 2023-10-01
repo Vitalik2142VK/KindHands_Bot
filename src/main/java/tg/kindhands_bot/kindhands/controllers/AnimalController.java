@@ -45,22 +45,17 @@ public class AnimalController {
      * -----||-----
      * Show the original photo
      */
-    @PatchMapping(value = "/photo/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    // PATCH http://localhost:8080/volunteer/animal/photo/1
+    @PutMapping(value = "photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // PUT http://localhost:8080/volunteer/animal/photo/1
     @Operation(summary = "Добавить фотографию животному")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Фотографию обработана"
             )})
-    public ResponseEntity<?> uploadPhoto(@PathVariable Long id, @RequestPart MultipartFile photo) {
-        var pair = animalService.uploadPhoto(id, photo);
-        byte[] data = pair.getLeft();
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(pair.getRight()))
-                .contentLength(data.length)
-                .body(data);
+    public ResponseEntity<?> uploadPhoto(@RequestPart MultipartFile photo) {
+        animalService.uploadPhoto(photo);
+        return ResponseEntity.ok().body("Фотографию обработана");
     }
 
     /**
@@ -76,7 +71,7 @@ public class AnimalController {
                     responseCode = "200",
                     description = "Фотографию успешно найдена"
             )})
-    public ResponseEntity<?> getPhotoAnimal(Long id) {
+    public ResponseEntity<?> getPhoto(@PathVariable Long id) {
         var pair = animalService.getPhoto(id);
         byte[] data = pair.getLeft();
 
