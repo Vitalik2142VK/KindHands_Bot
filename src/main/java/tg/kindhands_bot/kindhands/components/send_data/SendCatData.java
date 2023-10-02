@@ -18,7 +18,7 @@ public class SendCatData implements SendAnimalData{
 
     @Override
     public String printRecommendationsForHouseSmallAnimal() {
-        return "список рекомендаций по обустройству дома для котенка";
+        return "список рекомендаций по обустройству дома для котёнка";
     }
 
     @Override

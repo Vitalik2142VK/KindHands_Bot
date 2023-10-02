@@ -1,4 +1,13 @@
 {
+  "callbackQuery":{
+    "data": "%buttonCommand%",
+    "message": {
+      "messageId": 7416,
+      "chat": {
+        "id": 102030
+      }
+    }
+  },
   "message": {
     "from": {
       "id": 102030,
@@ -12,6 +21,17 @@
       "lastName": "LastName",
       "type": "private"
     },
+    "photo": [
+      {
+        "fileId": "10203",
+        "fileUniqueId": "987654",
+        "width": 720,
+        "height": 1080,
+        "fileSize": 100,
+        "filePath": "D:\\folder"
+      }
+    ],
     "text": "%text%"
   }
+
 }

@@ -1,6 +1,7 @@
 package tg.kindhands_bot.kindhands.entities;
 
 import tg.kindhands_bot.kindhands.entities.photo.AnimalPhoto;
+import tg.kindhands_bot.kindhands.enums.TypeAnimal;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -11,6 +12,8 @@ public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
+    private TypeAnimal typeAnimal;
     private String name;
     private String ration;
     private String recommendation;
@@ -24,6 +27,14 @@ public class Animal {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public AnimalPhoto getAnimalPhoto() {
+        return animalPhoto;
+    }
+
+    public void setAnimalPhoto(AnimalPhoto animalPhoto) {
+        this.animalPhoto = animalPhoto;
     }
 
     public String getName() {
@@ -50,14 +61,6 @@ public class Animal {
         this.recommendation = recommendation;
     }
 
-    public AnimalPhoto getAnimalPhoto() {
-        return animalPhoto;
-    }
-
-    public void setAnimalPhoto(AnimalPhoto animalPhoto) {
-        this.animalPhoto = animalPhoto;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -77,5 +80,13 @@ public class Animal {
                 ", name='" + name +
                 ", ration='" + ration +
                 ", recommendation='" + recommendation;
+    }
+
+    public TypeAnimal getTypeAnimal() {
+        return typeAnimal;
+    }
+
+    public void setTypeAnimal(TypeAnimal typeAnimal) {
+        this.typeAnimal = typeAnimal;
     }
 }

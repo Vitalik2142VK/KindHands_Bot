@@ -50,8 +50,8 @@
             </column>
             <column  name="free"  type="BOOLEAN" defaultValue="true"/>
             <column  name="phone"  type="VARCHAR(50)">
-            <constraints  nullable="false"/>
-        </column>
+                <constraints  nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -186,7 +186,7 @@
             <column  name="animal_id"  type="BIGINT"/>
             <column  name="user_id"  type="BIGINT"/>
         </createTable>
-        
+
         <createTable tableName="tamed_dog">
             <column  name="id"  type="BIGINT"  autoIncrement="true">
                 <constraints  primaryKey="true"  nullable="false"/>
@@ -201,7 +201,7 @@
             <column  name="user_id"  type="BIGINT"/>
         </createTable>
     </changeSet>
-    
+
     <changeSet id="8" author="morozov">
         <addForeignKeyConstraint baseTableName="tamed_cat"
                                  baseColumnNames="user_id"
@@ -232,5 +232,71 @@
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="10" author="morozov">
+        <addColumn tableName="users">
+            <column name="first_name" type="VARCHAR(50)"/>
+            <column name="last_name" type="VARCHAR(50)"/>
+            <column name="patronymic" type="VARCHAR(50)"/>
+            <column name="phone" type="VARCHAR(50)"/>
+            <column name="need_help" type="BOOLEAN" defaultValue="false"/>
+            <column name="date_of_last_report" type="TIMESTAMP"/>
+        </addColumn>
+
+        <addColumn tableName="volunteers">
+            <column name="first_name" type="VARCHAR(50)"/>
+            <column name="last_name" type="VARCHAR(50)"/>
+            <column name="patronymic" type="VARCHAR(50)"/>
+        </addColumn>
+
+        <addColumn tableName="tamed_cat">
+            <column name="date_adoption" type="DATE"/>
+            <column name="date_last_report" type="DATE"/>
+            <column name="date_of_last_report" type="TIMESTAMP"/>
+        </addColumn>
+
+        <addColumn tableName="tamed_dog">
+            <column name="date_adoption" type="DATE"/>
+            <column name="date_last_report" type="DATE"/>
+            <column name="date_of_last_report" type="TIMESTAMP"/>
+        </addColumn>
+
+        <addColumn tableName="animals">
+            <column name="type_animal" type="VARCHAR(50)"/>
+        </addColumn>
+
+        <addColumn tableName="report_animal">
+            <column name="photo_id" type="BIGINT"/>
+            <column name="tamed_animal_id" type="BIGINT"/>
+        </addColumn>
+
+        <addColumn tableName="animal_photos">
+            <column name="animal_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="11" author="morozov">
+        <modifyDataType tableName="report_animal" columnName="report_status" newDataType="VARCHAR(50)"/>
+
+        <modifyDataType tableName="users" columnName="bot_state" newDataType="VARCHAR(50)"/>
+
+        <addForeignKeyConstraint baseTableName="animal_photos"
+                                 baseColumnNames="animal_id"
+                                 constraintName="animal_id_relation_constraint"
+                                 referencedTableName="animal_photos"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="12" author="morozov">
+        <addColumn tableName="volunteers">
+            <column name="user_id" type="BIGINT"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="volunteers"
+                                 baseColumnNames="user_id"
+                                 constraintName="user_id_relation_constraint"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog>

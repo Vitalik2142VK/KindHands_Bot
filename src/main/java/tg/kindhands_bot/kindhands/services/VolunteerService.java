@@ -3,8 +3,13 @@ package tg.kindhands_bot.kindhands.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import tg.kindhands_bot.kindhands.components.MessagesBotFromControllers;
+import tg.kindhands_bot.kindhands.entities.ReportAnimal;
+import tg.kindhands_bot.kindhands.entities.User;
 import tg.kindhands_bot.kindhands.entities.Volunteer;
+import tg.kindhands_bot.kindhands.entities.tamed.TamedAnimal;
+import tg.kindhands_bot.kindhands.enums.ReportStatus;
+import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.VolunteersRepository;
 
 import java.util.List;
@@ -20,47 +25,73 @@ import java.util.List;
 @Service
 public class VolunteerService {
     private final VolunteersRepository volunteersRepository;
+    private final ReportAnimalRepository reportAnimalRepository;
+
+    private final MessagesBotFromControllers messagesBot;
 
     private final Logger log = LoggerFactory.getLogger(VolunteerService.class);
 
-    public VolunteerService(VolunteersRepository volunteersRepository) {
+    public VolunteerService(VolunteersRepository volunteersRepository, ReportAnimalRepository reportAnimalRepository, MessagesBotFromControllers messagesBot) {
         this.volunteersRepository = volunteersRepository;
+        this.reportAnimalRepository = reportAnimalRepository;
+        this.messagesBot = messagesBot;
     }
 
     /**
-     * Метод приглашения пользователем волонтера в чат
+     * Выводит не проверенные отчеты пользователей о животных.
      * -----||-----
-     * Method the user calls a volunteer
+     * Displays unverified user reports about animals.
      */
-    public String inviteVolunteer() {
-        return "Мы ищем волонтера";
+    public List<ReportAnimal> getReports() {
+        List<ReportAnimal> reports = reportAnimalRepository.findByReportStatus(ReportStatus.ON_INSPECTION);
+        if (reports.isEmpty()) {
+            throw new NullPointerException("Не проверенных отчетов нет.");
+        }
+
+        return reports;
     }
 
     /**
-     * Метод создания и сохранения волонтера
+     * Меняет статус отчета, указанный волонтером.
      * -----||-----
-     * Сreate and save a volunteer method
+     * Changes the status of the report specified by the volunteer.
      */
-    public Volunteer createVolunteer(Volunteer volunteer) {
-        log.info("Влонтер '" + volunteer.getName() + "' добавлен.");
+    public String changeStatusReport(Long id, String messageUser, ReportStatus reportStatus) {
+        ReportAnimal reportAnimal = reportAnimalRepository.findById(id).orElseThrow(() -> new NullPointerException("Отчет с id '" + id + "' не найден."));
 
-        return volunteersRepository.save(volunteer);
+        User user = reportAnimal.getTamedAnimal().getUser();
+        reportAnimal.setReportStatus(reportStatus);
+        reportAnimalRepository.save(reportAnimal);
+
+        if (messageUser == null || messageUser.isEmpty()) {
+            messagesBot.sendMessageUser(user, "Ваш отчет, присланный " + reportAnimal.getDate() + " принят.\nСпасибо!");
+        } else {
+            messagesBot.sendMessageUser(user, "Ваш отчет, присланный " + reportAnimal.getDate() + " принят.\n" +
+                    "Оставленный комментарий:\n" +
+                    messageUser +
+                    "\nСпасибо!");
+        }
+
+        return "Статус отчета с id '" + id + "' изменен на: " + reportStatus.name();
     }
 
     /**
-     * Метод сохраняет пользователя в БД Volunteer и отправляет строку, о том что волонтер принят
+     * Принимает кандидата в волонтеры
      * -----||-----
-     * Add a volunteer method
+     * Accepts a volunteer candidate
      */
-    public String addVolunteer(Update update, String phone) {
-        Volunteer volunteer = new Volunteer();
-        volunteer.setChatId(update.getMessage().getChatId());
-        volunteer.setName(update.getMessage().getChat().getFirstName());
+    public String addVolunteer(Long id) {
+        Volunteer volunteer = volunteersRepository.findById(id).orElseThrow(() -> new NullPointerException("Волонтер с id '" + id + "' не найден."));
+
+        User user = volunteer.getUser();
         volunteer.setAdopted(true);
-        volunteer.setPhone(printPhone(phone));//добавила проверку на приведение номера телефона к единому формату +7(ххх)ххх-хх-хх
+
         volunteersRepository.save(volunteer);
-        log.info("Влонтер '" + volunteer.getName() + "' добавлен.");
-        return "Ваша кандидатура на рассмотрении, с Вами свяжутся";
+        log.info("Влонтер '" + user.getLastName() + " " + user.getFirstName() + " " + user.getPatronymic() + "' добавлен.");
+
+        messagesBot.sendMessageUser(user, "Поздравляю! Ваша кандидатура в волонтеры принята.");
+
+        return "Влонтер '" + user.getLastName() + " " + user.getFirstName() + " " + user.getPatronymic() + "' добавлен.";
     }
 
     /**
@@ -68,74 +99,32 @@ public class VolunteerService {
      * -----||-----
      * Delete a volunteer method
      */
-
     public String deleteVolunteer(long id) {
-        Volunteer volunteer = volunteersRepository.findById(id).orElse(null);
-        if (volunteer != null) {
-            volunteersRepository.delete(volunteer);
-            log.info("Влонтер '" + volunteer.getName() + "' удален.");
-            return "Вы удалены из волонтеров!";
-        } else {
-            return "Волонтер не найден";
-        }
+        Volunteer volunteer = volunteersRepository.findById(id).orElseThrow(() -> new NullPointerException("Волонтер с id '" + id + "' не найден."));
+
+        User user = volunteer.getUser();
+        volunteersRepository.delete(volunteer);
+
+        log.info("Влонтер '" + user.getLastName() + "' удален.");
+
+        return "Волонтер " + user.getLastName() + " " + user.getFirstName() + ", удален." ;
     }
-//// НА ПОТОМ
-//    /**
-//     * Метод находит список свободных волонтеров и конвертирует в SendMessage
-//     * сообщение о том что пользователю нужна помощь
-//     * -----||-----
-//     * list of free volunteers method
-//     */
-//    public List<SendMessage> getFreeVolunteers(Update update) {
-//        if (update.hasMessage() && update.getMessage().hasText()) {
-//            String messageText = update.getMessage().getText();
-//            Long chatId=update.getMessage().getChatId();
-//
-//            if (messageText.contains("CALL_VOLUNTEER")) {
-//                var textToVolunteers=messageText("Пользователь запросил помощь волонтера");
-//                        var freeVolunteers=volunteersRepository.getVolunteersByIsFreeTrue();
-//                for (Volunteer volunteer : volunteers) {
-//                    sendMessage(volunteer.getChatId(), textToVolunteers);
-//
-//
-//                }
-//            }
-//        }
-//      return (List<SendMessage>) volunteersRepository.getVolunteersByIsFreeTrue().stream().findAny()
-//                .orElseThrow(() -> new RuntimeException("Все волонтеры заняты."));
-//    }
 
     /**
-     * Метод получения всех волонтеров
+     * Получение всех действующих волонтеров
      * -----||-----
-     * Get all volunteers method
+     * Getting all active volunteers
      */
-
     public List<Volunteer> getAllVolunteers() {
-        return volunteersRepository.findAll();
+        return volunteersRepository.findByAdoptedTrue();
     }
 
     /**
-     * Метод приведения телефонного номера к формату +7(ххх)ххх-хх-хх
+     * Выводит список всех желающих стать волонтером.
      * -----||-----
-     * Phone format +7(ххх)ххх-хх-хх method
+     * Displays a list of everyone who wants to become a volunteer.
      */
-    public String printPhone(String phone) {
-        if (phone == null || "".equalsIgnoreCase(phone)) {
-            return "Введите номер телефона";
-        } else {
-            if (phone.length() < 10 || phone.length() > 16) {
-                return "Это не похоже на номер телефона. Исправьте или введите заново";
-            }
-            String number = phone.replaceAll("[^0-9]", "");
-            if (number.length() > 10) {
-                number = number.substring(number.length() - 10);
-            }
-            number = "+7" + number;
-            number = number.replaceFirst("(\\d{1})(\\d{3})(\\d{3})(\\d{2})(\\d{2})",
-                    "$1($2)$3-$4-$5");
-            return "Ваш номер телефона записан: " + number;
-        }
+    public List<Volunteer> getAllBecomeVolunteers() {
+        return volunteersRepository.findByAdoptedFalse();
     }
-
 }
