@@ -19,14 +19,11 @@ import tg.kindhands_bot.kindhands.repositories.ReportAnimalRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
 import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
+
+import static tg.kindhands_bot.kindhands.components.CheckMethods.makeLoweredPhoto;
 
 /**
  * Класс для обработки и отправки сообщений.
@@ -169,7 +166,7 @@ public class ProcessingBotMessages {
         ReportAnimalPhoto reportAnimalPhoto = new ReportAnimalPhoto();
         reportAnimalPhoto.setFilePath(photo.getAbsolutePath());
         reportAnimalPhoto.setFileSize(data.length);
-        reportAnimalPhoto.setMediaType(StringUtils.getFilenameExtension(photo.getPath()));
+        reportAnimalPhoto.setMediaType("image/" + StringUtils.getFilenameExtension(photo.getPath()));
         reportAnimalPhoto.setData(data);
 
         reportAnimalPhotoRepository.save(reportAnimalPhoto);
@@ -295,34 +292,6 @@ public class ProcessingBotMessages {
     // Рассмотреть вариант вывести в отдельный класс
     // Вспомогательные методы
 
-
-    /**
-     * Метод для уменьшения размера фотографии
-     * -----||-----
-     * A method for lowering size of photo
-     */
-    public byte[] makeLoweredPhoto(Path photo) {
-        try (InputStream is = Files.newInputStream(photo);
-             BufferedInputStream bis = new BufferedInputStream(is, 1000);
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            BufferedImage image = ImageIO.read(bis);
-
-            int height = image.getHeight() / (image.getWidth() / 100);
-            BufferedImage loweredPhoto = new BufferedImage(100, height, image.getType());
-            Graphics2D graphics = loweredPhoto.createGraphics();
-            graphics.drawImage(image, 0, 0, 100, height, null);
-            graphics.dispose();
-
-            String fileName = photo.getFileName().toString();
-            ImageIO.write(
-                    loweredPhoto,
-                    fileName.substring(fileName.lastIndexOf(".") + 1),
-                    baos);
-            return baos.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Метод для редактирования существующего сообщения бота.

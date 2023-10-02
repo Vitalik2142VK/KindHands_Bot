@@ -1,16 +1,22 @@
 package tg.kindhands_bot.kindhands.services;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import tg.kindhands_bot.kindhands.components.MessagesBotFromControllers;
 import tg.kindhands_bot.kindhands.entities.Animal;
 import tg.kindhands_bot.kindhands.entities.User;
+import tg.kindhands_bot.kindhands.entities.photo.ReportAnimalPhoto;
 import tg.kindhands_bot.kindhands.entities.tamed.TamedAnimal;
 import tg.kindhands_bot.kindhands.entities.tamed.TamedCat;
 import tg.kindhands_bot.kindhands.entities.tamed.TamedDog;
 import tg.kindhands_bot.kindhands.repositories.AnimalsRepository;
 import tg.kindhands_bot.kindhands.repositories.UserRepository;
+import tg.kindhands_bot.kindhands.repositories.photo.ReportAnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
 
 import java.time.LocalDate;
@@ -21,16 +27,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final AnimalsRepository animalsRepository;
     private final TamedAnimalRepository tamedAnimalRepository;
-
+    private final ReportAnimalPhotoRepository reportAnimalPhotoRepository;
     private final MessagesBotFromControllers messagesBot;
 
     public UserService(UserRepository userRepository,
                        AnimalsRepository animalsRepository,
                        TamedAnimalRepository tamedAnimalRepository,
+                       ReportAnimalPhotoRepository reportAnimalPhotoRepository,
                        MessagesBotFromControllers messagesBot) {
         this.userRepository = userRepository;
         this.animalsRepository = animalsRepository;
         this.tamedAnimalRepository = tamedAnimalRepository;
+        this.reportAnimalPhotoRepository = reportAnimalPhotoRepository;
         this.messagesBot = messagesBot;
     }
 
@@ -58,24 +66,22 @@ public class UserService {
     }
 
     /**
-     * Добавляет пользователю, взятое им, животное.
+     * Добавляет пользователю, взятое им, ж
+     * ивотное.
      * -----||-----
      * Adds an animal taken by the user.
      */
     public String addUserAnimal(@PathVariable Long idUser, @RequestParam Long idAnimal) {
-        User user = userRepository.findById(idUser).orElse(null);
-        if (user == null) {
-            throw new NullPointerException("Пользователь с id '" + idUser + "' не найден");
-        }
+        User user = userRepository.findById(idUser).orElseThrow(() -> new NullPointerException("Пользователь с id '" + idUser + "' не найден"));
 
         if (user.getPhone() == null || user.getPhone().isEmpty()) {
             return "Пользователю " + user.getFirstName() + " необходимо, через бота, заполнить контактные данные.";
         }
 
-        Animal animal = animalsRepository.findById(idAnimal).orElse(null);
-        if (animal == null) {
-            throw new NullPointerException("Животное с id '" + idUser + "' не найдено");
+        if (tamedAnimalRepository.findByAnimal_Id(idAnimal) != null) {
+            return "Животное с id '" + idAnimal + "' приручено другим пользователем.";
         }
+        Animal animal = animalsRepository.findById(idAnimal).orElseThrow(() -> new NullPointerException("Животное с id '" + idUser + "' не найдено"));
 
         LocalDate nowDate = LocalDate.now();
 
@@ -146,10 +152,8 @@ public class UserService {
      * Method for changing the value of the user's needHelp field
      */
     public String isNeedHelp(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            throw new NullPointerException("Пользователь с id '" + id + "' не найден.");
-        }
+        User user = userRepository.findById(id).orElseThrow(() -> new NullPointerException("Пользователь с id '" + id + "' не найден."));
+
         user.setNeedHelp(false);
         userRepository.save(user);
 
@@ -157,5 +161,38 @@ public class UserService {
                 "была решена. Если это не так, пожалуйста, повторите попытку.");
 
         return "Проблема пользователя " + user.getLastName() + " " + user.getFirstName() + " " + user.getPatronymic() + " решена";//добавить фио
+    }
+
+    /**
+     * Возвращает оригинальный файл.
+     * -----||-----
+     * It returns original file.
+     */
+
+    public Pair<byte[], String> getPhoto(Long id) {
+        ReportAnimalPhoto reportAnimalPhoto = reportAnimalPhotoRepository.findById(id).orElseThrow(() -> new RuntimeException("The photo is not found"));
+        return Pair.of(reportAnimalPhoto.getData(), reportAnimalPhoto.getMediaType());
+    }
+
+    /**
+     * Отправляет сообщение пользователю
+     * -----||-----
+     * Sends a message to the user
+     */
+    public Object sendMessageUser(Long id, String messageUser) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NullPointerException("Пользователь с id '" + id + "' не найден."));
+
+        messagesBot.sendMessageUser(user, messageUser);
+
+        return "Сообщение пользователю отправлено";
+    }
+
+    /**
+     * Выводит список всех пользователей
+     * -----||-----
+     * Displays a list of all users
+     */
+    public Object getAllUsers() {
+        return userRepository.findAll();
     }
 }

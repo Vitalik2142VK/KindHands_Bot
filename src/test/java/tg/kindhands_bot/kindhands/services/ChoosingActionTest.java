@@ -813,16 +813,20 @@ public class ChoosingActionTest {
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInTwoLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInThreeLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInFourLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInFiveLine = new ArrayList<>();
 
         rowInLine.add(infoButton);
-        rowInLine.add(howGetButton);
-        rowInTwoLine.add(sendReportButton);
-        rowInTwoLine.add(callVolunteerButton);
-        rowInThreeLine.add(assistanceToShelterButton);
+        rowInTwoLine.add(howGetButton);
+        rowInThreeLine.add(sendReportButton);
+        rowInFourLine.add(callVolunteerButton);
+        rowInFiveLine.add(assistanceToShelterButton);
 
         rowsInLine.add(rowInLine);
         rowsInLine.add(rowInTwoLine);
         rowsInLine.add(rowInThreeLine);
+        rowsInLine.add(rowInFourLine);
+        rowsInLine.add(rowInFiveLine);
 
         markup.setKeyboard(rowsInLine);
         return markup;
@@ -848,7 +852,7 @@ public class ChoosingActionTest {
         var securityContactButton = createButton("Контактные данные охраны", SECURITY_CONTACT + animalText);
         var safetyRecommendationButton = createButton("Рекомендации по технике безопасности",
                 SAFETY_RECOMMENDATION + animalText);
-        var callContactButton = createButton("Записать контактные данные для связи", USER_CALL_CONTACT);
+        var callContactButton = createButton("Оставить контактные данные для связи", USER_CALL_CONTACT);
         var addressShelterButton = createButton("Адрес приюта", ADDRESS_SHELTER + animalText);
         var travelToShelterButton = createButton("Схема проезда", TRAVEL_SHELTER + animalText);
         var callVolunteerButton = createButton("Позвать волонтёра", CALL_VOLUNTEER);
@@ -936,21 +940,20 @@ public class ChoosingActionTest {
                 return null; // заменить на Exception
         }
 
-        var animalIntroductionRulesButton = createButton("Правила знакомства с животным до того, как забрать его из приюта",
+        var animalIntroductionRulesButton = createButton("Знакомство с животным.",
                 INTRODUCTION_RULES + animalText);
-        var listOfDocumentsButton = createButton("Список документов, необходимых для того, чтобы взять животное из приюта",
+        var listOfDocumentsButton = createButton("Документы, необходимые для оформления опеки.",
                 LIST_DOCUMENTS + animalText);
-        var recommendationsForTransportingButton = createButton("Список рекомендаций по транспортировке животного",
+        var recommendationsForTransportingButton = createButton("Рекомендации по транспортировке животного",
                 TRANSPORTING + animalText);
-        var recommendationsForHouseSmallAnimalButton = createButton("Список рекомендаций по обустройству" +
+        var recommendationsForHouseSmallAnimalButton = createButton("Советы по обустройству" +
                 " дома для маленького питомца", HOUSE_SMALL_ANIMAL + animalText);
-        var recommendationsForHouseAdultAnimalButton = createButton("Список рекомендаций по обустройству" +
+        var recommendationsForHouseAdultAnimalButton = createButton("Советы по обустройству" +
                 " дома для взрослого животного", HOUSE_ADULT_ANIMAL + animalText);
-        var recommendationsForHouseDisabledAnimalButton = createButton("Список рекомендаций по обустройству" +
+        var recommendationsForHouseDisabledAnimalButton = createButton("Советы по обустройству" +
                 " дома для животного с ограниченными возможностями", HOUSE_DISABLED_ANIMAL + animalText);
-        var rejectionReasonButton = createButton("Список причин, почему могут отказать и не дать" +
-                " забрать животное из приюта", REJECTION_REASON + animalText);
-        var callContactButton = createButton("Принять и записать контактные данные для связи", USER_CALL_CONTACT);
+        var rejectionReasonButton = createButton("Причины для отказа в опеке.", REJECTION_REASON + animalText);
+        var callContactButton = createButton("Оставить контактные данные для связи", USER_CALL_CONTACT);
 
 
         var initialCommunicationCynologistAdvicesButton = createButton("Советы кинолога по первичному" +

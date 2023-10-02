@@ -19,7 +19,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import tg.kindhands_bot.kindhands.entities.Animal;
 import tg.kindhands_bot.kindhands.entities.photo.AnimalPhoto;
+import tg.kindhands_bot.kindhands.enums.TypeAnimal;
 import tg.kindhands_bot.kindhands.repositories.AnimalsRepository;
+import tg.kindhands_bot.kindhands.repositories.photo.AnimalPhotoRepository;
 import tg.kindhands_bot.kindhands.services.AnimalService;
 
 import java.util.List;
@@ -32,6 +34,8 @@ public class AnimalControllerTest {
 
     @MockBean
     private AnimalsRepository animalsRepository;
+    @MockBean
+    private AnimalPhotoRepository animalPhotoRepository;
 
     @SpyBean
     private AnimalService animalService;
@@ -46,12 +50,16 @@ public class AnimalControllerTest {
         animal1.setName("One");
         animal1.setRation("good");
         animal1.setRecommendation("no");
+        animal1.setTypeAnimal(TypeAnimal.CAT);
+
+
 
         Animal animal2 = new Animal();
         animal2.setId(2L);
         animal2.setName("Two");
         animal2.setRation("bad");
         animal2.setRecommendation("yes");
+        animal2.setTypeAnimal(TypeAnimal.CAT);
 
         List<Animal> list = List.of(animal1, animal2);
 

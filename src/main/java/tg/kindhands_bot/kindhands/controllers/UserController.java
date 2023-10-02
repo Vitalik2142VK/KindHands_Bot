@@ -4,8 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.http.protocol.HttpCoreContext;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tg.kindhands_bot.kindhands.entities.User;
@@ -97,7 +96,7 @@ public class UserController {
      * -----||-----
      * The volunteer changes the user's needHelp field to false after providing assistance
      */
-    @PutMapping("/adopted/help/change/{id}")//GET http://localhost:8080/volunteer/user/help/change/3
+    @PutMapping("/adopted/help/change/{id}")//PUT http://localhost:8080/volunteer/user/help/change/3
     @Operation(summary = "Изменение волонтером статуса пользователя после оказания помощи")
     @ApiResponses(value = {
             @ApiResponse(
@@ -105,7 +104,62 @@ public class UserController {
                     description = "Помощь оказана."
             )
     })
-    public ResponseEntity<?> changeIsNeedHelp(@RequestParam(required = false) Long id) {
+    public ResponseEntity<?> changeIsNeedHelp(@PathVariable Long id) {
         return ResponseEntity.ok(userService.isNeedHelp(id));
+    }
+
+    /**
+     * Выводит оригинал фотографии животного
+     * -----||-----
+     * Show the original photo
+     */
+    @GetMapping("/photo/{id}")
+    // GET http://localhost:8080/volunteer/animal/photo/1
+    @Operation(summary = "Получить фотографию животного из отчета")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Фотографию успешно найдена"
+            )})
+    public ResponseEntity<?> getPhotoAnimal(Long id) {
+        var pair = userService.getPhoto(id);
+        byte[] data = pair.getLeft();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(pair.getRight()))
+                .contentLength(data.length)
+                .body(data);
+    }
+
+    /**
+     * Отправляет сообщение пользователю
+     * -----||-----
+     * Sends a message to the user
+     */
+    @PutMapping("/send_message/{id}") // GET http://localhost:8080/send_message/reports
+    @Operation(summary = "Отправить сообщение пользователю")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Сообщение отправлено"
+            )})
+    public ResponseEntity<?> sendMessageUser(@PathVariable Long id, @RequestParam String messageUser) {
+        return ResponseEntity.ok(userService.sendMessageUser(id, messageUser));
+    }
+
+    /**
+     * Выводит список всех пользователей
+     * -----||-----
+     * Displays a list of all users
+     */
+    @GetMapping("/getAll") // GET http://localhost:8080/getAll
+    @Operation(summary = "Получает список всех пользователей")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Пользователи получены"
+            )})
+    public ResponseEntity<?> getUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }

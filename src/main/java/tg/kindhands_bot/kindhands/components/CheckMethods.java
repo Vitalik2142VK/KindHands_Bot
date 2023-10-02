@@ -3,6 +3,15 @@ package tg.kindhands_bot.kindhands.components;
 import tg.kindhands_bot.kindhands.exceptions.IncorrectDataExceptionAndSendMessage;
 import tg.kindhands_bot.kindhands.exceptions.NullPointerExceptionAndSendMessage;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,5 +76,33 @@ public class CheckMethods {
                         s = s.substring(0,1).toUpperCase() + s.substring(1).toLowerCase();
                     return s.replaceAll("[!\"#$%&'()*+,./:;<=>?@\\[\\\\\\]^_`{|}~]", "");})
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Метод для уменьшения размера фотографии
+     * -----||-----
+     * A method for lowering size of photo
+     */
+    public static byte[] makeLoweredPhoto(Path photo) {
+        try (InputStream is = Files.newInputStream(photo);
+             BufferedInputStream bis = new BufferedInputStream(is, 1000);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            BufferedImage image = ImageIO.read(bis);
+
+            int height = image.getHeight() / (image.getWidth() / 100);
+            BufferedImage loweredPhoto = new BufferedImage(100, height, image.getType());
+            Graphics2D graphics = loweredPhoto.createGraphics();
+            graphics.drawImage(image, 0, 0, 100, height, null);
+            graphics.dispose();
+
+            String fileName = photo.getFileName().toString();
+            ImageIO.write(
+                    loweredPhoto,
+                    fileName.substring(fileName.lastIndexOf(".") + 1),
+                    baos);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

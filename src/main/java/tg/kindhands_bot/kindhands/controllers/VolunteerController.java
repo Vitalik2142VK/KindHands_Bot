@@ -61,7 +61,6 @@ public class VolunteerController {
         return ResponseEntity.ok(volunteerService.changeStatusReport(id, messageUser, reportStatus));
     }
 
-
     /**
      * Принимает кандидата в волонтеры
      * -----||-----
