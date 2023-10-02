@@ -41,11 +41,11 @@ public class AnimalController {
     }
 
     /**
-     * Выводит оригинал фотографии животного
+     * Сохраняет фото животного в БД
      * -----||-----
-     * Show the original photo
+     * Saves a photo of the animal in the database
      */
-    @PutMapping(value = "photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "photo/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     // PUT http://localhost:8080/volunteer/animal/photo/1
     @Operation(summary = "Добавить фотографию животному")
     @ApiResponses(value = {
@@ -53,15 +53,15 @@ public class AnimalController {
                     responseCode = "200",
                     description = "Фотографию обработана"
             )})
-    public ResponseEntity<?> uploadPhoto(@RequestPart MultipartFile photo) {
-        animalService.uploadPhoto(photo);
-        return ResponseEntity.ok().body("Фотографию обработана");
+    public ResponseEntity<?> uploadPhoto(@PathVariable Long id, @RequestPart MultipartFile photo) {
+        animalService.uploadPhoto(id, photo);
+        return ResponseEntity.ok().body("Фотографию обработана и добавлена.");
     }
 
     /**
-     * Сохранение принятой фотографии
+     * Выводит фото по id
      * -----||-----
-     * Uploading photo in DB
+     * Outputs a photo by id
      */
     @GetMapping("/photo/{id}")
     // GET http://localhost:8080/volunteer/animal/photo/1
