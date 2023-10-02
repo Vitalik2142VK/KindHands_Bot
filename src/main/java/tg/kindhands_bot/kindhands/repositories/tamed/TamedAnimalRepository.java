@@ -16,6 +16,10 @@ public interface TamedAnimalRepository extends JpaRepository<TamedAnimal, Long> 
 
     List<TamedAnimal> findByDateLastReportBefore(LocalDate dateLastReport);
 
+    TamedAnimal findByAnimal_Id(Long id);
+
+
+
 //    @Query(value = "SELECT u.* FROM tamed_cat tc, users u\n" +
 //            "WHERE tc.user_id = u.id\n" +
 //            "AND tc.date_last_report < :date\n" +
@@ -23,6 +27,15 @@ public interface TamedAnimalRepository extends JpaRepository<TamedAnimal, Long> 
 //            "SELECT u.* FROM tamed_dog td, users u\n" +
 //            "WHERE td.user_id = u.id\n" +
 //            "AND td.date_last_report < :date", nativeQuery = true)
-////            ("SELECT tc.user, td.user FROM TamedCat tc, TamedDog td")
 //    List<User> findAllUsers(@Param("date") LocalDate dateLastReport);
+
+//    @Query(value = "SELECT tc.user FROM TamedCat tc WHERE tc.dateLastReport < :date\n" +
+//            " UNION" +
+//            " SELECT td.user FROM TamedDog td WHERE td.dateLastReport < :date")
+//    List<User> findAllUsers(@Param("date") LocalDate dateLastReport);
+
+//    @Query(value = "SELECT u.* FROM tamed_cat tc, users u\n" +
+//            "WHERE tc.user_id = u.id\n" +
+//            "AND DATEIFF(tc.date_last_report, :date) >= 2")
+//    List<User> findBySentReportsMoreTwoDays(@Param("date") LocalDate date);
 }

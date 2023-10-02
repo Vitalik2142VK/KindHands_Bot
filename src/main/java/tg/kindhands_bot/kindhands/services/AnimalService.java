@@ -53,8 +53,10 @@ public class AnimalService {
      * Uploading photo in DB
      */
 
-    public void uploadPhoto(MultipartFile photo) {
+    public void uploadPhoto(Long id, MultipartFile photo) {
         try {
+            Animal animal = animalsRepository.findById(id).orElseThrow(() -> new NullPointerException("Животное по id '" + id + "' не найдено."));
+
             var animalPhoto = new AnimalPhoto();
 
             var contentType = photo.getContentType();
@@ -69,6 +71,9 @@ public class AnimalService {
             animalPhoto.setMediaType(contentType);
             animalPhoto.setData(data);
             animalPhotoRepository.save(animalPhoto);
+
+            animal.setAnimalPhoto(animalPhoto);
+            animalsRepository.save(animal);
         } catch (IOException e) {
             throw new RuntimeException();
         }
@@ -89,10 +94,10 @@ public class AnimalService {
      * Adds a new animal.
      */
     public Animal addAnimal(Animal animal) {
-        long idPhoto = animal.getAnimalPhoto().getId();
-
-        AnimalPhoto photo = animalPhotoRepository.findById(idPhoto).orElseThrow(() -> new NullPointerException("Фото животного с id '" + idPhoto + "' не найдено."));
-        animal.setAnimalPhoto(photo);
+//        long idPhoto = animal.getAnimalPhoto().getId();
+//
+//        AnimalPhoto photo = animalPhotoRepository.findById(idPhoto).orElseThrow(() -> new NullPointerException("Фото животного с id '" + idPhoto + "' не найдено."));
+//        animal.setAnimalPhoto(photo);
 
         return animalsRepository.save(animal);
     }

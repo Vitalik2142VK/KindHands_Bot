@@ -78,6 +78,9 @@ public class UserService {
             return "Пользователю " + user.getFirstName() + " необходимо, через бота, заполнить контактные данные.";
         }
 
+        if (tamedAnimalRepository.findByAnimal_Id(idAnimal) != null) {
+            return "Животное с id '" + idAnimal + "' приручено другим пользователем.";
+        }
         Animal animal = animalsRepository.findById(idAnimal).orElseThrow(() -> new NullPointerException("Животное с id '" + idUser + "' не найдено"));
 
         LocalDate nowDate = LocalDate.now();
@@ -182,5 +185,14 @@ public class UserService {
         messagesBot.sendMessageUser(user, messageUser);
 
         return "Сообщение пользователю отправлено";
+    }
+
+    /**
+     * Выводит список всех пользователей
+     * -----||-----
+     * Displays a list of all users
+     */
+    public Object getAllUsers() {
+        return userRepository.findAll();
     }
 }

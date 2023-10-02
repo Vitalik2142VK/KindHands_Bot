@@ -115,7 +115,7 @@ public class UserController {
      */
     @GetMapping("/photo/{id}")
     // GET http://localhost:8080/volunteer/animal/photo/1
-    @Operation(summary = "Получить фотографию животного")
+    @Operation(summary = "Получить фотографию животного из отчета")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -137,13 +137,29 @@ public class UserController {
      * Sends a message to the user
      */
     @PutMapping("/send_message/{id}") // GET http://localhost:8080/send_message/reports
-    @Operation(summary = "Изменить статус отчета")
+    @Operation(summary = "Отправить сообщение пользователю")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Статус отчета изменен."
+                    description = "Сообщение отправлено"
             )})
     public ResponseEntity<?> sendMessageUser(@PathVariable Long id, @RequestParam String messageUser) {
         return ResponseEntity.ok(userService.sendMessageUser(id, messageUser));
+    }
+
+    /**
+     * Выводит список всех пользователей
+     * -----||-----
+     * Displays a list of all users
+     */
+    @GetMapping("/getAll") // GET http://localhost:8080/getAll
+    @Operation(summary = "Получает список всех пользователей")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Пользователи получены"
+            )})
+    public ResponseEntity<?> getUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }

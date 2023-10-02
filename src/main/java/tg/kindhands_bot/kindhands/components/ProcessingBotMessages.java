@@ -166,7 +166,7 @@ public class ProcessingBotMessages {
         ReportAnimalPhoto reportAnimalPhoto = new ReportAnimalPhoto();
         reportAnimalPhoto.setFilePath(photo.getAbsolutePath());
         reportAnimalPhoto.setFileSize(data.length);
-        reportAnimalPhoto.setMediaType(StringUtils.getFilenameExtension(photo.getPath()));
+        reportAnimalPhoto.setMediaType("image/" + StringUtils.getFilenameExtension(photo.getPath()));
         reportAnimalPhoto.setData(data);
 
         reportAnimalPhotoRepository.save(reportAnimalPhoto);
