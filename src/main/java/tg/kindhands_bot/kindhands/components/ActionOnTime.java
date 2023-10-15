@@ -5,37 +5,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import tg.kindhands_bot.kindhands.entities.User;
-import tg.kindhands_bot.kindhands.entities.tamed.TamedAnimal;
-import tg.kindhands_bot.kindhands.repositories.tamed.TamedAnimalRepository;
-import tg.kindhands_bot.kindhands.repositories.tamed.TamedCatRepository;
-import tg.kindhands_bot.kindhands.repositories.tamed.TamedDogRepository;
+import tg.kindhands_bot.kindhands.repositories.UserRepository;
 import tg.kindhands_bot.kindhands.services.KindHandsBot;
 
 
-import java.sql.Date;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.Collection;
-import java.util.List;
 
 @Component
 public class ActionOnTime {
     private final Logger log = LoggerFactory.getLogger(ActionOnTime.class);
 
-    private final TamedAnimalRepository tamedAnimalRepository;
-    private final TamedCatRepository tamedCatRepository;
-    private final TamedDogRepository tamedDogRepository;
+    private final UserRepository userRepository;
     private final KindHandsBot bot;
 
-    public ActionOnTime(TamedAnimalRepository tamedAnimalRepository,
-                        TamedCatRepository tamedCatRepository,
-                        TamedDogRepository tamedDogRepository,
+    public ActionOnTime(UserRepository userRepository,
                         KindHandsBot bot) {
-        this.tamedAnimalRepository = tamedAnimalRepository;
-        this.tamedCatRepository = tamedCatRepository;
-        this.tamedDogRepository = tamedDogRepository;
+        this.userRepository = userRepository;
         this.bot = bot;
     }
 
@@ -46,7 +32,7 @@ public class ActionOnTime {
      */
     @Scheduled(cron = "0 00 18 * * *") // каждый день в 18 всем усыновителям
     public void sendDailyReportReminder() {
-        Collection<User> users = getAllUser(); //getAllUser();
+        Collection<User> users = userRepository.findUsersNotSendReport(LocalDate.now()); //getAllUser();
         if (users.isEmpty()) {
             log.info("На 18:00 все пользователи отчеты отравили.");
             return;
@@ -65,7 +51,7 @@ public class ActionOnTime {
      */
     @Scheduled(cron = "0 00 21 * * *") // каждый день в 21 всем усыновителям, не приславшим отчет
     public void sendDailyReportNotReceived() {
-        Collection<User> users = getAllUser(); //getAllUser();
+        Collection<User> users = userRepository.findUsersNotSendReport(LocalDate.now());
         if (users.isEmpty()) {
             log.info("На 21:00 все пользователи отчеты отравили.");
             return;
@@ -83,37 +69,14 @@ public class ActionOnTime {
      * -----||-----
      * A method for identifying people who haven't send report more than 2 days
      */
-    @Scheduled(cron = "0 20 18 * * *") // каждый день в 12
+    @Scheduled(cron = "0 30 21 * * *") // каждый день в 21:30
     public void checkDailyReportReceived() {
-        LocalDate date = LocalDate.now();
-        List<TamedAnimal> tamedAnimals = tamedAnimalRepository.findByDateLastReportBefore(date);
-        tamedAnimals.stream()
-                .filter(tamedAnimal -> Period.between(tamedAnimal.getDateLastReport(), date).getDays() >= 2)
-                .map(TamedAnimal::getUser)
-                .forEach(user -> bot.sendMessage(ProcessingBotMessages.returnMessageUser(user,
-                        "Вы не отправляли отчеты более 2-х дней. Пожалуйста, отправьте отчет в ближайшее время, " +
+        Collection<User> users = userRepository.findUsersNotSendReportMoreTwoDays(LocalDate.now());
+        users.stream().map(user -> ProcessingBotMessages.returnMessageUser(user,
+                "Вы не отправляли отчеты более 2-х дней. Пожалуйста, отправьте отчет в ближайшее время, " +
                                 "иначе мы будем вынуждены забрать питомца обратно!" +
-                                "\n\nВ скором времени с Вами свяжутся для уточнения.")));
-//        Collection<User> users = getAllUserNoSentReportsMoreTwoDays();
-//        users.stream().map(user -> ProcessingBotMessages.returnMessageUser(user,
-//                "Вы не отправляли отчеты более 2-х дней. Пожалуйста, отправьте отчет в ближайшее время, " +
-//                                "иначе мы будем вынуждены забрать питомца обратно!" +
-//                                "\n\nВ скором времени с Вами свяжутся для уточнения.")).forEach(bot::sendMessage);
+                                "\n\nВ скором времени с Вами свяжутся для уточнения.")).forEach(bot::sendMessage);
     }
-
-    private Collection<User> getAllUser() {
-        LocalDate nowDate = LocalDate.now();
-        Collection<User> users = tamedCatRepository.findAllUsersDateLastReportBefore(nowDate);
-        users.addAll(tamedDogRepository.findAllUsersDateLastReportBefore(nowDate));
-        return users;
-    }
-
-//    private Collection<User> getAllUserNoSentReportsMoreTwoDays() {
-//        Date nowDate = Date.valueOf(LocalDate.now());
-//        Collection<User> users = tamedCatRepository.findByNoSentReportsMoreTwoDays(nowDate);
-//        users.addAll(tamedDogRepository.findByNoSentReportsMoreTwoDays(nowDate));
-//        return users;
-//    }
 }
 
 
